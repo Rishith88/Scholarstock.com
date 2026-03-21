@@ -1,0 +1,2213 @@
+
+
+<!DOCTYPE html>
+<!-- saved from url=(0071)file:///C:/Users/ganes/Downloads/ScholarStock___Study_Smarter__Pay_Less.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ScholarStock — Study Smarter, Pay Less</title>
+<link href="file:///C:/Users/ganes/Downloads/ScholarStock%20%E2%80%94%20Study%20Smarter,%20Pay%20Less_files/css2" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#020817;--glass:rgba(255,255,255,.04);--gb:rgba(255,255,255,.08);--ghov:rgba(255,255,255,.07);--blue:#3b82f6;--blue2:#60a5fa;--purple:#8b5cf6;--cyan:#06b6d4;--gold:#f59e0b;--white:#f8fafc;--muted:#94a3b8;--muted2:#64748b;--green:#10b981;--red:#ef4444}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;line-height:1.6}
+.orbs{position:fixed;inset:0;z-index:0;pointer-events:none}
+.orb{position:absolute;border-radius:50%;filter:blur(130px);opacity:.13}
+.o1{width:600px;height:600px;background:radial-gradient(circle,#3b82f6,transparent);top:-150px;left:-100px}
+.o2{width:400px;height:400px;background:radial-gradient(circle,#8b5cf6,transparent);bottom:5%;right:-100px}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:rgba(2,8,23,.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--gb);padding:1rem 0}
+.nav.scrolled{box-shadow:0 4px 30px rgba(0,0,0,.3)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 2rem;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,#fff,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;cursor:pointer}
+.nav-links{display:flex;gap:1.5rem;align-items:center}
+.nl{color:var(--muted);font-size:.9rem;cursor:pointer;transition:color .2s;font-weight:500}
+.nl:hover{color:var(--white)}
+.nbtn{padding:.6rem 1.3rem;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;border:none}
+.nbtn-ghost{background:transparent;border:1px solid var(--gb);color:var(--muted)}
+.nbtn-ghost:hover{border-color:var(--blue2);color:var(--blue2)}
+.nbtn-grad{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;box-shadow:0 4px 15px rgba(59,130,246,.3)}
+.nbtn-grad:hover{opacity:.9;transform:translateY(-2px)}
+
+/* PAGE */
+.page{display:none;position:relative;z-index:1}
+.page.on{display:block}
+.hero{padding:6rem 2rem;text-align:center}
+.hero-pill{display:inline-block;background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);color:var(--blue2);padding:.5rem 1.2rem;border-radius:50px;font-size:.8rem;font-weight:600;margin-bottom:1.5rem;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.hero-title{font-family:'Playfair Display',serif;font-size:3.5rem;font-weight:800;line-height:1.1;margin-bottom:1rem;background:linear-gradient(135deg,#fff,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{font-size:1.2rem;color:var(--muted);max-width:600px;margin:0 auto 2rem}
+.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.btn{padding:.9rem 2rem;border-radius:10px;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .3s;border:none}
+.btn-grad{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;box-shadow:0 8px 25px rgba(59,130,246,.4)}
+.btn-grad:hover{transform:translateY(-3px);box-shadow:0 12px 35px rgba(59,130,246,.5)}
+.btn-ghost{background:transparent;border:1px solid var(--gb);color:var(--white)}
+.btn-ghost:hover{border-color:var(--blue2);background:rgba(59,130,246,.1)}
+
+/* SECTION */
+.sec{max-width:1200px;margin:3rem auto;padding:0 2rem}
+.eyebrow{font-size:.75rem;text-transform:uppercase;letter-spacing:2px;color:var(--blue2);font-weight:700;margin-bottom:.5rem}
+.sec-title{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:800;margin-bottom:2rem}
+
+/* CATEGORY GRID */
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin-bottom:2rem}
+.cat-card{background:var(--glass);border:1px solid var(--gb);border-radius:12px;padding:1.2rem;cursor:pointer;backdrop-filter:blur(20px);transition:all .3s;text-align:center;position:relative;overflow:hidden}
+.cat-card::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(59,130,246,.08),transparent);transition:left .6s}
+.cat-card:hover::before{left:100%}
+.cat-card:hover{background:var(--ghov);border-color:rgba(59,130,246,.4);transform:translateY(-5px);box-shadow:0 15px 40px rgba(0,0,0,.3)}
+.cat-icon{font-size:2rem;margin-bottom:.5rem;display:block;transition:transform .3s}
+.cat-card:hover .cat-icon{transform:scale(1.1) rotate(5deg)}
+.cat-name{font-size:.85rem;font-weight:700;margin-bottom:.3rem}
+.cat-meta{font-size:.7rem;color:var(--muted);margin-bottom:.2rem}
+.cat-docs{font-size:.65rem;color:var(--blue2);font-weight:600}
+.cat-search{width:100%;max-width:500px;margin:0 auto 2rem;position:relative}
+.cat-search input{width:100%;background:var(--glass);border:1px solid var(--gb);border-radius:10px;padding:.9rem 1.2rem .9rem 3rem;color:var(--white);font-size:.9rem;outline:none;backdrop-filter:blur(10px)}
+.cat-search input:focus{border-color:var(--blue)}
+.cat-search::before{content:'🔍';position:absolute;left:1rem;top:50%;transform:translateY(-50%);font-size:1.1rem}
+
+/* DOC GRID */
+.doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem}
+.doc-card{background:var(--glass);border:1px solid var(--gb);border-radius:14px;padding:1.5rem;backdrop-filter:blur(20px);transition:all .3s;cursor:pointer}
+.doc-card:hover{background:var(--ghov);border-color:rgba(59,130,246,.3);transform:translateY(-5px)}
+.doc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.tag{font-size:.65rem;font-weight:700;padding:.25rem .7rem;border-radius:50px;text-transform:uppercase}
+.tbl{background:rgba(59,130,246,.15);color:var(--blue2);border:1px solid rgba(59,130,246,.3)}
+.tgr{background:rgba(16,185,129,.15);color:var(--green);border:1px solid rgba(16,185,129,.3)}
+.tgo{background:rgba(245,158,11,.15);color:var(--gold);border:1px solid rgba(245,158,11,.3)}
+.tr{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3)}
+.doc-rating{font-size:.75rem;color:var(--gold)}
+.doc-title{font-size:1.05rem;font-weight:700;margin-bottom:.8rem;line-height:1.3}
+.doc-meta{display:flex;gap:1rem;font-size:.75rem;color:var(--muted);margin-bottom:1rem}
+.doc-price{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:800;color:var(--blue2);margin-bottom:1rem}
+
+/* SUBCATEGORY BADGE */
+.subcat-badge{display:inline-block;background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.3);color:var(--purple);padding:.2rem .6rem;border-radius:50px;font-size:.65rem;font-weight:600;margin-top:.3rem}
+
+/* AUTOCOMPLETE */
+.autocomplete-container{position:relative;flex:1;min-width:250px}
+.autocomplete-input{width:100%;background:var(--glass);border:1px solid var(--gb);border-radius:8px;padding:.6rem 1rem;color:var(--white);font-size:.85rem;outline:none}
+.autocomplete-input:focus{border-color:var(--blue)}
+.autocomplete-dropdown{position:absolute;top:100%;left:0;right:0;background:rgba(8,15,32,.98);border:1px solid var(--gb);border-radius:8px;margin-top:.5rem;max-height:300px;overflow-y:auto;z-index:1000;display:none}
+.autocomplete-dropdown.on{display:block}
+.autocomplete-item{padding:.7rem 1rem;cursor:pointer;border-bottom:1px solid var(--gb);transition:background .2s;font-size:.85rem}
+.autocomplete-item:hover,.autocomplete-item.selected{background:rgba(59,130,246,.1)}
+.autocomplete-item:last-child{border-bottom:none}
+.filter-bar select:disabled,.filter-bar input:disabled{opacity:.5;cursor:not-allowed}
+
+/* SUBCATEGORY GRID */
+.subcat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.5rem;margin-top:2rem}
+.subcat-card{background:var(--glass);border:1px solid var(--gb);border-radius:14px;padding:2rem;cursor:pointer;backdrop-filter:blur(20px);transition:all .3s;position:relative;overflow:hidden;text-align:center}
+.subcat-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:4px;background:linear-gradient(90deg,var(--blue),var(--purple));transform:scaleX(0);transform-origin:left;transition:transform .3s}
+.subcat-card:hover::before{transform:scaleX(1)}
+.subcat-card:hover{background:var(--ghov);border-color:rgba(59,130,246,.4);transform:translateY(-5px);box-shadow:0 20px 50px rgba(0,0,0,.4)}
+.subcat-icon{font-size:2.5rem;margin-bottom:1rem;display:block}
+.subcat-name{font-size:1.1rem;font-weight:700;margin-bottom:.5rem}
+.subcat-count{font-size:.8rem;color:var(--blue2);font-weight:600}
+
+/* BACK BUTTON */
+.back-btn{display:inline-flex;align-items:center;gap:.5rem;background:var(--glass);border:1px solid var(--gb);padding:.7rem 1.2rem;border-radius:8px;color:var(--white);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;margin-bottom:2rem}
+.back-btn:hover{background:var(--ghov);border-color:var(--blue2)}
+
+/* FILTER */
+.filter-bar{display:flex;gap:1rem;margin-bottom:2rem;flex-wrap:wrap;align-items:center}
+.filter-bar select{background:var(--glass);border:1px solid var(--gb);border-radius:8px;padding:.6rem 1rem;color:var(--white);font-size:.85rem;outline:none}
+.filter-bar select:focus{border-color:var(--blue)}
+
+/* FOOTER */
+.footer{background:rgba(2,8,23,.98);border-top:1px solid var(--gb);padding:3rem 2rem 1.5rem;margin-top:4rem}
+.footer-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2rem;margin-bottom:2rem}
+.footer-col h3{font-size:1rem;font-weight:700;margin-bottom:1rem}
+.footer-col a{display:block;color:var(--muted);font-size:.85rem;margin-bottom:.5rem;cursor:pointer;transition:color .2s}
+.footer-col a:hover{color:var(--blue2)}
+.footer-bottom{text-align:center;padding-top:2rem;border-top:1px solid var(--gb);color:var(--muted);font-size:.8rem}
+
+/* TOAST */
+.toast{position:fixed;bottom:2rem;right:2rem;z-index:9999;background:rgba(8,15,32,.98);border:1px solid var(--gb);border-radius:11px;padding:.9rem 1.3rem;transform:translateY(80px);opacity:0;transition:all .3s;box-shadow:0 8px 30px rgba(0,0,0,.5);font-size:.85rem;max-width:350px}
+.toast.on{transform:translateY(0);opacity:1}
+.toast.success{border-color:rgba(16,185,129,.5);color:var(--green)}
+.toast.error{border-color:rgba(239,68,68,.5);color:var(--red)}
+
+/* PDF VIEWER */
+.pdf-viewer{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.95);display:none;align-items:center;justify-content:center;padding:2rem}
+.pdf-viewer.on{display:flex}
+.pdf-container{width:100%;height:100%;max-width:1000px;background:var(--glass);border:1px solid var(--gb);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.pdf-header{padding:1rem 1.5rem;border-bottom:1px solid var(--gb);display:flex;justify-content:space-between;align-items:center}
+.pdf-header button{background:transparent;border:1px solid var(--gb);color:var(--muted);padding:.5rem 1rem;border-radius:6px;cursor:pointer;transition:all .2s;font-size:.85rem}
+.pdf-header button:hover{border-color:var(--blue2);color:var(--blue2)}
+.pdf-frame{flex:1;border:none;background:#fff}
+
+/* AUTH PAGES */
+.auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
+.auth-box{background:var(--glass);border:1px solid var(--gb);border-radius:20px;padding:2.5rem;width:450px;max-width:100%;backdrop-filter:blur(30px)}
+.auth-title{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:800;margin-bottom:.5rem;text-align:center}
+.auth-sub{text-align:center;color:var(--muted);font-size:.9rem;margin-bottom:2rem}
+.form-group{margin-bottom:1.2rem}
+.form-group label{display:block;font-size:.75rem;font-weight:700;color:var(--muted2);text-transform:uppercase;margin-bottom:.4rem}
+.form-group input{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--gb);border-radius:8px;padding:.8rem 1rem;color:var(--white);font-size:.9rem;outline:none;transition:border-color .2s}
+.form-group input:focus{border-color:var(--blue)}
+.auth-error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--red);padding:.7rem 1rem;border-radius:8px;font-size:.8rem;margin-bottom:1rem;display:none}
+.auth-error.on{display:block}
+.auth-link{text-align:center;margin-top:1.5rem;color:var(--muted);font-size:.85rem}
+.auth-link a{color:var(--blue2);cursor:pointer;font-weight:600}
+.auth-link a:hover{text-decoration:underline}
+
+@media(max-width:768px){
+.hero-title{font-size:2.5rem}
+.cat-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+.doc-grid,.filter-bar{grid-template-columns:1fr}
+.nav-links{gap:.8rem}
+}
+
+/* CART & PRICING SYSTEM */
+.cart-btn{background:linear-gradient(135deg,var(--blue),var(--purple));border:none;padding:.7rem 1.5rem;border-radius:8px;color:#fff;font-weight:700;cursor:pointer;transition:all .3s;position:relative;margin-left:1rem}
+.cart-btn:hover{opacity:.9;transform:translateY(-2px)}
+.cart-badge{position:absolute;top:-8px;right:-8px;background:var(--red);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700}
+.pricing-modal,.cart-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.9);z-index:9999;display:none;align-items:center;justify-content:center;backdrop-filter:blur(10px)}
+.pricing-modal.on,.cart-modal.on{display:flex}
+.pricing-content,.cart-content{background:var(--bg);border:1px solid var(--gb);border-radius:20px;padding:2rem;max-width:900px;max-height:90vh;overflow-y:auto;width:90%;box-shadow:0 25px 50px rgba(0,0,0,.5)}
+.cart-content{max-width:600px}
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1.5rem 0}
+.pricing-card{background:var(--glass);border:1px solid var(--gb);border-radius:12px;padding:1.5rem;text-align:center;cursor:pointer;transition:all .3s}
+.pricing-card:hover{border-color:var(--blue);transform:translateY(-5px);box-shadow:0 10px 30px rgba(59,130,246,.3)}
+.plan-price{font-size:2rem;color:var(--blue2);font-weight:800;margin:1rem 0}
+.cart-item{background:var(--glass);border:1px solid var(--gb);border-radius:10px;padding:1rem;margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center}
+.cart-summary{border-top:2px solid var(--gb);padding-top:1.5rem;margin-top:1.5rem}
+.modal-close{background:transparent;border:none;color:var(--muted);font-size:2rem;cursor:pointer;transition:color .2s;line-height:1}
+.modal-close:hover{color:var(--white)}
+
+/* PRICING PLANS PAGE */
+.pricing-plans-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2rem;margin-top:2rem}
+.pricing-plan-card{background:var(--glass);border:2px solid var(--gb);border-radius:16px;padding:2rem;transition:all .3s;position:relative;overflow:hidden}
+.pricing-plan-card:hover{border-color:var(--blue);transform:translateY(-5px);box-shadow:0 20px 40px rgba(59,130,246,.3)}
+.pricing-plan-card.popular{border-color:var(--green);background:rgba(16,185,129,.05)}
+.pricing-plan-card.best-value{border-color:var(--gold);background:rgba(245,158,11,.05)}
+.plan-badge{position:absolute;top:1rem;right:1rem;font-size:.65rem;font-weight:700;padding:.4rem .8rem;border-radius:50px;text-transform:uppercase}
+.plan-badge.popular{background:rgba(16,185,129,.2);color:var(--green);border:1px solid var(--green)}
+.plan-badge.best-value{background:rgba(245,158,11,.2);color:var(--gold);border:1px solid var(--gold)}
+.plan-name{font-size:1.3rem;font-weight:800;margin-bottom:.5rem;color:var(--white)}
+.plan-price-big{font-family:'Playfair Display',serif;font-size:3rem;font-weight:900;color:var(--blue2);margin:1rem 0}
+.plan-duration{color:var(--muted);font-size:.9rem;margin-bottom:1rem}
+.plan-savings{color:var(--green);font-weight:700;font-size:.95rem;margin-bottom:1.5rem}
+.plan-actions{display:flex;flex-direction:column;gap:.8rem}
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
+</head>
+<body>
+<div class="orbs"><div class="orb o1"></div><div class="orb o2"></div></div>
+
+<!-- NAVIGATION -->
+<div class="nav" id="mainNav">
+<div class="nav-inner">
+<div class="logo" onclick="go(&#39;home&#39;)">SCHOLARSTOCK</div>
+<div class="nav-links" id="navLinks">
+<button class="cart-btn" onclick="showCart()">🛒 Cart <span id="cartBadge" class="cart-badge">0</span></button>
+<span class="nl" onclick="go(&#39;home&#39;)">Home</span>
+<span class="nl" onclick="go(&#39;browse&#39;)">Browse</span>
+<span class="nl" onclick="go(&#39;materials&#39;)">My Materials</span>
+<button class="nbtn nbtn-ghost" onclick="go(&#39;profile&#39;)">👤 john</button>
+<button class="nbtn nbtn-grad" onclick="logout()">Logout</button>
+</div>
+</div>
+</div>
+
+<!-- HOME PAGE -->
+<div id="pg-home" class="page on">
+<div class="hero">
+<div class="hero-pill">🚀 107 Exam Categories • 10,000+ Study Materials</div>
+<h1 class="hero-title">Study Smarter, Pay Less</h1>
+<p class="hero-sub">Access premium study materials for 100+ competitive exams. Rent by the day, save thousands.</p>
+<div class="hero-btns">
+<button class="btn btn-grad" onclick="go(&#39;browse&#39;)">Browse Materials</button>
+</div>
+</div>
+
+<div class="sec">
+<div class="eyebrow">All Exam Categories</div>
+<h2 class="sec-title">Browse by Exam (107 Categories)</h2>
+<div class="cat-search">
+<input type="text" id="catSearch" placeholder="Search exams (JEE, NEET, SAT, UPSC...)" onkeyup="searchCategories()">
+</div>
+<div class="cat-grid" id="categoryGrid"></div>
+</div>
+</div>
+
+<!-- BROWSE PAGE -->
+<div id="pg-browse" class="page">
+<div class="sec" style="margin-top:2rem">
+<h2 class="sec-title">Browse Study Materials</h2>
+<div class="filter-bar">
+<select id="categoryFilter" onchange="onCategoryChange()"><option value="">All Categories</option><option value="jee-mains">JEE Mains</option><option value="jee-advanced">JEE Advanced</option><option value="bitsat">BITSAT</option><option value="viteee">VITEEE</option><option value="srmjeee">SRMJEEE</option><option value="mht-cet">MHT CET</option><option value="wbjee">WBJEE</option><option value="kcet">KCET</option><option value="comedk">COMEDK</option><option value="keam">KEAM</option><option value="neet-ug">NEET UG</option><option value="neet-pg">NEET PG</option><option value="aiims">AIIMS</option><option value="jipmer">JIPMER</option><option value="neet-ss">NEET SS</option><option value="fmge">FMGE</option><option value="ini-cet">INI CET</option><option value="neet-mds">NEET MDS</option><option value="upsc-cse">UPSC CSE</option><option value="ssc-cgl">SSC CGL</option><option value="ssc-chsl">SSC CHSL</option><option value="ibps-po">IBPS PO</option><option value="ibps-clerk">IBPS Clerk</option><option value="sbi-po">SBI PO</option><option value="rbi-grade-b">RBI Grade B</option><option value="rrb-ntpc">RRB NTPC</option><option value="rrb-group-d">RRB Group D</option><option value="capf">CAPF</option><option value="cds">CDS</option><option value="nda">NDA</option><option value="cat">CAT</option><option value="xat">XAT</option><option value="snap">SNAP</option><option value="nmat">NMAT</option><option value="cmat">CMAT</option><option value="mat">MAT</option><option value="atma">ATMA</option><option value="iift">IIFT</option><option value="gate-cs">GATE CS</option><option value="gate-ec">GATE EC</option><option value="gate-ee">GATE EE</option><option value="gate-me">GATE ME</option><option value="gate-ce">GATE CE</option><option value="gate-ch">GATE CH</option><option value="gate-in">GATE IN</option><option value="gate-ag">GATE AG</option><option value="gate-bt">GATE BT</option><option value="gate-mt">GATE MT</option><option value="imo">IMO (Math)</option><option value="ipho">IPhO (Physics)</option><option value="icho">IChO (Chemistry)</option><option value="ibo">IBO (Biology)</option><option value="ioi">IOI (Informatics)</option><option value="iao">IAO (Astronomy)</option><option value="ipho-junior">IPhO Junior</option><option value="ijso">IJSO</option><option value="imo-asia">Asian Math Olympiad</option><option value="balkan-mo">Balkan Math Olympiad</option><option value="egmo">EGMO</option><option value="ioaa">IOAA (Astronomy)</option><option value="ieso">IESO (Earth Science)</option><option value="iol">IOL (Linguistics)</option><option value="ipho-phil">IPhO (Philosophy)</option><option value="sat">SAT</option><option value="act">ACT</option><option value="ap-calc">AP Calculus</option><option value="ap-physics">AP Physics</option><option value="ap-chem">AP Chemistry</option><option value="ib-diploma">IB Diploma</option><option value="psat">PSAT</option><option value="gre">GRE</option><option value="gmat">GMAT</option><option value="toefl">TOEFL</option><option value="ielts">IELTS</option><option value="pte">PTE</option><option value="mcat">MCAT</option><option value="lsat">LSAT</option><option value="dat">DAT</option><option value="a-levels">A-Levels</option><option value="gcse">GCSE</option><option value="igcse">IGCSE</option><option value="ukcat">UKCAT</option><option value="bmat">BMAT</option><option value="lnat">LNAT</option><option value="step">STEP Math</option><option value="mat-oxford">MAT Oxford</option><option value="aws-saa">AWS Solutions Architect</option><option value="azure-admin">Azure Administrator</option><option value="gcp-ace">GCP Associate</option><option value="ccna">CCNA</option><option value="ccnp">CCNP</option><option value="comptia-aplus">CompTIA A+</option><option value="comptia-secplus">Security+</option><option value="cissp">CISSP</option><option value="ceh">CEH</option><option value="pmp">PMP</option><option value="cfa">CFA</option><option value="frm">FRM</option><option value="cpa">CPA</option><option value="acca">ACCA</option><option value="ca-india">CA</option><option value="cs-india">CS</option><option value="cma-india">CMA</option><option value="cfp">CFP</option><option value="codechef">CodeChef</option><option value="codeforces">Codeforces</option><option value="icpc">ICPC</option><option value="google-codejam">Code Jam</option><option value="putnam">Putnam</option><option value="clat">CLAT</option><option value="nata">NATA</option><option value="nid">NID</option><option value="nift">NIFT</option><option value="cuet">CUET</option><option value="ailet">AILET</option><option value="duet">DUET</option></select>
+<select id="subcategoryFilter" onchange="loadMaterials()" disabled>
+<option value="">Select Category First</option>
+</select>
+<div class="autocomplete-container">
+<input type="text" id="subcategorySearch" placeholder="Search subcategories..." class="autocomplete-input" disabled>
+<div id="autocompleteDropdown" class="autocomplete-dropdown"></div>
+</div>
+<select id="typeFilter" onchange="loadMaterials()">
+<option value="">All Types</option>
+<option value="notes">Notes</option>
+<option value="pyq">PYQ</option>
+<option value="book">Books</option>
+<option value="guide">Guides</option>
+</select>
+<select id="sortFilter" onchange="loadMaterials()">
+<option value="popular">Most Popular</option>
+<option value="price-low">Price: Low to High</option>
+<option value="price-high">Price: High to Low</option>
+<option value="newest">Newest First</option>
+</select>
+</div>
+<div class="doc-grid" id="browseGrid"></div>
+</div>
+</div>
+
+<!-- CATEGORY PAGE (Shows Subcategories) -->
+<div id="pg-category" class="page">
+<div class="sec" style="margin-top:2rem">
+<button class="back-btn" onclick="go('home')">← Back to All Categories</button>
+<h2 class="sec-title" id="categoryPageTitle"></h2>
+<div class="subcat-grid" id="subcategoryPageGrid"></div>
+</div>
+</div>
+
+<!-- SUBCATEGORY MATERIALS PAGE -->
+<div id="pg-subcategory" class="page">
+<div class="sec" style="margin-top:2rem">
+<button class="back-btn" id="backToCategoryBtn">← Back</button>
+<h2 class="sec-title" id="subcategoryPageTitle"></h2>
+<div class="doc-grid" id="subcategoryMaterialsGrid"></div>
+</div>
+</div>
+
+<!-- MY MATERIALS PAGE -->
+<div id="pg-materials" class="page">
+<div class="sec" style="margin-top:2rem">
+<h2 class="sec-title">My Rented Materials</h2>
+<div class="doc-grid" id="myRentalsGrid"></div>
+</div>
+</div>
+
+<!-- LIBRARY PAGE -->
+<div id="pg-library" class="page">
+<div class="sec" style="margin-top:2rem">
+<h2 class="sec-title">📚 My Library</h2>
+<p style="color:var(--muted);margin-bottom:2rem">All your rented subcategories. Click any to browse its materials.</p>
+<div id="libraryGrid" class="doc-grid"></div>
+</div>
+</div>
+
+<!-- CART PAGE -->
+<div id="pg-cart" class="page">
+<div class="sec" style="margin-top:2rem">
+<h2 class="sec-title">🛒 Cart</h2>
+<div id="cartItems" style="margin-bottom:2rem"></div>
+<div id="cartSummary" style="display:none;background:var(--glass);border:1px solid var(--gb);border-radius:14px;padding:1.5rem;max-width:500px">
+<div style="display:flex;justify-content:space-between;margin-bottom:1rem;font-size:1.1rem">
+<span>Subtotal</span><span id="cartSubtotal" style="font-weight:700">₹0</span>
+</div>
+<div style="display:flex;justify-content:space-between;margin-bottom:1rem;color:var(--green)">
+<span>Wallet Balance</span><span id="cartBalanceUsed" style="font-weight:700">-₹0</span>
+</div>
+<div style="display:flex;justify-content:space-between;margin-bottom:1.5rem;font-size:1.2rem;border-top:1px solid var(--gb);padding-top:1rem">
+<span style="font-weight:800">Total</span><span id="cartTotal" style="font-weight:800;color:var(--blue2)">₹0</span>
+</div>
+<div style="display:flex;gap:1rem;align-items:center;margin-bottom:1rem">
+<input type="checkbox" id="useWalletBalance" onchange="renderCart()" style="width:18px;height:18px;cursor:pointer">
+<label for="useWalletBalance" style="cursor:pointer;font-size:.9rem">Use wallet balance (₹<span id="walletBalanceShow">0</span> available)</label>
+</div>
+<button class="btn btn-grad" style="width:100%" onclick="goToCheckout('cart')">🏦 Proceed to Checkout</button>
+</div>
+<div id="cartEmpty" style="text-align:center;padding:4rem;color:var(--muted)">
+<div style="font-size:3rem;margin-bottom:1rem">🛒</div>
+<div style="font-size:1.1rem;font-weight:600;margin-bottom:.5rem">Your cart is empty</div>
+<div style="font-size:.9rem;margin-bottom:1.5rem">Browse categories and add subcategories to rent</div>
+<button class="btn btn-grad" onclick="go('home')">Browse Categories</button>
+</div>
+</div>
+</div>
+
+<!-- CHECKOUT PAGE -->
+<div id="pg-checkout" class="page">
+<div class="sec" style="margin-top:2rem;max-width:600px;margin-left:auto;margin-right:auto">
+<button class="back-btn" id="checkoutBackBtn" onclick="go('cart')">← Back to Cart</button>
+<h2 class="sec-title">🏦 Checkout</h2>
+
+<!-- Order Summary -->
+<div style="background:var(--glass);border:1px solid var(--gb);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem">
+<div style="font-weight:700;margin-bottom:1rem;color:var(--blue2)">📋 Order Summary</div>
+<div id="checkoutItems"></div>
+<div style="border-top:1px solid var(--gb);margin-top:1rem;padding-top:1rem">
+<div style="display:flex;justify-content:space-between;margin-bottom:.5rem;color:var(--muted)"><span>Subtotal</span><span id="checkoutSubtotal">₹0</span></div>
+<div style="display:flex;justify-content:space-between;margin-bottom:.5rem;color:var(--green)"><span>Wallet Discount</span><span id="checkoutDiscount">-₹0</span></div>
+<div style="display:flex;justify-content:space-between;font-size:1.2rem;font-weight:800;margin-top:.5rem"><span>Total</span><span id="checkoutTotal" style="color:var(--blue2)">₹0</span></div>
+</div>
+</div>
+
+<!-- Payment Method -->
+<div style="background:var(--glass);border:1px solid var(--gb);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem">
+<div style="font-weight:700;margin-bottom:1.2rem;color:var(--blue2)">💳 Select Payment Method</div>
+<div style="display:flex;flex-direction:column;gap:.8rem">
+<label style="display:flex;align-items:center;gap:1rem;padding:1rem;border:2px solid var(--gb);border-radius:10px;cursor:pointer;transition:all .2s" onclick="selectPayment(this,'upi')">
+<input type="radio" name="paymentMethod" value="upi" style="width:18px;height:18px">
+<span style="font-size:1.5rem">📱</span>
+<div><div style="font-weight:700">UPI</div><div style="font-size:.8rem;color:var(--muted)">Google Pay, PhonePe, Paytm, BHIM</div></div>
+</label>
+<label style="display:flex;align-items:center;gap:1rem;padding:1rem;border:2px solid var(--gb);border-radius:10px;cursor:pointer;transition:all .2s" onclick="selectPayment(this,'card')">
+<input type="radio" name="paymentMethod" value="card" style="width:18px;height:18px">
+<span style="font-size:1.5rem">💳</span>
+<div><div style="font-weight:700">Credit / Debit Card</div><div style="font-size:.8rem;color:var(--muted)">Visa, Mastercard, RuPay</div></div>
+</label>
+<label style="display:flex;align-items:center;gap:1rem;padding:1rem;border:2px solid var(--gb);border-radius:10px;cursor:pointer;transition:all .2s" onclick="selectPayment(this,'netbanking')">
+<input type="radio" name="paymentMethod" value="netbanking" style="width:18px;height:18px">
+<span style="font-size:1.5rem">🏦</span>
+<div><div style="font-weight:700">Net Banking</div><div style="font-size:.8rem;color:var(--muted)">All major banks supported</div></div>
+</label>
+<label style="display:flex;align-items:center;gap:1rem;padding:1rem;border:2px solid var(--gb);border-radius:10px;cursor:pointer;transition:all .2s" onclick="selectPayment(this,'wallet')">
+<input type="radio" name="paymentMethod" value="wallet" style="width:18px;height:18px">
+<span style="font-size:1.5rem">👛</span>
+<div><div style="font-weight:700">Mobile Wallet</div><div style="font-size:.8rem;color:var(--muted)">Paytm Wallet, Amazon Pay</div></div>
+</label>
+</div>
+</div>
+
+<button class="btn btn-grad" style="width:100%;padding:1.2rem;font-size:1.1rem" onclick="processPayment()" id="payBtn">🔒 Pay Now</button>
+<p style="text-align:center;font-size:.75rem;color:var(--muted);margin-top:.8rem">🔐 Secure payment • Your data is protected</p>
+</div>
+</div>
+
+<!-- PRICING PLANS PAGE -->
+<div id="pg-pricing-plans" class="page">
+<div class="sec" style="margin-top:2rem">
+<button class="back-btn" onclick="history.back()">← Back</button>
+<h2 class="sec-title" id="pricingPlansTitle">Choose Your Plan</h2>
+<p id="pricingPlansSubtitle" style="color:var(--muted);text-align:center;margin-bottom:2rem"></p>
+
+<!-- Individual Material Plans -->
+<div id="individualPlansSection" style="display:none">
+<div class="pricing-plans-grid" id="individualPlansGrid"></div>
+</div>
+
+<!-- Subcategory Bundle Plans -->
+<div id="bundlePlansSection" style="display:none">
+<div class="pricing-plans-grid" id="bundlePlansGrid"></div>
+</div>
+</div>
+</div>
+
+<!-- PROFILE PAGE -->
+<div id="pg-profile" class="page">
+<div class="sec" style="margin-top:2rem">
+<h2 class="sec-title">My Profile</h2>
+<div id="profileContent">
+<div class="doc-card" style="text-align:center;max-width:500px;margin:2rem auto">
+<div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:2rem;color:white;font-weight:700">R</div>
+<h3 style="font-size:1.3rem;margin-bottom:.5rem">rishith</h3>
+<p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="43312a302b2a372b2e222d202b222f227a7b7a03242e222a2f6d202c2e">[email&#160;protected]</a></p>
+<div style="background:rgba(59,130,246,.1);padding:1rem;border-radius:8px;margin-top:1rem">
+<div style="font-size:.7rem;color:var(--blue2);margin-bottom:.3rem">MEMBER SINCE</div>
+<div style="font-weight:600">3/8/2026</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- LOGIN PAGE -->
+<div id="pg-login" class="page">
+<div class="auth-page">
+<div class="auth-box">
+<h2 class="auth-title">Welcome Back</h2>
+<p class="auth-sub">Login to access your study materials</p>
+<div class="auth-error" id="loginError"></div>
+<form onsubmit="doLogin(event)">
+<div class="form-group">
+<label>Email Address</label>
+<input type="email" id="loginEmail" required="">
+</div>
+<div class="form-group">
+<label>Password</label>
+<input type="password" id="loginPassword" required="">
+</div>
+<button type="submit" class="btn btn-grad" style="width:100%">Login</button>
+</form>
+<div class="auth-link">Don't have an account? <a onclick="go(&#39;signup&#39;)">Sign up</a></div>
+</div>
+</div>
+</div>
+
+<!-- SIGNUP PAGE -->
+<div id="pg-signup" class="page">
+<div class="auth-page">
+<div class="auth-box">
+<h2 class="auth-title">Create Account</h2>
+<p class="auth-sub">Join thousands of students studying smarter</p>
+<div class="auth-error" id="signupError"></div>
+<form onsubmit="doSignup(event)">
+<div class="form-group">
+<label>Full Name</label>
+<input type="text" id="signupName" required="">
+</div>
+
+<div class="form-group">
+<label>Email Address</label>
+<input type="email" id="signupEmail" required="">
+</div>
+<div class="form-group">
+<label>Password</label>
+<input type="password" id="signupPassword" required="">
+</div>
+<div class="form-group">
+<label>Referred by <span style="color:var(--muted);font-weight:400">(optional)</span></label>
+<div style="display:flex;gap:.5rem;margin-bottom:.5rem">
+<label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;padding:.6rem 1rem;background:rgba(255,255,255,.05);border:1px solid var(--gb);border-radius:8px;flex:1">
+<input type="radio" name="referralOpt" value="none" checked onchange="toggleReferralInput(this)"> None
+</label>
+<label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;padding:.6rem 1rem;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.3);border-radius:8px;flex:1">
+<input type="radio" name="referralOpt" value="yes" onchange="toggleReferralInput(this)"> I was referred
+</label>
+</div>
+<div id="referralInputWrap" style="display:none">
+<div style="display:flex;gap:.5rem">
+<input type="text" id="signupReferral" placeholder="Enter their username" style="flex:1" oninput="this.value=this.value.toLowerCase().replace(/\s/g,'')">
+<button type="button" onclick="validateReferralCode()" style="padding:.8rem 1rem;background:rgba(59,130,246,.2);border:1px solid var(--blue);border-radius:8px;color:var(--blue2);cursor:pointer;font-size:.85rem;font-weight:600;white-space:nowrap">Check</button>
+</div>
+</div>
+<div id="referralValidMsg" style="margin-top:.4rem;font-size:.8rem"></div>
+</div>
+<button type="submit" class="btn btn-grad" style="width:100%">Create Account</button>
+</form>
+<div class="auth-link">Already have an account? <a onclick="go('login')">Login</a></div>
+</div>
+</div>
+</div>
+
+<!-- PDF VIEWER -->
+<div id="pdfViewer" class="pdf-viewer">
+<div class="pdf-container">
+<div class="pdf-header">
+<div style="font-weight:700" id="pdfTitle">PDF Viewer</div>
+<div style="display:flex;gap:1rem;align-items:center">
+<span id="pdfPageInfo" style="font-size:.85rem;color:var(--muted)"></span>
+<button onclick="pdfPrevPage()">◀ Prev</button>
+<button onclick="pdfNextPage()">Next ▶</button>
+<button onclick="closePDF()">✕ Close</button>
+</div>
+</div>
+<div id="pdfCanvasWrap" style="flex:1;overflow-y:auto;background:#525659;display:flex;flex-direction:column;align-items:center;padding:1rem;gap:1rem;user-select:none;-webkit-user-select:none" oncontextmenu="return false">
+<div id="pdfLoading" style="color:white;padding:3rem;font-size:1rem">⏳ Loading PDF...</div>
+</div>
+</div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+<div class="footer-grid">
+<div class="footer-col">
+<h3>ScholarStock</h3>
+<a onclick="go(&#39;home&#39;)">Home</a>
+<a onclick="go(&#39;browse&#39;)">Browse Materials</a>
+</div>
+<div class="footer-col">
+<h3>Categories</h3>
+<a onclick="filterByCategory('JEE Main')">JEE Main</a>
+<a onclick="filterByCategory('NEET UG')">NEET UG</a>
+<a onclick="filterByCategory('UPSC Civil Services (IAS)')">UPSC CSE</a>
+<a onclick="filterByCategory('CAT')">CAT</a>
+</div>
+<div class="footer-col">
+<h3>Support</h3>
+<a>Help Center</a>
+<a>Contact Us</a>
+<a>Terms of Service</a>
+<a>Privacy Policy</a>
+</div>
+<div class="footer-col">
+<h3>Connect</h3>
+<a>Twitter</a>
+<a>LinkedIn</a>
+<a>Instagram</a>
+</div>
+</div>
+<div class="footer-bottom">© 2026 ScholarStock. All rights reserved. Made with ❤️ for students.</div>
+</div>
+
+<div id="toast" class="toast success">Account created!</div>
+
+<!-- Cloudflare email-decode removed for local testing -->
+<script>
+const API_URL='https://scholarstock-com-backend-6.onrender.com';
+
+let SUBCATEGORIES_DATA={};
+let allSubcategories=[];
+let currentMaterialId=null;
+let PROGRAM_SETTINGS={referral:{rentalsRequiredForCashback:3,cashbackAmount:20,enabled:true},pricing:{subcategoryMonthlyPrice:199,materialDayPrice:29,freeResourcesEnabled:true}};
+
+async function loadProgramSettings(){
+try{
+const res=await fetch(`${API_URL}/api/settings`);
+const data=await res.json();
+if(data.success) PROGRAM_SETTINGS=data.settings;
+}catch(e){}
+}
+
+// 107 EXAM CATEGORIES
+
+// AUTH
+function getToken(){return localStorage.getItem('token')}
+function getUser(){const u=localStorage.getItem('user');return u?JSON.parse(u):null}
+function setAuth(token,user){localStorage.setItem('token',token);localStorage.setItem('user',JSON.stringify(user))}
+function clearAuth(){localStorage.removeItem('token');localStorage.removeItem('user')}
+function isLoggedIn(){return!!getToken()}
+
+// NAVIGATION
+function go(page){
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+document.getElementById('pg-'+page).classList.add('on');
+updateNav();
+window.scrollTo(0,0);
+if(page==='browse')loadMaterials();
+if(page==='materials')loadMyRentals();
+if(page==='library')loadLibrary();
+if(page==='cart')renderCart();
+if(page==='checkout')renderCheckoutPage();
+if(page==='pricing-plans')loadPricingPlansPage();
+if(page==='profile')loadProfile();
+if(page==='home')renderCategories();
+}
+
+function updateNav(){
+const nav=document.getElementById('navLinks');
+if(isLoggedIn()){
+const user=getUser();
+nav.innerHTML=`
+<span class="nl" onclick="go('home')">Home</span>
+<span class="nl" onclick="go('browse')">Browse</span>
+<span class="nl" onclick="go('library')">📚 Library</span>
+<span class="nl" onclick="go('cart')" style="position:relative">🛒 Cart <span id="cartBadge" style="position:absolute;top:-8px;right:-8px;background:var(--blue);color:white;border-radius:50%;width:18px;height:18px;font-size:.65rem;display:flex;align-items:center;justify-content:center;font-weight:700"></span></span>
+<button class="nbtn nbtn-ghost" onclick="go('profile')">👤 ${user.name.split(' ')[0]}</button>
+<button class="nbtn nbtn-grad" onclick="logout()">Logout</button>
+`;
+}else{
+nav.innerHTML=`
+<span class="nl" onclick="go('home')">Home</span>
+<span class="nl" onclick="go('browse')">Browse</span>
+<button class="nbtn nbtn-ghost" onclick="go('login')">Login</button>
+<button class="nbtn nbtn-grad" onclick="go('signup')">Get Started</button>
+`;
+}
+}
+
+function logout(){
+clearAuth();
+toast('Logged out successfully');
+go('home');
+}
+
+// TOAST
+function toast(msg,type=''){
+const t=document.getElementById('toast');
+t.textContent=msg;
+t.className='toast '+(type||'');
+t.classList.add('on');
+setTimeout(()=>t.classList.remove('on'),3000);
+}
+
+// AUTH FUNCTIONS
+async function doLogin(e){
+e.preventDefault();
+const err=document.getElementById('loginError');
+err.classList.remove('on');
+const email=document.getElementById('loginEmail').value;
+const password=document.getElementById('loginPassword').value;
+try{
+const res=await fetch(`${API_URL}/api/auth/login`,{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({email,password})
+});
+const data=await res.json();
+if(res.ok){
+setAuth(data.token,data.user);
+toast('Login successful!','success');
+go('home');
+}else{
+err.textContent=data.message||'Login failed';
+err.classList.add('on');
+}
+}catch(error){
+err.textContent='Network error';
+err.classList.add('on');
+}
+}
+
+async function doSignup(e){
+e.preventDefault();
+const err=document.getElementById('signupError');
+err.classList.remove('on');
+const name=document.getElementById('signupName').value;
+
+const email=document.getElementById('signupEmail').value;
+const password=document.getElementById('signupPassword').value;
+const referralOpt=document.querySelector('input[name="referralOpt"]:checked')?.value||'none';
+const referredByUsername=referralOpt==='yes'?(document.getElementById('signupReferral')?.value.trim().toLowerCase()||''):'';
+
+try{
+const res=await fetch(`${API_URL}/api/auth/register`,{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({name,email,password,referredByUsername})
+});
+const data=await res.json();
+if(res.ok){
+setAuth(data.token,data.user);
+toast(referredByUsername?'Account created! Referral applied 🎉':'Account created! Welcome 🎉','success');
+go('home');
+}else{
+err.textContent=data.message||'Signup failed';
+err.classList.add('on');
+}
+}catch(error){
+err.textContent='Network error';
+err.classList.add('on');
+}
+}
+
+// CATEGORIES
+function renderCategories(){
+const grid=document.getElementById('categoryGrid');
+const filter=document.getElementById('categoryFilter');
+const keys=Object.keys(SUBCATEGORIES_DATA);
+if(!keys.length){
+grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted)">⚠️ Could not load categories. Make sure the backend is running and you have saved categories in the admin panel.</div>';
+return;
+}
+grid.innerHTML=keys.map(name=>`
+<div class="cat-card" onclick="openCategoryPage('${name.replace(/'/g,"\\'")}')">
+<span class="cat-icon">📚</span>
+<div class="cat-name">${name}</div>
+<div class="cat-docs">${SUBCATEGORIES_DATA[name].length} subcategories</div>
+</div>
+`).join('');
+filter.innerHTML='<option value="">All Categories</option>'+keys.map(name=>`<option value="${name}">${name}</option>`).join('');
+}
+
+function searchCategories(){
+const term=document.getElementById('catSearch').value.toLowerCase();
+const keys=Object.keys(SUBCATEGORIES_DATA);
+const filtered=term?keys.filter(k=>k.toLowerCase().includes(term)):keys;
+const grid=document.getElementById('categoryGrid');
+grid.innerHTML=filtered.length>0?filtered.map(name=>`
+<div class="cat-card" onclick="openCategoryPage('${name.replace(/'/g,"\\'")}')">
+<span class="cat-icon">📚</span>
+<div class="cat-name">${name}</div>
+<div class="cat-docs">${SUBCATEGORIES_DATA[name].length} subcategories</div>
+</div>
+`).join(''):'<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted)">No categories found</div>';
+}
+
+function filterByCategory(catName){
+if(SUBCATEGORIES_DATA[catName]){
+openCategoryPage(catName);
+}else{
+document.getElementById('categoryFilter').value=catName;
+go('browse');
+}
+}
+
+function openCategoryPage(categoryName){
+// Always add Free Resources as first subcategory
+let subcats=SUBCATEGORIES_DATA[categoryName]||[];
+if(!subcats.includes('Free Resources')) subcats=['Free Resources',...subcats];
+document.getElementById('categoryPageTitle').textContent=categoryName;
+const grid=document.getElementById('subcategoryPageGrid');
+const SI={'Physics':'⚛️','Chemistry':'🧪','Mathematics':'📐','Biology':'🧬','Previous Year Papers':'📋','Mock Tests':'📊','Free Resources':'🆓'};
+grid.innerHTML=subcats.map(sub=>{
+const isFree=sub==='Free Resources';
+const catSafe=categoryName.replace(/'/g,"\\'");
+const subSafe=sub.replace(/'/g,"\\'");
+return `<div class="subcat-card">
+<span class="subcat-icon" onclick="openSubcategoryPage('${catSafe}','${subSafe}')" style="cursor:pointer">${SI[sub]||'📚'}</span>
+<div class="subcat-name" onclick="openSubcategoryPage('${catSafe}','${subSafe}')" style="cursor:pointer">${sub}</div>
+<div class="subcat-count" style="margin-bottom:.8rem">${isFree?'<span style="color:var(--green);font-weight:700">FREE ✅</span>':'<span style="color:var(--blue2);font-weight:700">₹199/month</span>'}</div>
+${isFree?`<button class="btn btn-grad" style="width:100%;padding:.5rem;font-size:.8rem" onclick="openSubcategoryPage('${catSafe}','${subSafe}')">📖 Browse Free</button>`:`<div style="display:flex;gap:.4rem">
+<button class="btn btn-ghost" style="flex:1;padding:.5rem;font-size:.75rem" onclick="addToCart('${catSafe}','${subSafe}',199)">🛒 Cart</button>
+<button class="btn btn-grad" style="flex:1;padding:.5rem;font-size:.75rem" onclick="buyNow('${catSafe}','${subSafe}',199)">⚡ Buy</button>
+</div>`}
+</div>`;
+}).join('');
+go('category');
+}
+
+async function openSubcategoryPage(categoryName,subcategoryName){
+const isFree=subcategoryName==='Free Resources';
+document.getElementById('subcategoryPageTitle').textContent=`${categoryName} — ${subcategoryName}`;
+document.getElementById('backToCategoryBtn').setAttribute('onclick',`openCategoryPage('${categoryName}')`);
+go('subcategory');
+const grid=document.getElementById('subcategoryMaterialsGrid');
+
+// Check if user has access
+if(isLoggedIn()&&!isFree){
+try{
+const checkRes=await fetch(`${API_URL}/api/rentals/check-subcategory?examCategory=${encodeURIComponent(categoryName)}&subcategory=${encodeURIComponent(subcategoryName)}`,{
+headers:{'Authorization':`Bearer ${getToken()}`}
+});
+const checkData=await checkRes.json();
+if(!checkData.hasAccess){
+grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:3rem">
+<div style="font-size:3rem;margin-bottom:1rem">🔒</div>
+<div style="font-size:1.2rem;font-weight:700;margin-bottom:.5rem">${subcategoryName}</div>
+<div style="color:var(--muted);margin-bottom:1.5rem">Rent this subcategory to access all its materials</div>
+<div style="font-size:2rem;font-weight:900;color:var(--blue2);margin-bottom:1.5rem">₹${PROGRAM_SETTINGS.pricing?.subcategoryMonthlyPrice||199}<span style="font-size:1rem;color:var(--muted)">/month</span></div>
+<div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+<button class="btn btn-grad" onclick="rentSubcategory('${categoryName.replace(/'/g,"\\'")}','${subcategoryName.replace(/'/g,"\\'")}',199)">🔓 Rent Now — ₹199/month</button>
+<button class="btn btn-ghost" onclick="addToCart('${categoryName.replace(/'/g,"\\'")}','${subcategoryName.replace(/'/g,"\\'")}',199)">🛒 Add to Cart</button>
+</div>
+</div>`;
+return;
+}else{
+const expiry=checkData.expiryDate?`<div style="color:var(--green);font-size:.85rem;margin-bottom:1.5rem">✅ Active rental • Expires ${new Date(checkData.expiryDate).toLocaleDateString()} (${checkData.daysLeft} days left)</div>`:'';
+grid.innerHTML=`<div id="subcatHeader" style="grid-column:1/-1;margin-bottom:1rem">${expiry}</div>`;
+}
+}catch(e){}
+}
+
+// Load materials
+try{
+const res=await fetch(`${API_URL}/api/materials?category=${encodeURIComponent(categoryName)}&subcategory=${encodeURIComponent(subcategoryName)}`);
+const data=await res.json();
+const existingHeader=document.getElementById('subcatHeader');
+const materialsHtml=data.success&&data.materials.length>0?data.materials.map(m=>`
+<div class="doc-card" onclick="openPDF('${m._id}')">
+<div class="doc-top"><span class="tag tbl">${m.type||'PDF'}</span><div class="doc-rating">⭐ ${m.stars||4.5}</div></div>
+<div class="doc-title">${m.title}</div>
+<div class="doc-meta"><span>📄 ${m.pages||'?'} pages</span><span>📚 ${m.type||'PDF'}</span></div>
+${isFree?'<div style="color:var(--green);font-weight:700;margin-bottom:.5rem">FREE ✅</div>':''}
+<button class="btn btn-grad" style="width:100%;padding:.7rem" onclick="event.stopPropagation();openPDF('${m._id}')">📖 Read Now</button>
+</div>`).join(''):'<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted)">No materials in this subcategory yet</div>';
+if(existingHeader){
+existingHeader.insertAdjacentHTML('afterend',materialsHtml);
+}else{
+grid.innerHTML=materialsHtml;
+}
+}catch(err){
+grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--red)">Failed to load materials</div>';
+}
+}
+
+// LOAD SUBCATEGORIES FROM API
+async function loadSubcategories(){
+try{
+const res=await fetch('https://scholarstock-com-backend-6.onrender.com/api/categories/structure');
+const data=await res.json();
+if(data.success&&data.categories&&Object.keys(data.categories).length>0){
+SUBCATEGORIES_DATA=data.categories;
+console.log('✅ Loaded',Object.keys(SUBCATEGORIES_DATA).length,'categories from backend');
+}else{
+console.warn('⚠️ Backend returned empty categories');
+}
+}catch(e){
+console.warn('⚠️ Could not load categories from backend.',e);
+}
+}
+
+// HANDLE CATEGORY CHANGE
+function onCategoryChange(){
+const cat=document.getElementById('categoryFilter').value;
+const subcatSelect=document.getElementById('subcategoryFilter');
+const subcatSearch=document.getElementById('subcategorySearch');
+if(cat&&SUBCATEGORIES_DATA[cat]){
+const subs=SUBCATEGORIES_DATA[cat];
+subcatSelect.disabled=false;
+subcatSearch.disabled=false;
+subcatSelect.innerHTML='<option value="">All Subcategories</option>'+subs.map(s=>`<option value="${s}">${s}</option>`).join('');
+}else{
+subcatSelect.disabled=true;
+subcatSearch.disabled=true;
+subcatSelect.innerHTML='<option value="">Select Category First</option>';
+if(subcatSearch)subcatSearch.value='';
+}
+loadMaterials();
+}
+
+// INIT AUTOCOMPLETE
+function initSubcategoryAutocomplete(){
+const searchInput=document.getElementById('subcategorySearch');
+const dropdown=document.getElementById('autocompleteDropdown');
+if(!searchInput)return;
+searchInput.addEventListener('input',function(){
+const term=this.value.toLowerCase().trim();
+const cat=document.getElementById('categoryFilter').value;
+if(!term||!cat||!SUBCATEGORIES_DATA[cat]){
+dropdown.classList.remove('on');
+return;
+}
+const subs=SUBCATEGORIES_DATA[cat];
+const filtered=subs.filter(s=>s.toLowerCase().includes(term));
+if(filtered.length>0){
+dropdown.innerHTML=filtered.map(s=>`<div class="autocomplete-item" onclick="selectSubcategory('${s.replace(/'/g,"\\'")}')">${s}</div>`).join('');
+dropdown.classList.add('on');
+}else{
+dropdown.classList.remove('on');
+}
+});
+searchInput.addEventListener('blur',()=>{
+setTimeout(()=>dropdown.classList.remove('on'),200);
+});
+}
+
+// SELECT SUBCATEGORY FROM AUTOCOMPLETE
+function selectSubcategory(subcat){
+document.getElementById('subcategoryFilter').value=subcat;
+document.getElementById('subcategorySearch').value=subcat;
+document.getElementById('autocompleteDropdown').classList.remove('on');
+loadMaterials();
+}
+
+// MATERIALS
+async function loadMaterials(){
+try{
+const cat=document.getElementById('categoryFilter').value;
+const subcat=document.getElementById('subcategoryFilter')?.value||'';
+const type=document.getElementById('typeFilter').value;
+const sort=document.getElementById('sortFilter').value;
+let url=`${API_URL}/api/materials?`;
+if(cat)url+=`category=${encodeURIComponent(cat)}&`;
+if(subcat)url+=`subcategory=${encodeURIComponent(subcat)}&`;
+if(type)url+=`type=${type}&`;
+url+=`sort=${sort}`;
+const res=await fetch(url);
+const data=await res.json();
+const grid=document.getElementById('browseGrid');
+if(data.success&&data.materials.length>0){
+grid.innerHTML=data.materials.map(m=>`
+<div class="doc-card" onclick="handleRent('${m._id}')">
+<div class="doc-top">
+<span class="tag tbl">${m.examLabel}</span>
+<div class="doc-rating">⭐ ${m.stars||4.5}</div>
+</div>
+<div class="doc-title">${m.title}</div>
+${m.subcategory?`<span class="subcat-badge">📂 ${m.subcategory}</span>`:''}
+<div class="doc-meta">
+<span>📄 ${m.pages} pages</span>
+<span>📚 ${m.type}</span>
+</div>
+<div class="doc-price">${m.pricePerDay === 0 || m.isFreeResource ? '<span style="color:#10b981;font-weight:700;font-size:1.2rem">FREE</span>' : '₹' + m.pricePerDay + '<span style="font-size:.8rem;color:var(--muted)">/day</span>'}</div>
+<button class="btn btn-grad" style="width:100%;padding:.7rem">${m.pricePerDay === 0 || m.isFreeResource ? 'View Free' : 'Rent Now'}</button>
+</div>
+`).join('');
+}else{
+grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted)">No materials found</div>';
+}
+}catch(err){
+toast('Failed to load materials','error');
+}
+}
+
+async function handleRent(materialId){
+if(!isLoggedIn()){
+toast('Please login first','error');
+go('login');
+return;
+}
+try{
+const matRes=await fetch(`${API_URL}/api/materials/${materialId}`);
+const matData=await matRes.json();
+if(matData.success && (matData.material.pricePerDay === 0 || matData.material.isFreeResource)){
+openPDF(materialId);
+return;
+}
+const res=await fetch(`${API_URL}/api/rentals/check/${materialId}`,{
+headers:{'Authorization':`Bearer ${getToken()}`}
+});
+const data=await res.json();
+if(data.hasAccess){
+openPDF(materialId);
+}else{
+showPricingPlansForMaterial(materialId, matData.material.title);
+}
+}catch(err){
+toast('Error','error');
+}
+}
+
+
+async function validateReferralCode(){
+const username=document.getElementById('signupReferral').value.trim().toLowerCase();
+const msg=document.getElementById('referralValidMsg');
+if(!username){msg.textContent='Please enter a username';msg.style.color='var(--red)';return;}
+try{
+const res=await fetch(`${API_URL}/api/referral/validate`,{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({username})
+});
+const data=await res.json();
+if(data.success){
+msg.textContent=`✅ Found! Referred by ${data.referrerName}. They earn ₹10 every 5 referrals!`;
+msg.style.color='var(--green)';
+}else{
+msg.textContent='❌ Username not found';
+msg.style.color='var(--red)';
+}
+}catch(e){
+msg.textContent='Could not validate username';
+msg.style.color='var(--muted)';
+}
+}
+
+let pdfDoc=null;
+let pdfCurrentPage=1;
+let pdfTotalPages=0;
+let pdfRendering=false;
+
+async function openPDF(materialId){
+currentMaterialId=materialId;
+const viewer=document.getElementById('pdfViewer');
+const wrap=document.getElementById('pdfCanvasWrap');
+const loading=document.getElementById('pdfLoading');
+wrap.innerHTML='<div id="pdfLoading" style="color:white;padding:3rem;font-size:1rem">⏳ Loading PDF...</div>';
+viewer.classList.add('on');
+pdfDoc=null;
+pdfCurrentPage=1;
+
+try{
+// Set PDF.js worker
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+const url=`${API_URL}/api/materials/${materialId}/stream?token=${getToken()}`;
+const loadingTask=pdfjsLib.getDocument({url,withCredentials:false});
+pdfDoc=await loadingTask.promise;
+pdfTotalPages=pdfDoc.numPages;
+document.getElementById('pdfPageInfo').textContent=`Page 1 of ${pdfTotalPages}`;
+
+// Render all pages as canvases
+wrap.innerHTML='';
+for(let i=1;i<=pdfTotalPages;i++){
+const page=await pdfDoc.getPage(i);
+const scale=1.5;
+const viewport=page.getViewport({scale});
+const canvas=document.createElement('canvas');
+canvas.width=viewport.width;
+canvas.height=viewport.height;
+canvas.style.maxWidth='100%';
+canvas.style.boxShadow='0 4px 20px rgba(0,0,0,.5)';
+canvas.style.borderRadius='4px';
+canvas.oncontextmenu=()=>false;
+const ctx=canvas.getContext('2d');
+await page.render({canvasContext:ctx,viewport}).promise;
+wrap.appendChild(canvas);
+}
+document.getElementById('pdfTitle').textContent='PDF Viewer';
+document.getElementById('pdfPageInfo').textContent=`${pdfTotalPages} pages`;
+
+}catch(err){
+wrap.innerHTML=`<div style="color:#f87171;padding:3rem">❌ Failed to load PDF: ${err.message}</div>`;
+}
+}
+
+function pdfPrevPage(){
+const wrap=document.getElementById('pdfCanvasWrap');
+const canvases=wrap.querySelectorAll('canvas');
+if(!canvases.length)return;
+pdfCurrentPage=Math.max(1,pdfCurrentPage-1);
+canvases[pdfCurrentPage-1].scrollIntoView({behavior:'smooth'});
+document.getElementById('pdfPageInfo').textContent=`Page ${pdfCurrentPage} of ${pdfTotalPages}`;
+}
+
+function pdfNextPage(){
+const wrap=document.getElementById('pdfCanvasWrap');
+const canvases=wrap.querySelectorAll('canvas');
+if(!canvases.length)return;
+pdfCurrentPage=Math.min(pdfTotalPages,pdfCurrentPage+1);
+canvases[pdfCurrentPage-1].scrollIntoView({behavior:'smooth'});
+document.getElementById('pdfPageInfo').textContent=`Page ${pdfCurrentPage} of ${pdfTotalPages}`;
+}
+
+function closePDF(){
+document.getElementById('pdfViewer').classList.remove('on');
+document.getElementById('pdfCanvasWrap').innerHTML='';
+pdfDoc=null;
+pdfCurrentPage=1;
+pdfTotalPages=0;
+currentMaterialId=null;
+}
+
+async function loadMyRentals(){
+if(!isLoggedIn()){
+go('login');
+return;
+}
+try{
+const res=await fetch(`${API_URL}/api/rentals/my`,{
+headers:{'Authorization':`Bearer ${getToken()}`}
+});
+const rentals=await res.json();
+const grid=document.getElementById('myRentalsGrid');
+if(rentals.length===0){
+grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:3rem"><p style="color:var(--muted);margin-bottom:1rem">No rented materials yet</p><button class="btn btn-grad" onclick="go(\'browse\')">Browse Materials</button></div>';
+}else{
+grid.innerHTML=rentals.map(r=>`
+<div class="doc-card">
+<div class="doc-top">
+<span class="tag ${r.status==='active'?'tgr':'tr'}">${r.status.toUpperCase()}</span>
+<div class="doc-rating">⭐ ${r.material.stars||4.5}</div>
+</div>
+<div class="doc-title">${r.material.title}</div>
+<div class="doc-meta">
+<span>📄 ${r.material.pages} pages</span>
+<span>🕒 ${r.daysLeft} days left</span>
+</div>
+${r.status==='active'?
+`<button class="btn btn-grad" style="width:100%;padding:.7rem" onclick="openPDF('${r.material._id}')">📄 View PDF</button>`:
+`<button class="btn btn-ghost" style="width:100%;padding:.7rem" disabled>⏰ Expired</button>`
+}
+</div>
+`).join('');
+}
+}catch(err){
+toast('Failed to load rentals','error');
+}
+}
+
+async function loadProfile(){
+if(!isLoggedIn()){go('login');return;}
+const user=getUser();
+const pc=document.getElementById('profileContent');
+pc.innerHTML=`
+<div style="max-width:700px;margin:0 auto">
+<div class="doc-card" style="text-align:center;margin-bottom:1.5rem">
+<div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:2rem;color:white;font-weight:700">${user.name[0].toUpperCase()}</div>
+<h3 style="font-size:1.3rem;margin-bottom:.5rem">${user.name}</h3>
+<p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">${user.email}</p>
+<div style="background:rgba(59,130,246,.1);padding:1rem;border-radius:8px">
+<div style="font-size:.7rem;color:var(--blue2);margin-bottom:.3rem">MEMBER SINCE</div>
+<div style="font-weight:600">${new Date(user.createdAt||Date.now()).toLocaleDateString()}</div>
+</div>
+</div>
+
+<div class="doc-card" id="referralCard" style="margin-bottom:1.5rem">
+<div style="display:flex;align-items:center;gap:.8rem;margin-bottom:1.2rem">
+<span style="font-size:1.8rem">🎁</span>
+<div>
+<div style="font-size:1.1rem;font-weight:800">Referral Program</div>
+<div style="font-size:.8rem;color:var(--muted)">Invite friends, earn ₹10 each when they make their first rental</div>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.2rem">
+<div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:10px;padding:1rem;text-align:center">
+<div style="font-size:.7rem;color:var(--green);text-transform:uppercase;font-weight:700;margin-bottom:.3rem">Wallet Balance</div>
+<div style="font-size:1.8rem;font-weight:900;color:var(--green)" id="refBalance">₹...</div>
+</div>
+<div style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);border-radius:10px;padding:1rem;text-align:center">
+<div style="font-size:.7rem;color:var(--blue2);text-transform:uppercase;font-weight:700;margin-bottom:.3rem">Friends Referred</div>
+<div style="font-size:1.8rem;font-weight:900;color:var(--blue2)" id="refCount">...</div>
+</div>
+</div>
+<div style="margin-bottom:1rem">
+<div style="font-size:.75rem;color:var(--muted);margin-bottom:.4rem;font-weight:700">YOUR USERNAME (share this)</div>
+<div style="display:flex;gap:.5rem">
+<div id="refCode" style="flex:1;background:rgba(255,255,255,.05);border:2px dashed var(--blue);border-radius:8px;padding:.8rem 1rem;font-size:1.1rem;font-weight:800;letter-spacing:3px;color:var(--blue2);text-align:center">...</div>
+<button onclick="copyReferralCode()" style="padding:.8rem 1.2rem;background:linear-gradient(135deg,var(--blue),var(--purple));border:none;border-radius:8px;color:white;cursor:pointer;font-weight:700">📋 Copy</button>
+</div>
+</div>
+<div>
+<div style="font-size:.75rem;color:var(--muted);margin-bottom:.4rem;font-weight:700">SHARE LINK</div>
+<div style="display:flex;gap:.5rem">
+<input id="refLink" readonly style="flex:1;background:rgba(255,255,255,.05);border:1px solid var(--gb);border-radius:8px;padding:.7rem 1rem;color:var(--muted);font-size:.8rem;outline:none" value="Loading...">
+<button onclick="copyReferralLink()" style="padding:.7rem 1.2rem;background:rgba(59,130,246,.2);border:1px solid var(--blue);border-radius:8px;color:var(--blue2);cursor:pointer;font-weight:700;white-space:nowrap">🔗 Copy Link</button>
+</div>
+</div>
+</div>
+
+<div class="doc-card" id="referralHistoryCard">
+<div style="font-size:1rem;font-weight:800;margin-bottom:1rem">📋 Referral History</div>
+<div id="refHistory" style="color:var(--muted);text-align:center;padding:1rem">Loading...</div>
+</div>
+</div>
+`;
+loadReferralData();
+}
+
+async function loadReferralData(){
+try{
+const res=await fetch(`${API_URL}/api/referral/my`,{headers:{'Authorization':`Bearer ${getToken()}`}});
+const data=await res.json();
+if(data.success){
+document.getElementById('refBalance').textContent=`₹${data.referralBalance}`;
+document.getElementById('refCount').textContent=data.referralCount;
+document.getElementById('refCode').textContent=data.username||'N/A';
+document.getElementById('refLink').value=data.referralLink;
+}
+
+const histRes=await fetch(`${API_URL}/api/referral/history`,{headers:{'Authorization':`Bearer ${getToken()}`}});
+const histData=await histRes.json();
+const histDiv=document.getElementById('refHistory');
+if(histData.success&&histData.history.length>0){
+const nextIn=histData.nextCashbackIn||5;
+histDiv.innerHTML=`<div style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);border-radius:8px;padding:.8rem 1rem;margin-bottom:1rem;font-size:.85rem">
+🎯 <strong>${nextIn} more rental${nextIn!==1?'s':''}</strong> by your referrals needed for next ₹20 cashback! (Every 3 rentals = ₹20)
+</div>`+histData.history.map(h=>`
+<div style="display:flex;justify-content:space-between;align-items:center;padding:.8rem 0;border-bottom:1px solid var(--gb)">
+<div>
+<div style="font-weight:600">${h.name}</div>
+<div style="font-size:.75rem;color:var(--muted)">${new Date(h.joinedAt).toLocaleDateString()}</div>
+</div>
+<div style="text-align:right">
+<div style="font-size:.8rem">${h.status}</div>
+</div>
+</div>`).join('')+`<div style="text-align:center;margin-top:1rem;font-size:.85rem;color:var(--green);font-weight:700">Total earned: ₹${histData.totalEarned||0}</div>`;
+}else{
+histDiv.innerHTML='<div style="padding:1rem;color:var(--muted)">No referrals yet. Share your code to start earning!</div>';
+}
+}catch(e){
+console.warn('Referral load error',e);
+}
+}
+
+function copyReferralCode(){
+const code=document.getElementById('refCode').textContent;
+navigator.clipboard.writeText(code).then(()=>toast('Referral code copied! 🎉','success'));
+}
+
+function copyReferralLink(){
+const link=document.getElementById('refLink').value;
+navigator.clipboard.writeText(link).then(()=>toast('Referral link copied! 🔗','success'));
+}
+
+// INIT
+window.addEventListener('scroll',()=>{
+const nav=document.getElementById('mainNav');
+if(window.scrollY>50){
+nav.classList.add('scrolled');
+}else{
+nav.classList.remove('scrolled');
+}
+});
+
+// ─── BUY NOW ───
+function buyNow(examCategory, subcategory, price){
+if(!isLoggedIn()){toast('Please login first','error');go('login');return;}
+showPricingPlansForSubcategory(examCategory, subcategory, price);
+}
+
+// ─── RENT SUBCATEGORY (used by library renew) ───
+function rentSubcategory(examCategory, subcategory, price){
+if(!isLoggedIn()){toast('Please login first','error');go('login');return;}
+showPricingPlansForSubcategory(examCategory, subcategory, price);
+}
+
+// ─── CHECKOUT SYSTEM (for subcategory purchases) ───
+let checkoutSource='cart';
+let buyNowItem=null;
+
+function renderCart(){
+// Old cart page - not used with new pricing system
+// Redirect to home
+toast('Cart system moved to top navigation 🛒','info');
+setTimeout(()=>go('home'),1000);
+}
+
+function goToCheckout(source, item=null){
+if(!isLoggedIn()){toast('Please login first','error');go('login');return;}
+checkoutSource=source;
+buyNowItem=item;
+go('checkout');
+}
+
+function renderCheckoutPage(){
+const itemsDiv=document.getElementById('checkoutItems');
+const backBtn=document.getElementById('checkoutBackBtn');
+if(!itemsDiv)return;
+const items=checkoutSource==='buynow'&&buyNowItem?[buyNowItem]:[];
+if(!items.length){go('cart');return;}
+if(backBtn) backBtn.setAttribute('onclick',checkoutSource==='buynow'?'history.back()':"go('cart')");
+itemsDiv.innerHTML=items.map(i=>`
+<div style="display:flex;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--gb)">
+<div><div style="font-weight:600">${i.subcategory}</div><div style="font-size:.75rem;color:var(--muted)">${i.examCategory} • 1 month</div></div>
+<div style="font-weight:700;color:var(--blue2)">₹${i.price}</div>
+</div>`).join('');
+const subtotal=items.reduce((s,i)=>s+i.price,0);
+document.getElementById('checkoutSubtotal').textContent='₹'+subtotal;
+document.getElementById('checkoutDiscount').textContent='-₹0';
+document.getElementById('checkoutTotal').textContent='₹'+subtotal;
+}
+
+function selectPayment(label, method){
+document.querySelectorAll('input[name="paymentMethod"]').forEach(r=>r.closest('label').style.borderColor='var(--gb)');
+label.style.borderColor='var(--blue)';
+label.style.background='rgba(59,130,246,.08)';
+}
+
+async function processPayment(){
+const method=document.querySelector('input[name="paymentMethod"]:checked')?.value;
+if(!method){toast('Please select a payment method','error');return;}
+const payBtn=document.getElementById('payBtn');
+payBtn.textContent='⏳ Processing...';
+payBtn.disabled=true;
+
+await new Promise(r=>setTimeout(r,1500));
+
+const items=checkoutSource==='buynow'&&buyNowItem?[buyNowItem]:[];
+
+if(!items||!items.length){
+payBtn.disabled=false;
+payBtn.textContent='🔒 Pay Now';
+toast('❌ No items to purchase. Please go back and select again.','error');
+return;
+}
+
+let success=0,failed=0;
+for(const item of items){
+try{
+const res=await fetch(`${API_URL}/api/rentals/rent-subcategory`,{
+method:'POST',
+headers:{'Authorization':`Bearer ${getToken()}`,'Content-Type':'application/json'},
+body:JSON.stringify({examCategory:item.examCategory,subcategory:item.subcategory,pricePaid:item.price,useBalance:false})
+});
+const data=await res.json();
+if(res.ok&&data.success) success++;
+else failed++;
+}catch(e){failed++;}
+}
+
+payBtn.disabled=false;
+payBtn.textContent='🔒 Pay Now';
+
+if(success>0){
+buyNowItem=null;
+showPaymentSuccess(success, method);
+}else{
+toast('❌ Payment failed. Please try again.','error');
+}
+}
+
+function showPaymentSuccess(count, method){
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+const checkoutPage=document.getElementById('pg-checkout');
+checkoutPage.classList.add('on');
+checkoutPage.querySelector('.sec').innerHTML=`
+<div style="text-align:center;padding:3rem 2rem;max-width:500px;margin:0 auto">
+<div style="font-size:5rem;margin-bottom:1.5rem;animation:float 3s ease-in-out infinite">🎉</div>
+<h2 style="font-family:'Playfair Display',serif;font-size:2rem;margin-bottom:1rem;color:var(--green)">Payment Successful!</h2>
+<p style="color:var(--muted);margin-bottom:.5rem">${count} subcategor${count!==1?'ies':'y'} rented successfully</p>
+<p style="color:var(--muted);font-size:.85rem;margin-bottom:2rem">Paid via <strong style="color:var(--white)">${method.toUpperCase()}</strong></p>
+<div style="background:rgba(16,185,129,.1);border:2px solid rgba(16,185,129,.3);border-radius:12px;padding:1.2rem;margin-bottom:2rem">
+<div style="color:var(--green);font-weight:700;margin-bottom:.3rem">✅ Access Granted</div>
+<div style="font-size:.85rem;color:var(--muted)">Your rented subcategories are now in your Library. Access them anytime for 30 days.</div>
+</div>
+<div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+<button class="btn btn-grad" onclick="go('library')">📚 Go to Library</button>
+<button class="btn btn-ghost" onclick="go('home')">🏠 Browse More</button>
+</div>
+</div>`;
+}
+
+// ─── LIBRARY ───
+async function loadLibrary(){
+if(!isLoggedIn()){go('login');return;}
+const grid=document.getElementById('libraryGrid');
+grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted)">⏳ Loading library...</div>';
+try{
+const res=await fetch(`${API_URL}/api/rentals/library`,{headers:{'Authorization':`Bearer ${getToken()}`}});
+const data=await res.json();
+if(!data.success||!data.library.length){
+grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:4rem">
+<div style="font-size:3rem;margin-bottom:1rem">📚</div>
+<div style="font-size:1.1rem;font-weight:600;margin-bottom:.5rem">Your library is empty</div>
+<div style="color:var(--muted);margin-bottom:1.5rem">Rent subcategories to access their materials</div>
+<button class="btn btn-grad" onclick="go('home')">Browse Categories</button>
+</div>`;
+return;
+}
+grid.innerHTML=data.library.map(item=>{
+const isExpired=item.status==='expired';
+const isFree=item.isFree;
+const daysLeft=item.daysLeft;
+const urgentColor=daysLeft<=3?'var(--red)':daysLeft<=7?'var(--gold)':'var(--green)';
+return `<div class="doc-card" style="${isExpired?'opacity:.6':''}" onclick="${isExpired?'':` openSubcategoryPage('${item.examCategory.replace(/'/g,"\\'")}','${item.subcategory.replace(/'/g,"\\'")}') `}">
+<div class="doc-top">
+<span class="tag ${isExpired?'tr':'tgr'}">${isExpired?'EXPIRED':'ACTIVE'}</span>
+${isFree?'<span style="color:var(--green);font-size:.75rem;font-weight:700">FREE</span>':''}
+</div>
+<div class="doc-title">${item.subcategory}</div>
+<div style="font-size:.8rem;color:var(--muted);margin-bottom:.5rem">📁 ${item.examCategory}</div>
+${!isExpired?`<div style="color:${urgentColor};font-size:.85rem;font-weight:700;margin-bottom:.8rem">⏰ ${daysLeft} day${daysLeft!==1?'s':''} left • Expires ${new Date(item.expiryDate).toLocaleDateString()}</div>`:'<div style="color:var(--red);font-size:.85rem;margin-bottom:.8rem">Expired on '+new Date(item.expiryDate).toLocaleDateString()+'</div>'}
+${!isExpired?'<button class="btn btn-grad" style="width:100%;padding:.7rem">📖 Open</button>':`<button class="btn btn-ghost" style="width:100%;padding:.7rem" onclick="event.stopPropagation();rentSubcategory('${item.examCategory.replace(/'/g,"\\'")}','${item.subcategory.replace(/'/g,"\\'")}',199)">🔄 Renew ₹199</button>`}
+</div>`;
+}).join('');
+}catch(e){
+grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--red)">❌ Failed to load library</div>';
+}
+}
+
+// ─── REFERRAL TOGGLE ───
+function toggleReferralInput(radio){
+const wrap = document.getElementById('referralInputWrap');
+const msg = document.getElementById('referralValidMsg');
+if(radio.value==='yes'){
+wrap.style.display='block';
+}else{
+wrap.style.display='none';
+if(document.getElementById('signupReferral')) document.getElementById('signupReferral').value='';
+if(msg) msg.textContent='';
+}
+}
+
+// ─── USERNAME CHECK ───
+async function checkUsername(){
+const val=document.getElementById('signupUsername')?.value.trim();
+const msg=document.getElementById('usernameMsg');
+if(!val||val.length<3){msg.textContent='Username must be at least 3 characters';msg.style.color='var(--red)';return;}
+try{
+const res=await fetch(`${API_URL}/api/auth/check-username`,{
+method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:val})
+});
+const data=await res.json();
+if(data.available){msg.textContent='✅ Username available!';msg.style.color='var(--green)';}
+else{msg.textContent='❌ Username taken';msg.style.color='var(--red)';}
+}catch(e){msg.textContent='Could not check';msg.style.color='var(--muted)';}
+}
+
+// INITIALIZE - Load subcategories then render
+Promise.all([loadSubcategories(), loadProgramSettings()]).then(()=>{
+renderCategories();
+updateNav();
+initSubcategoryAutocomplete();
+});
+
+// CHATBOT
+let conversationHistory = [];
+
+function toggleChatbot() {
+  const widget = document.getElementById('chatbot-widget');
+  widget.classList.toggle('active');
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chatbot-input');
+  const message = input.value.trim();
+  if (!message) return;
+
+  addMessage(message, 'user');
+  input.value = '';
+  input.disabled = true;
+  showTypingIndicator();
+
+  try {
+    const response = await fetch(`${API_URL}/api/chatbot/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, conversationHistory })
+    });
+
+    const data = await response.json();
+    removeTypingIndicator();
+
+    if (data.success) {
+      addMessage(data.reply, 'bot');
+      conversationHistory = data.conversationHistory;
+    } else {
+      addMessage('Sorry, I encountered an error. Please try again.', 'bot');
+    }
+  } catch (error) {
+    removeTypingIndicator();
+    addMessage('Sorry, I\'m having trouble connecting. Please make sure the backend is running.', 'bot');
+  } finally {
+    input.disabled = false;
+    input.focus();
+  }
+}
+
+function addMessage(text, sender) {
+  const messagesDiv = document.getElementById('chatbot-messages');
+  const messageDiv = document.createElement('div');
+  messageDiv.className = `chatbot-message ${sender}`;
+  const contentDiv = document.createElement('div');
+  contentDiv.className = 'message-content';
+  contentDiv.innerHTML = text.replace(/\n/g, '<br>');
+  messageDiv.appendChild(contentDiv);
+  messagesDiv.appendChild(messageDiv);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+function showTypingIndicator() {
+  const messagesDiv = document.getElementById('chatbot-messages');
+  const typingDiv = document.createElement('div');
+  typingDiv.id = 'typing-indicator';
+  typingDiv.className = 'chatbot-message bot';
+  typingDiv.innerHTML = `
+    <div class="message-content">
+      <div class="typing-indicator">
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      </div>
+    </div>
+  `;
+  messagesDiv.appendChild(typingDiv);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+function removeTypingIndicator() {
+  const indicator = document.getElementById('typing-indicator');
+  if (indicator) indicator.remove();
+}
+
+
+// PRICING & CART SYSTEM
+let cart = {items: [], total: 0, itemCount: 0};
+
+// Pricing context for the pricing plans page
+let pricingContext = {
+  type: null, // 'material' or 'subcategory'
+  materialId: null,
+  materialTitle: null,
+  examCategory: null,
+  subcategory: null,
+  price: null
+};
+
+async function updateCartBadge() {
+  if (!isLoggedIn()) return;
+  try {
+    const res = await fetch(`${API_URL}/api/cart`, {
+      headers: {'Authorization': `Bearer ${getToken()}`}
+    });
+    const data = await res.json();
+    if (data.success) {
+      cart = data.cart;
+      document.getElementById('cartBadge').textContent = cart.itemCount || 0;
+    }
+  } catch (e) {
+    console.error('Cart badge update failed:', e);
+  }
+}
+
+async function showPricingForMaterial(materialId, materialTitle) {
+  if (!isLoggedIn()) {
+    toast('Please login first', 'error');
+    return;
+  }
+  
+  const modal = document.getElementById('pricingModal');
+  const container = document.getElementById('pricingPlansContainer');
+  
+  try {
+    const res = await fetch(`${API_URL}/api/pricing-plans/public`);
+    const data = await res.json();
+    
+    if (data.success) {
+      const plans = data.plans.individualPlans;
+      
+      container.innerHTML = `
+        <h3 style="margin-bottom:1rem;color:var(--white)">Plans for ${materialTitle}</h3>
+        <div class="pricing-grid">
+          ${plans.filter(p => p.active).map(plan => `
+            <div class="pricing-card" onclick="addMaterialToCart('${materialId}', '${materialTitle.replace(/'/g, "\\'")}', '${plan.id}', '${plan.name.replace(/'/g, "\\'")}', ${plan.duration}, ${plan.price})">
+              ${plan.badge ? `<div class="tag ${plan.badge === 'popular' ? 'tgr' : 'tbl'}" style="margin-bottom:.5rem">${plan.badge.toUpperCase().replace('_', ' ')}</div>` : ''}
+              <div style="font-weight:700;margin-bottom:.5rem;color:var(--white)">${plan.name}</div>
+              <div class="plan-price">₹${plan.price}</div>
+              <div style="color:var(--muted);font-size:.85rem">${plan.duration} days</div>
+              ${plan.savings > 0 ? `<div style="color:var(--green);font-size:.8rem;margin-top:.5rem">Save ₹${plan.savings}</div>` : ''}
+              <button class="btn btn-grad" style="width:100%;margin-top:1rem;padding:.7rem" onclick="event.stopPropagation()">Add to Cart</button>
+            </div>
+          `).join('')}
+        </div>
+      `;
+      
+      modal.classList.add('on');
+    }
+  } catch (e) {
+    toast('Failed to load plans', 'error');
+  }
+}
+
+function closePricingModal() {
+  document.getElementById('pricingModal').classList.remove('on');
+}
+
+async function addMaterialToCart(materialId, materialTitle, planId, planName, duration, price) {
+  event.stopPropagation();
+  
+  try {
+    const res = await fetch(`${API_URL}/api/cart/add`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getToken()}`
+      },
+      body: JSON.stringify({
+        itemType: 'material',
+        materialId,
+        planId,
+        planName,
+        duration,
+        price
+      })
+    });
+    
+    const data = await res.json();
+    if (data.success) {
+      toast('✅ Added to cart!', 'success');
+      await updateCartBadge();
+      closePricingModal();
+    } else {
+      toast(data.message, 'error');
+    }
+  } catch (e) {
+    toast('Failed to add to cart', 'error');
+  }
+}
+
+async function showCart() {
+  if (!isLoggedIn()) {
+    toast('Please login', 'error');
+    return;
+  }
+  
+  const modal = document.getElementById('cartModal');
+  const container = document.getElementById('cartItems');
+  const summary = document.getElementById('cartSummary');
+  
+  try {
+    const res = await fetch(`${API_URL}/api/cart`, {
+      headers: {'Authorization': `Bearer ${getToken()}`}
+    });
+    const data = await res.json();
+    
+    if (data.success) {
+      if (data.cart.items.length === 0) {
+        container.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--muted)"><div style="font-size:4rem;margin-bottom:1rem">🛒</div><div>Cart is empty</div></div>';
+        summary.style.display = 'none';
+      } else {
+        container.innerHTML = data.cart.items.map(item => `
+          <div class="cart-item">
+            <div>
+              <div style="font-weight:700;color:var(--white);margin-bottom:.3rem">${item.planName}</div>
+              <div style="font-size:.85rem;color:var(--muted)">${item.duration} days • ₹${item.price}</div>
+            </div>
+            <button onclick="removeFromCart('${item._id}')" style="padding:.5rem 1rem;background:var(--red);color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600">Remove</button>
+          </div>
+        `).join('');
+        
+        document.getElementById('cartTotal').textContent = data.cart.total;
+        summary.style.display = 'block';
+      }
+      
+      modal.classList.add('on');
+    }
+  } catch (e) {
+    toast('Failed to load cart', 'error');
+  }
+}
+
+function closeCart() {
+  document.getElementById('cartModal').classList.remove('on');
+}
+
+async function removeFromCart(itemId) {
+  try {
+    const res = await fetch(`${API_URL}/api/cart/remove/${itemId}`, {
+      method: 'DELETE',
+      headers: {'Authorization': `Bearer ${getToken()}`}
+    });
+    
+    const data = await res.json();
+    if (data.success) {
+      await showCart();
+      await updateCartBadge();
+    }
+  } catch (e) {
+    toast('Failed to remove item', 'error');
+  }
+}
+
+async function checkout() {
+  if (!confirm('Proceed with checkout?')) return;
+  
+  try {
+    const res = await fetch(`${API_URL}/api/cart/checkout`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getToken()}`
+      },
+      body: JSON.stringify({useBalance: false})
+    });
+    
+    const data = await res.json();
+    if (data.success) {
+      toast('🎉 Purchase successful!', 'success');
+      closeCart();
+      await updateCartBadge();
+      go('rentals');
+    } else {
+      toast(data.message, 'error');
+    }
+  } catch (e) {
+    toast('Checkout failed', 'error');
+  }
+}
+
+// PRICING PLANS PAGE SYSTEM
+async function showPricingPlansForMaterial(materialId, materialTitle) {
+  if (!isLoggedIn()) {
+    toast('Please login first', 'error');
+    go('login');
+    return;
+  }
+  
+  // Set context
+  pricingContext = {
+    type: 'material',
+    materialId,
+    materialTitle,
+    examCategory: null,
+    subcategory: null,
+    price: null
+  };
+  
+  // Navigate to pricing plans page
+  go('pricing-plans');
+}
+
+async function showPricingPlansForSubcategory(examCategory, subcategory, price) {
+  if (!isLoggedIn()) {
+    toast('Please login first', 'error');
+    go('login');
+    return;
+  }
+  
+  // Set context
+  pricingContext = {
+    type: 'subcategory',
+    materialId: null,
+    materialTitle: null,
+    examCategory,
+    subcategory,
+    price
+  };
+  
+  // Navigate to pricing plans page
+  go('pricing-plans');
+}
+
+async function loadPricingPlansPage() {
+  const titleEl = document.getElementById('pricingPlansTitle');
+  const subtitleEl = document.getElementById('pricingPlansSubtitle');
+  const individualSection = document.getElementById('individualPlansSection');
+  const bundleSection = document.getElementById('bundlePlansSection');
+  const individualGrid = document.getElementById('individualPlansGrid');
+  const bundleGrid = document.getElementById('bundlePlansGrid');
+  
+  // Fallback pricing data (used if API fails)
+  const fallbackPlans = {
+    individualPlans: [
+      {id: 'mat_1day', name: '1 Day', duration: 1, price: 5, savings: 0, active: true, badge: null},
+      {id: 'mat_2day', name: '2 Days', duration: 2, price: 9, savings: 1, active: true, badge: null},
+      {id: 'mat_3day', name: '3 Days', duration: 3, price: 13, savings: 2, active: true, badge: null},
+      {id: 'mat_5day', name: '5 Days', duration: 5, price: 19, savings: 6, active: true, badge: null},
+      {id: 'mat_1week', name: '1 Week', duration: 7, price: 29, savings: 10, active: true, badge: 'popular'},
+      {id: 'mat_10day', name: '10 Days', duration: 10, price: 39, savings: 11, active: true, badge: null},
+      {id: 'mat_2week', name: '2 Weeks', duration: 14, price: 49, savings: 21, active: true, badge: null},
+      {id: 'mat_3week', name: '3 Weeks', duration: 21, price: 69, savings: 36, active: true, badge: null},
+      {id: 'mat_1month', name: '1 Month', duration: 30, price: 89, savings: 61, active: true, badge: 'best_value'},
+      {id: 'mat_2month', name: '2 Months', duration: 60, price: 149, savings: 151, active: true, badge: null}
+    ],
+    bundlePlans: [
+      {id: 'bundle_1day', name: '1 Day', duration: 1, price: 19, savings: 0, active: true, badge: null},
+      {id: 'bundle_2day', name: '2 Days', duration: 2, price: 35, savings: 3, active: true, badge: null},
+      {id: 'bundle_3day', name: '3 Days', duration: 3, price: 49, savings: 8, active: true, badge: null},
+      {id: 'bundle_5day', name: '5 Days', duration: 5, price: 79, savings: 16, active: true, badge: null},
+      {id: 'bundle_1week', name: '1 Week', duration: 7, price: 99, savings: 34, active: true, badge: 'popular'},
+      {id: 'bundle_10day', name: '10 Days', duration: 10, price: 129, savings: 61, active: true, badge: null},
+      {id: 'bundle_2week', name: '2 Weeks', duration: 14, price: 159, savings: 107, active: true, badge: null},
+      {id: 'bundle_3week', name: '3 Weeks', duration: 21, price: 199, savings: 200, active: true, badge: null},
+      {id: 'bundle_1month', name: '1 Month', duration: 30, price: 249, savings: 321, active: true, badge: 'best_value'},
+      {id: 'bundle_2month', name: '2 Months', duration: 60, price: 399, savings: 781, active: true, badge: null}
+    ]
+  };
+  
+  let plans = fallbackPlans;
+  
+  try {
+    // Try to fetch plans from API
+    const res = await fetch(`${API_URL}/api/pricing-plans/public`);
+    const data = await res.json();
+    
+    // Validate that API response has the correct structure
+    if (data.success && 
+        data.plans && 
+        Array.isArray(data.plans.individualPlans) && 
+        Array.isArray(data.plans.bundlePlans) &&
+        data.plans.individualPlans.length > 0 &&
+        data.plans.bundlePlans.length > 0) {
+      plans = data.plans;
+      console.log('✅ Loaded pricing plans from API');
+    } else {
+      console.log('⚠️ Using fallback pricing plans (API returned invalid/incomplete data)');
+      console.log('API Response:', data);
+    }
+  } catch (e) {
+    console.log('⚠️ Using fallback pricing plans (API not available)');
+    console.error('API Error:', e);
+  }
+  
+  // Render the plans
+  if (pricingContext.type === 'material') {
+    // Show individual material plans
+    titleEl.textContent = 'Choose Your Plan';
+    subtitleEl.textContent = `Select a rental period for: ${pricingContext.materialTitle}`;
+    individualSection.style.display = 'block';
+    bundleSection.style.display = 'none';
+    
+    const activePlans = (plans.individualPlans || []).filter(p => p.active);
+    individualGrid.innerHTML = activePlans.map(plan => `
+      <div class="pricing-plan-card ${plan.badge === 'popular' ? 'popular' : ''} ${plan.badge === 'best_value' ? 'best-value' : ''}">
+        ${plan.badge ? `<div class="plan-badge ${plan.badge === 'popular' ? 'popular' : ''} ${plan.badge === 'best_value' ? 'best-value' : ''}">${plan.badge === 'popular' ? '⭐ POPULAR' : '💎 BEST VALUE'}</div>` : ''}
+        <div class="plan-name">${plan.name}</div>
+        <div class="plan-price-big">₹${plan.price}</div>
+        <div class="plan-duration">${plan.duration} day${plan.duration !== 1 ? 's' : ''} access</div>
+        ${plan.savings > 0 ? `<div class="plan-savings">💰 Save ₹${plan.savings}</div>` : '<div style="height:1.5rem"></div>'}
+        <div class="plan-actions">
+          <button class="btn btn-ghost" style="width:100%" onclick="addMaterialPlanToCart('${plan.id}', '${plan.name}', ${plan.duration}, ${plan.price})">🛒 Add to Cart</button>
+          <button class="btn btn-grad" style="width:100%" onclick="proceedToCheckoutMaterial('${plan.id}', '${plan.name}', ${plan.duration}, ${plan.price})">⚡ Proceed to Checkout</button>
+        </div>
+      </div>
+    `).join('');
+    
+  } else if (pricingContext.type === 'subcategory') {
+    // Show subcategory bundle plans
+    titleEl.textContent = 'Choose Your Bundle Plan';
+    subtitleEl.textContent = `Select a rental period for: ${pricingContext.subcategory} (${pricingContext.examCategory})`;
+    individualSection.style.display = 'none';
+    bundleSection.style.display = 'block';
+    
+    const activePlans = (plans.bundlePlans || []).filter(p => p.active);
+    bundleGrid.innerHTML = activePlans.map(plan => `
+      <div class="pricing-plan-card ${plan.badge === 'popular' ? 'popular' : ''} ${plan.badge === 'best_value' ? 'best-value' : ''}">
+        ${plan.badge ? `<div class="plan-badge ${plan.badge === 'popular' ? 'popular' : ''} ${plan.badge === 'best_value' ? 'best-value' : ''}">${plan.badge === 'popular' ? '⭐ POPULAR' : '💎 BEST VALUE'}</div>` : ''}
+        <div class="plan-name">${plan.name} Bundle</div>
+        <div class="plan-price-big">₹${plan.price}</div>
+        <div class="plan-duration">${plan.duration} day${plan.duration !== 1 ? 's' : ''} access to ALL materials</div>
+        ${plan.savings > 0 ? `<div class="plan-savings">💰 Save ₹${plan.savings}</div>` : '<div style="height:1.5rem"></div>'}
+        <div class="plan-actions">
+          <button class="btn btn-ghost" style="width:100%" onclick="addSubcategoryPlanToCart('${plan.id}', '${plan.name}', ${plan.duration}, ${plan.price})">🛒 Add to Cart</button>
+          <button class="btn btn-grad" style="width:100%" onclick="proceedToCheckoutSubcategory('${plan.id}', '${plan.name}', ${plan.duration}, ${plan.price})">⚡ Proceed to Checkout</button>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+// Add material plan to cart
+async function addMaterialPlanToCart(planId, planName, duration, price) {
+  try {
+    const res = await fetch(`${API_URL}/api/cart/add`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getToken()}`
+      },
+      body: JSON.stringify({
+        itemType: 'material',
+        materialId: pricingContext.materialId,
+        planId,
+        planName,
+        duration,
+        price
+      })
+    });
+    
+    const data = await res.json();
+    if (data.success) {
+      toast('✅ Added to cart!', 'success');
+      await updateCartBadge();
+    } else {
+      toast(data.message, 'error');
+    }
+  } catch (e) {
+    toast('Failed to add to cart', 'error');
+  }
+}
+
+// Add subcategory plan to cart (store as cart item for now)
+async function addSubcategoryPlanToCart(planId, planName, duration, price) {
+  toast('💡 Subcategory bundles must be purchased directly', 'info');
+  // For now, redirect to checkout
+  await proceedToCheckoutSubcategory(planId, planName, duration, price);
+}
+
+// Proceed to checkout for material
+async function proceedToCheckoutMaterial(planId, planName, duration, price) {
+  try {
+    const res = await fetch(`${API_URL}/api/cart/add`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getToken()}`
+      },
+      body: JSON.stringify({
+        itemType: 'material',
+        materialId: pricingContext.materialId,
+        planId,
+        planName,
+        duration,
+        price
+      })
+    });
+    
+    const data = await res.json();
+    if (data.success) {
+      await updateCartBadge();
+      // Now go to checkout
+      await checkout();
+    } else {
+      toast(data.message, 'error');
+    }
+  } catch (e) {
+    toast('Failed', 'error');
+  }
+}
+
+// Proceed to checkout for subcategory
+async function proceedToCheckoutSubcategory(planId, planName, duration, price) {
+  // Set up buy now item for subcategory
+  buyNowItem = {
+    examCategory: pricingContext.examCategory,
+    subcategory: pricingContext.subcategory,
+    price: price
+  };
+  checkoutSource = 'buynow';
+  go('checkout');
+}
+
+// Initialize cart badge on page load
+setTimeout(updateCartBadge, 1000);
+
+</script>
+<!-- Chatbot Button (Fixed position) -->
+<div id="chatbot-btn" class="chatbot-btn" onclick="toggleChatbot()">
+  💬
+</div>
+
+<!-- Chatbot Widget -->
+<div id="chatbot-widget" class="chatbot-widget">
+  <div class="chatbot-header">
+    <div class="chatbot-header-content">
+      <div class="chatbot-avatar">🤖</div>
+      <div>
+        <div class="chatbot-title">ScholarStock AI Assistant</div>
+        <div class="chatbot-status">● Online</div>
+      </div>
+    </div>
+    <button class="chatbot-close" onclick="toggleChatbot()">✕</button>
+  </div>
+  
+  <div class="chatbot-messages" id="chatbot-messages">
+    <div class="chatbot-message bot">
+      <div class="message-content">
+        👋 Hi! I'm your ScholarStock AI assistant. I can help you:
+        <br><br>
+        • Find the perfect study materials<br>
+        • Understand rental plans<br>
+        • Get study tips & advice<br>
+        • Answer any questions<br>
+        <br>
+        How can I help you today?
+      </div>
+    </div>
+  </div>
+  
+  <div class="chatbot-input">
+    <input 
+      type="text" 
+      id="chatbot-input" 
+      placeholder="Ask me anything..."
+      onkeypress="if(event.key === 'Enter') sendMessage()"
+    >
+    <button onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<style>
+/* Chatbot Styles */
+.chatbot-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+  z-index: 1000;
+  transition: all 0.3s;
+}
+
+.chatbot-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 30px rgba(59, 130, 246, 0.6);
+}
+
+.chatbot-widget {
+  position: fixed;
+  bottom: 100px;
+  right: 30px;
+  width: 380px;
+  height: 550px;
+  background: rgba(2, 8, 23, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  display: none;
+  flex-direction: column;
+  z-index: 1000;
+  backdrop-filter: blur(20px);
+}
+
+.chatbot-widget.active {
+  display: flex;
+}
+
+.chatbot-header {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  padding: 15px 20px;
+  border-radius: 16px 16px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chatbot-header-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chatbot-avatar {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.chatbot-title {
+  font-weight: 700;
+  font-size: 16px;
+  color: white;
+}
+
+.chatbot-status {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.chatbot-close {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.chatbot-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.chatbot-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.chatbot-message {
+  display: flex;
+  gap: 10px;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chatbot-message.user {
+  flex-direction: row-reverse;
+}
+
+.message-content {
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  padding: 12px 16px;
+  border-radius: 12px;
+  max-width: 80%;
+  color: #f8fafc;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.chatbot-message.user .message-content {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  border: none;
+}
+
+.chatbot-message.bot .message-content {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chatbot-input {
+  display: flex;
+  gap: 10px;
+  padding: 15px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chatbot-input input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 10px 15px;
+  color: white;
+  font-size: 14px;
+  outline: none;
+}
+
+.chatbot-input input:focus {
+  border-color: #3b82f6;
+}
+
+.chatbot-input button {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.chatbot-input button:hover {
+  opacity: 0.9;
+}
+
+.chatbot-input button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.typing-indicator {
+  display: flex;
+  gap: 5px;
+  padding: 10px;
+}
+
+.typing-dot {
+  width: 8px;
+  height: 8px;
+  background: #3b82f6;
+  border-radius: 50%;
+  animation: typing 1.4s infinite;
+}
+
+.typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing {
+  0%, 60%, 100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 480px) {
+  .chatbot-widget {
+    width: 100%;
+    height: 100%;
+    bottom: 0;
+    right: 0;
+    border-radius: 0;
+  }
+  
+  .chatbot-btn {
+    bottom: 20px;
+    right: 20px;
+  }
+}
+</style>
+
+
+
+<!-- PRICING MODAL -->
+<div id="pricingModal" class="pricing-modal" onclick="if(event.target===this)closePricingModal()">
+<div class="pricing-content">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem">
+<h2 style="font-family:'Playfair Display',serif;color:var(--white)">Choose Your Plan</h2>
+<button onclick="closePricingModal()" class="modal-close">&times;</button>
+</div>
+<div id="pricingPlansContainer"></div>
+<button onclick="closePricingModal()" class="btn btn-ghost" style="width:100%;margin-top:1.5rem">Cancel</button>
+</div>
+</div>
+
+<!-- CART MODAL -->
+<div id="cartModal" class="cart-modal" onclick="if(event.target===this)closeCart()">
+<div class="cart-content">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem">
+<h2 style="font-family:'Playfair Display',serif;color:var(--white)">🛒 Shopping Cart</h2>
+<button onclick="closeCart()" class="modal-close">&times;</button>
+</div>
+<div id="cartItems"></div>
+<div class="cart-summary" id="cartSummary" style="display:none">
+<div style="display:flex;justify-content:space-between;margin-bottom:1rem">
+<strong style="color:var(--white)">Total:</strong>
+<span style="font-size:1.5rem;color:var(--blue2);font-weight:800">₹<span id="cartTotal">0</span></span>
+</div>
+<button onclick="checkout()" class="btn btn-grad" style="width:100%">🎉 Checkout</button>
+</div>
+</div>
+</div>
+
+</body>
+</html>
