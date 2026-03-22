@@ -1,5 +1,7 @@
 
 
+
+
 <!DOCTYPE html>
 <!-- saved from url=(0071)file:///C:/Users/ganes/Downloads/ScholarStock___Study_Smarter__Pay_Less.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -563,6 +565,22 @@ function setAuth(token,user){localStorage.setItem('token',token);localStorage.se
 function clearAuth(){localStorage.removeItem('token');localStorage.removeItem('user')}
 function isLoggedIn(){return!!getToken()}
 
+let cartItems=[];
+function addToCart(examCategory,subcategory,price){
+if(!isLoggedIn()){toast('Please login first','error');go('login');return;}
+if(cartItems.find(i=>i.examCategory===examCategory&&i.subcategory===subcategory)){toast('Already in cart','error');return;}
+cartItems.push({examCategory,subcategory,price});
+const badge=document.getElementById('cartBadge');
+if(badge)badge.textContent=cartItems.length||'';
+toast(`🛒 ${subcategory} added to cart!`,'success');
+}
+function removeFromCartPage(idx){
+cartItems.splice(idx,1);
+const badge=document.getElementById('cartBadge');
+if(badge)badge.textContent=cartItems.length||'';
+renderCart();
+}
+
 // NAVIGATION
 function go(page){
 document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
@@ -733,10 +751,7 @@ return `<div class="subcat-card">
 <span class="subcat-icon" onclick="openSubcategoryPage('${catSafe}','${subSafe}')" style="cursor:pointer">${SI[sub]||'📚'}</span>
 <div class="subcat-name" onclick="openSubcategoryPage('${catSafe}','${subSafe}')" style="cursor:pointer">${sub}</div>
 <div class="subcat-count" style="margin-bottom:.8rem">${isFree?'<span style="color:var(--green);font-weight:700">FREE ✅</span>':'<span style="color:var(--blue2);font-weight:700">₹199/month</span>'}</div>
-${isFree?`<button class="btn btn-grad" style="width:100%;padding:.5rem;font-size:.8rem" onclick="openSubcategoryPage('${catSafe}','${subSafe}')">📖 Browse Free</button>`:`<div style="display:flex;gap:.4rem">
-<button class="btn btn-ghost" style="flex:1;padding:.5rem;font-size:.75rem" onclick="addToCart('${catSafe}','${subSafe}',199)">🛒 Cart</button>
-<button class="btn btn-grad" style="flex:1;padding:.5rem;font-size:.75rem" onclick="buyNow('${catSafe}','${subSafe}',199)">⚡ Buy</button>
-</div>`}
+${isFree?`<button class="btn btn-grad" style="width:100%;padding:.5rem;font-size:.8rem" onclick="openSubcategoryPage('${catSafe}','${subSafe}')">📖 Browse Free</button>`:`<button class="btn btn-grad" style="width:100%;padding:.5rem;font-size:.75rem" onclick="buyNow('${catSafe}','${subSafe}',199)">⚡ Buy</button>`}
 </div>`;
 }).join('');
 go('category');
@@ -1204,11 +1219,48 @@ showPricingPlansForSubcategory(examCategory, subcategory, price);
 let checkoutSource='cart';
 let buyNowItem=null;
 
-function renderCart(){
-// Old cart page - not used with new pricing system
-// Redirect to home
-toast('Cart system moved to top navigation 🛒','info');
-setTimeout(()=>go('home'),1000);
+async function renderCart(){
+const container=document.getElementById('cartItems');
+const summary=document.getElementById('cartSummary');
+const empty=document.getElementById('cartEmpty');
+if(!container)return;
+
+let walletBalance=0;
+try{
+const r=await fetch(`${API_URL}/api/referral/my`,{headers:{'Authorization':`Bearer ${getToken()}`}});
+const d=await r.json();
+if(d.success) walletBalance=d.referralBalance||0;
+}catch(e){}
+document.getElementById('walletBalanceShow').textContent=walletBalance;
+
+if(!cartItems.length){
+container.innerHTML='';
+summary.style.display='none';
+empty.style.display='block';
+return;
+}
+empty.style.display='none';
+summary.style.display='block';
+
+const subtotal=cartItems.reduce((s,i)=>s+i.price,0);
+const useWallet=document.getElementById('useWalletBalance')?.checked;
+const balanceUsed=useWallet?Math.min(walletBalance,subtotal):0;
+const total=subtotal-balanceUsed;
+document.getElementById('cartSubtotal').textContent=`₹${subtotal}`;
+document.getElementById('cartBalanceUsed').textContent=`-₹${balanceUsed}`;
+document.getElementById('cartTotal').textContent=`₹${total}`;
+
+container.innerHTML=cartItems.map((item,i)=>`
+<div style="display:flex;justify-content:space-between;align-items:center;background:var(--glass);border:1px solid var(--gb);border-radius:12px;padding:1.2rem;margin-bottom:.8rem">
+<div>
+<div style="font-weight:700">${item.subcategory}</div>
+<div style="font-size:.8rem;color:var(--muted)">${item.examCategory} • 1 month</div>
+</div>
+<div style="display:flex;align-items:center;gap:1rem">
+<div style="font-weight:800;color:var(--blue2)">₹${item.price}</div>
+<button onclick="removeFromCartPage(${i})" style="background:rgba(239,68,68,.2);border:1px solid rgba(239,68,68,.4);color:var(--red);padding:.4rem .8rem;border-radius:6px;cursor:pointer;font-size:.8rem">✕</button>
+</div>
+</div>`).join('');
 }
 
 function goToCheckout(source, item=null){
@@ -1222,7 +1274,7 @@ function renderCheckoutPage(){
 const itemsDiv=document.getElementById('checkoutItems');
 const backBtn=document.getElementById('checkoutBackBtn');
 if(!itemsDiv)return;
-const items=checkoutSource==='buynow'&&buyNowItem?[buyNowItem]:[];
+const items=checkoutSource==='buynow'&&buyNowItem?[buyNowItem]:cartItems;
 if(!items.length){go('cart');return;}
 if(backBtn) backBtn.setAttribute('onclick',checkoutSource==='buynow'?'history.back()':"go('cart')");
 itemsDiv.innerHTML=items.map(i=>`
@@ -1251,7 +1303,7 @@ payBtn.disabled=true;
 
 await new Promise(r=>setTimeout(r,1500));
 
-const items=checkoutSource==='buynow'&&buyNowItem?[buyNowItem]:[];
+const items=checkoutSource==='buynow'&&buyNowItem?[buyNowItem]:cartItems;
 
 if(!items||!items.length){
 payBtn.disabled=false;
@@ -1278,6 +1330,7 @@ payBtn.disabled=false;
 payBtn.textContent='🔒 Pay Now';
 
 if(success>0){
+if(checkoutSource==='cart'){cartItems=[];const b=document.getElementById('cartBadge');if(b)b.textContent='';}
 buyNowItem=null;
 showPaymentSuccess(success, method);
 }else{
