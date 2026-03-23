@@ -1426,12 +1426,7 @@ else{msg.textContent='❌ Username taken';msg.style.color='var(--red)';}
 }
 
 // INITIALIZE - Load subcategories then render
-Promise.all([loadSubcategories(), loadProgramSettings()]).then(()=>{
-renderCategories();
-updateNav();
-initSubcategoryAutocomplete();
-});
-
+// Initialization handled by guide bot script below
 // CHATBOT
 let conversationHistory = [];
 
@@ -1890,9 +1885,16 @@ async function addMaterialPlanToCart(planId, planName, duration, price) {
 
 // Add subcategory plan to cart (store as cart item for now)
 async function addSubcategoryPlanToCart(planId, planName, duration, price) {
-  toast('💡 Subcategory bundles must be purchased directly', 'info');
-  // For now, redirect to checkout
-  await proceedToCheckoutSubcategory(planId, planName, duration, price);
+  if(!isLoggedIn()){toast('Please login first','error');go('login');return;}
+  const examCategory = pricingContext.examCategory;
+  const subcategory = pricingContext.subcategory;
+  if(cartItems.find(i=>i.examCategory===examCategory&&i.subcategory===subcategory)){
+    toast('Already in cart','error');return;
+  }
+  cartItems.push({examCategory, subcategory, price, planId, planName, duration});
+  const badge=document.getElementById('cartBadge');
+  if(badge) badge.textContent=cartItems.length||'';
+  toast(`🛒 ${subcategory} (${planName}) added to cart!`,'success');
 }
 
 // Proceed to checkout for material
@@ -2262,5 +2264,227 @@ setTimeout(updateCartBadge, 1000);
 </div>
 </div>
 
+
+<!-- GUIDE BOT -->
+<div id="guideOverlay" style="display:none;position:fixed;inset:0;z-index:99999;pointer-events:none"></div>
+<div id="guideBotWrap" style="display:none;position:fixed;z-index:100000;bottom:2rem;left:50%;transform:translateX(-50%);width:min(520px,92vw);pointer-events:all">
+  <div style="background:rgba(2,8,23,.98);border:2px solid var(--blue);border-radius:20px;padding:1.5rem 1.8rem;box-shadow:0 20px 60px rgba(59,130,246,.4);backdrop-filter:blur(20px);position:relative">
+    <!-- Bot header -->
+    <div style="display:flex;align-items:center;gap:.8rem;margin-bottom:1rem">
+      <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;animation:float 3s ease-in-out infinite">🎓</div>
+      <div>
+        <div style="font-weight:800;font-size:1rem;color:var(--white)">ScholarStock Guide</div>
+        <div style="font-size:.7rem;color:var(--blue2);font-weight:600">● Your personal tour guide</div>
+      </div>
+      <button onclick="skipGuide()" style="margin-left:auto;background:transparent;border:1px solid var(--gb);color:var(--muted);padding:.3rem .8rem;border-radius:6px;cursor:pointer;font-size:.75rem">Skip Tour</button>
+    </div>
+    <!-- Progress dots -->
+    <div id="guideDots" style="display:flex;gap:.4rem;margin-bottom:1rem;justify-content:center"></div>
+    <!-- Message -->
+    <div id="guideMsg" style="font-size:.95rem;line-height:1.6;color:var(--white);margin-bottom:1.3rem;min-height:60px"></div>
+    <!-- Buttons -->
+    <div style="display:flex;gap:.8rem">
+      <button id="guidePrevBtn" onclick="guidePrev()" style="background:transparent;border:1px solid var(--gb);color:var(--muted);padding:.7rem 1.4rem;border-radius:10px;cursor:pointer;font-weight:600;font-size:.85rem">← Back</button>
+      <button id="guideNextBtn" onclick="guideNext()" style="flex:1;background:linear-gradient(135deg,var(--blue),var(--purple));border:none;color:#fff;padding:.7rem 1.4rem;border-radius:10px;cursor:pointer;font-weight:700;font-size:.9rem">Got it! →</button>
+    </div>
+  </div>
+</div>
+
+<style>
+.guide-highlight{
+  position:relative;
+  z-index:99998!important;
+  outline:3px solid #3b82f6!important;
+  outline-offset:4px!important;
+  border-radius:12px!important;
+  animation:guidePulse 1.5s ease-in-out infinite!important;
+}
+@keyframes guidePulse{
+  0%,100%{outline-color:#3b82f6;box-shadow:0 0 0 0 rgba(59,130,246,.4)}
+  50%{outline-color:#60a5fa;box-shadow:0 0 0 8px rgba(59,130,246,0)}
+}
+</style>
+
+<script>
+const GUIDE_STEPS = [
+  {
+    msg: `👋 <strong>Welcome to ScholarStock!</strong><br><br>I'm your personal guide. I'll walk you through everything in about 60 seconds. You can skip anytime.<br><br>ScholarStock lets you <strong>rent study materials</strong> for 100+ competitive exams — JEE, NEET, UPSC, CAT, GRE and more — at a fraction of the cost of buying them.`,
+    highlight: null,
+    scrollTo: null,
+    action: null
+  },
+  {
+    msg: `📚 <strong>Browse Exam Categories</strong><br><br>The home page shows all <strong>107 exam categories</strong>. Use the search bar to quickly find your exam — type "JEE", "NEET", "UPSC" or anything else.`,
+    highlight: 'categoryGrid',
+    scrollTo: 'categoryGrid',
+    action: null
+  },
+  {
+    msg: `📂 <strong>Subcategories inside each Exam</strong><br><br>Click any exam card to see its subcategories — Physics, Chemistry, Maths, Previous Year Papers, Mock Tests and more.<br><br>Every exam also has a <span style="color:var(--green);font-weight:700">Free Resources</span> section — completely free, no account needed!`,
+    highlight: null,
+    scrollTo: 'categoryGrid',
+    action: null
+  },
+  {
+    msg: `📦 <strong>Bundle Plans</strong> — shown live below!<br><br>When you click <strong>⚡ Buy</strong> on a subcategory, you see these 10 plans. Each one unlocks <em>all materials</em> inside that subcategory for the chosen duration:<br><br>1 Day ₹19 · 2 Days ₹35 · 3 Days ₹49 · 5 Days ₹79<br>⭐ 1 Week ₹99 · 10 Days ₹129 · 2 Weeks ₹159 · 3 Weeks ₹199<br>💎 1 Month ₹249 · 2 Months ₹399`,
+    highlight: null,
+    scrollTo: null,
+    action: () => {
+      pricingContext = {type:'subcategory', materialId:null, materialTitle:null, examCategory:'JEE Main', subcategory:'Physics', price:199};
+      go('pricing-plans');
+    }
+  },
+  {
+    msg: `📄 <strong>Individual Plans</strong> — shown live below!<br><br>When you click <strong>Rent Now</strong> on a single material from the Browse page, you see these 10 plans. Rent just one PDF or book at a much lower price:<br><br>1 Day ₹5 · 2 Days ₹9 · 3 Days ₹13 · 5 Days ₹19<br>⭐ 1 Week ₹29 · 10 Days ₹39 · 2 Weeks ₹49 · 3 Weeks ₹69<br>💎 1 Month ₹89 · 2 Months ₹149`,
+    highlight: null,
+    scrollTo: null,
+    action: () => {
+      pricingContext = {type:'material', materialId:'demo', materialTitle:'Sample Study Material', examCategory:null, subcategory:null, price:null};
+      go('pricing-plans');
+    }
+  },
+  {
+    msg: `🛒 <strong>Shopping Cart</strong><br><br>Add multiple subcategories to your cart and pay for everything at once. Choose from:<br><br>📱 UPI &nbsp;·&nbsp; 💳 Card &nbsp;·&nbsp; 🏦 Net Banking &nbsp;·&nbsp; 👛 Wallet<br><br>Your wallet balance from referrals can also be used as a discount at checkout!`,
+    highlight: null,
+    scrollTo: null,
+    action: () => {
+      go('home');
+      setTimeout(()=>{
+        const cartLink = document.querySelector('.nl[onclick*="cart"]');
+        if(cartLink){ cartLink.classList.add('guide-highlight'); setTimeout(()=>cartLink.classList.remove('guide-highlight'),3000); }
+      }, 400);
+    }
+  },
+  {
+    msg: `📖 <strong>Your Library</strong><br><br>After renting, all your subcategories appear in <strong>📚 Library</strong>. Open any subcategory to browse and read its PDFs instantly in the browser — no download required, and no print/copy option to protect content.<br><br>You'll see a countdown of days remaining for each rental.`,
+    highlight: null,
+    scrollTo: null,
+    action: null
+  },
+  {
+    msg: `🎁 <strong>Referral Program — Earn Free Credits!</strong><br><br>Share your <strong>username</strong> with friends. When they sign up using your username and make rentals, you earn <strong>₹20 cashback</strong> to your wallet every 3 rentals they make.<br><br>Check your earnings in <strong>👤 Profile → Referral History</strong>.`,
+    highlight: null,
+    scrollTo: null,
+    action: null
+  },
+  {
+    msg: `🤖 <strong>AI Chatbot</strong><br><br>See the <strong>💬 button</strong> at the bottom right? That's your ScholarStock AI assistant — ask it anything about finding materials, study tips, exam strategies, or how the platform works.`,
+    highlight: 'chatbot-btn',
+    scrollTo: null,
+    action: null
+  },
+  {
+    msg: `✅ <strong>You're all set!</strong><br><br>Here's a quick recap:<br>• 🔍 Search your exam on the home page<br>• 📂 Pick a subcategory & choose a plan<br>• 🛒 Add to cart or buy directly<br>• 📖 Read in your Library<br>• 🎁 Refer friends & earn wallet credits<br><br><strong>Create a free account to get started!</strong>`,
+    highlight: null,
+    scrollTo: null,
+    action: null,
+    lastStep: true
+  }
+];
+
+let guideStep = 0;
+let guideActive = false;
+let lastHighlightEl = null;
+
+function initGuide() {
+  // Show guide if no token AND not seen before
+  const token = localStorage.getItem('token');
+  const seen = localStorage.getItem('guideShown');
+  console.log('Guide check — token:', !!token, 'seen:', seen);
+  if (token) { console.log('Guide skipped: user logged in'); return; }
+  if (seen) { console.log('Guide skipped: already shown'); return; }
+  setTimeout(startGuide, 1200);
+}
+
+function startGuide() {
+  guideActive = true;
+  document.getElementById('guideBotWrap').style.display = 'block';
+  document.getElementById('guideOverlay').style.display = 'block';
+  guideStep = 0;
+  renderGuideStep();
+}
+
+function renderGuideStep() {
+  const step = GUIDE_STEPS[guideStep];
+  const total = GUIDE_STEPS.length;
+
+  // Dots
+  document.getElementById('guideDots').innerHTML = GUIDE_STEPS.map((_,i) =>
+    `<div style="width:${i===guideStep?'20px':'8px'};height:8px;border-radius:50px;background:${i===guideStep?'var(--blue)':i<guideStep?'rgba(59,130,246,.4)':'var(--gb)'};transition:all .3s"></div>`
+  ).join('');
+
+  // Message
+  document.getElementById('guideMsg').innerHTML = step.msg;
+
+  // Prev button
+  document.getElementById('guidePrevBtn').style.display = guideStep === 0 ? 'none' : 'block';
+
+  // Next button
+  const nextBtn = document.getElementById('guideNextBtn');
+  if (step.lastStep) {
+    nextBtn.textContent = '🚀 Create Free Account';
+    nextBtn.onclick = () => { skipGuide(); go('signup'); };
+  } else {
+    nextBtn.textContent = 'Got it! →';
+    nextBtn.onclick = guideNext;
+  }
+
+  // Remove old highlight
+  if (lastHighlightEl) {
+    lastHighlightEl.classList.remove('guide-highlight');
+    lastHighlightEl = null;
+  }
+
+  // Highlight element
+  if (step.highlight) {
+    const el = document.getElementById(step.highlight);
+    if (el) {
+      el.classList.add('guide-highlight');
+      lastHighlightEl = el;
+    }
+  }
+
+  // Scroll
+  if (step.scrollTo) {
+    const el = document.getElementById(step.scrollTo);
+    if (el) setTimeout(() => el.scrollIntoView({behavior:'smooth', block:'center'}), 200);
+  } else {
+    setTimeout(() => window.scrollTo({top:0, behavior:'smooth'}), 200);
+  }
+
+  // Custom action
+  if (step.action) step.action();
+}
+
+function guideNext() {
+  if (guideStep < GUIDE_STEPS.length - 1) {
+    guideStep++;
+    renderGuideStep();
+  }
+}
+
+function guidePrev() {
+  if (guideStep > 0) {
+    guideStep--;
+    renderGuideStep();
+  }
+}
+
+function skipGuide() {
+  guideActive = false;
+  document.getElementById('guideBotWrap').style.display = 'none';
+  document.getElementById('guideOverlay').style.display = 'none';
+  if (lastHighlightEl) { lastHighlightEl.classList.remove('guide-highlight'); lastHighlightEl = null; }
+  localStorage.setItem('guideShown', '1');
+}
+
+// Start after categories load
+Promise.all([loadSubcategories(), loadProgramSettings()]).then(()=>{
+  renderCategories();
+  updateNav();
+  initSubcategoryAutocomplete();
+  initGuide();
+});
+</script>
 </body>
 </html>
