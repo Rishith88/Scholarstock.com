@@ -1746,6 +1746,17 @@ async function showPricingPlansForSubcategory(examCategory, subcategory, price) 
   go('pricing-plans');
 }
 
+function getPlanCountdown(expiry){
+  if(!expiry) return null;
+  const diff = new Date(expiry).getTime() - Date.now();
+  if(diff <= 0) return null; // expired plans filtered out already
+  const days = Math.floor(diff/86400000);
+  const hrs = Math.floor((diff%86400000)/3600000);
+  if(days > 1) return `⏱ Offer ends in ${days}d ${hrs}h`;
+  if(days === 1) return `⏱ Offer ends in 1d ${hrs}h`;
+  return `⏱ Offer ends in ${hrs}h`;
+}
+
 async function loadPricingPlansPage() {
   const titleEl = document.getElementById('pricingPlansTitle');
   const subtitleEl = document.getElementById('pricingPlansSubtitle');
@@ -1784,28 +1795,30 @@ async function loadPricingPlansPage() {
   
   let plans = fallbackPlans;
   
-  try {
-    // Try to fetch plans from API
-    const res = await fetch(`${API_URL}/api/pricing-plans/public`);
-    const data = await res.json();
-    
-    // Validate that API response has the correct structure
-    if (data.success && 
-        data.plans && 
-        Array.isArray(data.plans.individualPlans) && 
-        Array.isArray(data.plans.bundlePlans) &&
-        data.plans.individualPlans.length > 0 &&
-        data.plans.bundlePlans.length > 0) {
-      plans = data.plans;
-      console.log('✅ Loaded pricing plans from API');
-    } else {
-      console.log('⚠️ Using fallback pricing plans (API returned invalid/incomplete data)');
-      console.log('API Response:', data);
+  // Read plans from localStorage (set by admin panel) — only show active plans
+  try{
+    const saved = localStorage.getItem('ss_plans');
+    if(saved){
+      const parsed = JSON.parse(saved);
+      const currentCat = pricingContext.examCategory || '';
+      if(parsed.individual && parsed.bundle){
+        const filterByScope = (p) => {
+          if(!p.active) return false;
+          if(p.expiry && new Date(p.expiry).getTime() <= Date.now()) return false;
+          const scope = p.scope || 'all';
+          if(scope === 'all') return true;
+          if(scope === 'single' || scope === 'multiple') return (p.categories||[]).includes(currentCat);
+          return true;
+        };
+        plans = {
+          individualPlans: parsed.individual.filter(filterByScope)
+            .map(p=>({id:p.id,name:p.name,duration:p.duration,price:p.price,savings:p.savings||0,active:true,badge:p.badge||null,expiry:p.expiry||null})),
+          bundlePlans: parsed.bundle.filter(filterByScope)
+            .map(p=>({id:p.id,name:p.name,duration:p.duration,price:p.price,savings:p.savings||0,active:true,badge:p.badge||null,expiry:p.expiry||null}))
+        };
+      }
     }
-  } catch (e) {
-    console.log('⚠️ Using fallback pricing plans (API not available)');
-    console.error('API Error:', e);
-  }
+  }catch(e){}
   
   // Render the plans
   if (pricingContext.type === 'material') {
@@ -1823,6 +1836,7 @@ async function loadPricingPlansPage() {
         <div class="plan-price-big">₹${plan.price}</div>
         <div class="plan-duration">${plan.duration} day${plan.duration !== 1 ? 's' : ''} access</div>
         ${plan.savings > 0 ? `<div class="plan-savings">💰 Save ₹${plan.savings}</div>` : '<div style="height:1.5rem"></div>'}
+        ${plan.expiry ? `<div style="font-size:.72rem;font-weight:700;color:var(--gold);margin-bottom:.5rem">${getPlanCountdown(plan.expiry)||''}</div>` : ''}
         <div class="plan-actions">
           <button class="btn btn-ghost" style="width:100%" onclick="addMaterialPlanToCart('${plan.id}', '${plan.name}', ${plan.duration}, ${plan.price})">🛒 Add to Cart</button>
           <button class="btn btn-grad" style="width:100%" onclick="proceedToCheckoutMaterial('${plan.id}', '${plan.name}', ${plan.duration}, ${plan.price})">⚡ Proceed to Checkout</button>
@@ -1845,6 +1859,7 @@ async function loadPricingPlansPage() {
         <div class="plan-price-big">₹${plan.price}</div>
         <div class="plan-duration">${plan.duration} day${plan.duration !== 1 ? 's' : ''} access to ALL materials</div>
         ${plan.savings > 0 ? `<div class="plan-savings">💰 Save ₹${plan.savings}</div>` : '<div style="height:1.5rem"></div>'}
+        ${plan.expiry ? `<div style="font-size:.72rem;font-weight:700;color:var(--gold);margin-bottom:.5rem">${getPlanCountdown(plan.expiry)||''}</div>` : ''}
         <div class="plan-actions">
           <button class="btn btn-ghost" style="width:100%" onclick="addSubcategoryPlanToCart('${plan.id}', '${plan.name}', ${plan.duration}, ${plan.price})">🛒 Add to Cart</button>
           <button class="btn btn-grad" style="width:100%" onclick="proceedToCheckoutSubcategory('${plan.id}', '${plan.name}', ${plan.duration}, ${plan.price})">⚡ Proceed to Checkout</button>
