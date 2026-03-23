@@ -534,7 +534,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 <a>Instagram</a>
 </div>
 </div>
-<div class="footer-bottom">© 2026 ScholarStock. All rights reserved. Made with ❤️ for students.</div>
+<div class="footer-bottom">© 2026 ScholarStock. All rights reserved. Made with ❤️ for students. &nbsp;·&nbsp; <span onclick="localStorage.removeItem('guideShown');startGuide();" style="color:var(--blue2);cursor:pointer;font-weight:600">🎓 Take the Tour</span></div>
 </div>
 
 <div id="toast" class="toast success">Account created!</div>
@@ -606,6 +606,7 @@ nav.innerHTML=`
 <span class="nl" onclick="go('browse')">Browse</span>
 <span class="nl" onclick="go('library')">📚 Library</span>
 <span class="nl" onclick="go('cart')" style="position:relative">🛒 Cart <span id="cartBadge" style="position:absolute;top:-8px;right:-8px;background:var(--blue);color:white;border-radius:50%;width:18px;height:18px;font-size:.65rem;display:flex;align-items:center;justify-content:center;font-weight:700"></span></span>
+<span class="nl" onclick="localStorage.removeItem('guideShown');startGuide();" style="color:var(--blue2)">🎓 Tour</span>
 <button class="nbtn nbtn-ghost" onclick="go('profile')">👤 ${user.name.split(' ')[0]}</button>
 <button class="nbtn nbtn-grad" onclick="logout()">Logout</button>
 `;
@@ -613,6 +614,7 @@ nav.innerHTML=`
 nav.innerHTML=`
 <span class="nl" onclick="go('home')">Home</span>
 <span class="nl" onclick="go('browse')">Browse</span>
+<span class="nl" onclick="localStorage.removeItem('guideShown');startGuide();" style="color:var(--blue2)">🎓 Tour</span>
 <button class="nbtn nbtn-ghost" onclick="go('login')">Login</button>
 <button class="nbtn nbtn-grad" onclick="go('signup')">Get Started</button>
 `;
@@ -2483,8 +2485,10 @@ Promise.all([loadSubcategories(), loadProgramSettings()]).then(()=>{
   renderCategories();
   updateNav();
   initSubcategoryAutocomplete();
-  initGuide();
 });
+
+// Guide runs immediately, independent of backend
+initGuide();
 </script>
 </body>
 </html>
