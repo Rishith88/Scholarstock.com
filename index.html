@@ -1197,7 +1197,7 @@ body.light .hamburger{border-color:rgba(0,0,0,.15);color:#475569}
 
 <!-- Cloudflare email-decode removed for local testing -->
 <script>
-const API_URL='https://scholarstock-com-backend-6.onrender.com';
+const API_URL='https://scholarstock-backend-rfr4.onrender.com';
 
 let SUBCATEGORIES_DATA={};
 let allSubcategories=[];
@@ -1478,7 +1478,7 @@ grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:3rem;colo
 // LOAD SUBCATEGORIES FROM API
 async function loadSubcategories(){
 try{
-const res=await fetch('https://scholarstock-com-backend-6.onrender.com/api/categories/structure');
+const res=await fetch('https://scholarstock-backend-rfr4.onrender.com/api/categories/structure');
 const data=await res.json();
 if(data.success&&data.categories&&Object.keys(data.categories).length>0){
 SUBCATEGORIES_DATA=data.categories;
