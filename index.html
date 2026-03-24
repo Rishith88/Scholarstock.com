@@ -8,10 +8,51 @@
 
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>ScholarStock — Study Smarter, Pay Less</title>
-<link href="file:///C:/Users/ganes/Downloads/ScholarStock%20%E2%80%94%20Study%20Smarter,%20Pay%20Less_files/css2" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#020817;--glass:rgba(255,255,255,.04);--gb:rgba(255,255,255,.08);--ghov:rgba(255,255,255,.07);--blue:#3b82f6;--blue2:#60a5fa;--purple:#8b5cf6;--cyan:#06b6d4;--gold:#f59e0b;--white:#f8fafc;--muted:#94a3b8;--muted2:#64748b;--green:#10b981;--red:#ef4444}
+
+/* LIGHT MODE */
+body.light{--bg:#f0f4ff;--glass:rgba(0,0,0,.04);--gb:rgba(0,0,0,.1);--ghov:rgba(0,0,0,.06);--white:#1e293b;--muted:#64748b;--muted2:#94a3b8}
+body.light .nav{background:rgba(240,244,255,.97)}
+body.light .autocomplete-dropdown{background:rgba(240,244,255,.99)}
+body.light .toast{background:rgba(240,244,255,.99);color:#1e293b}
+body.light .pdf-container{background:#f0f4ff}
+body.light .auth-box{background:rgba(255,255,255,.7)}
+body.light .footer{background:rgba(220,228,245,.98)}
+body.light .pricing-content,.body.light .cart-content{background:#f0f4ff}
+
+/* DARK MODE TOGGLE BTN */
+.theme-toggle{background:transparent;border:1px solid var(--gb);border-radius:8px;padding:.5rem .7rem;cursor:pointer;font-size:1rem;color:var(--muted);transition:all .2s;line-height:1}
+.theme-toggle:hover{border-color:var(--blue2);color:var(--blue2)}
+
+/* WISHLIST HEART */
+.wish-btn{position:absolute;top:.8rem;right:.8rem;background:rgba(0,0,0,.3);border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all .2s;z-index:2;backdrop-filter:blur(4px)}
+.wish-btn:hover{transform:scale(1.15)}
+.wish-btn.active{background:rgba(239,68,68,.25);color:#ef4444}
+.doc-card{position:relative}
+
+/* REVIEWS */
+.reviews-modal{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:none;align-items:center;justify-content:center;backdrop-filter:blur(10px)}
+.reviews-modal.on{display:flex}
+.reviews-box{background:var(--bg);border:1px solid var(--gb);border-radius:20px;padding:2rem;width:560px;max-width:95vw;max-height:88vh;overflow-y:auto}
+.reviews-box h3{font-size:1.2rem;font-weight:800;margin-bottom:1.2rem}
+.review-item{background:var(--glass);border:1px solid var(--gb);border-radius:10px;padding:1rem;margin-bottom:.8rem}
+.review-stars{color:var(--gold);font-size:1rem;margin-bottom:.3rem}
+.review-text{font-size:.85rem;color:var(--muted);line-height:1.5}
+.review-author{font-size:.75rem;color:var(--muted2);margin-top:.4rem}
+.star-select{display:flex;gap:.3rem;font-size:1.5rem;cursor:pointer;margin:.5rem 0}
+.star-select span{opacity:.4;transition:opacity .15s}
+.star-select span.on{opacity:1}
+.review-form textarea{width:100%;background:rgba(255,255,255,.05);border:1px solid var(--gb);border-radius:8px;padding:.8rem;color:var(--white);font-size:.85rem;outline:none;resize:vertical;min-height:80px;font-family:inherit}
+.review-form textarea:focus{border-color:var(--blue)}
+.avg-rating{display:flex;align-items:center;gap:.8rem;margin-bottom:1.2rem;background:var(--glass);border:1px solid var(--gb);border-radius:12px;padding:1rem}
+.avg-big{font-size:2.5rem;font-weight:900;color:var(--gold)}
+
+/* WISHLIST PAGE */
+.wish-empty{text-align:center;padding:4rem 2rem;color:var(--muted)}
+
 body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;line-height:1.6}
 .orbs{position:fixed;inset:0;z-index:0;pointer-events:none}
 .orb{position:absolute;border-radius:50%;filter:blur(130px);opacity:.13}
@@ -23,6 +64,15 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .nav.scrolled{box-shadow:0 4px 30px rgba(0,0,0,.3)}
 .nav-inner{max-width:1200px;margin:0 auto;padding:0 2rem;display:flex;align-items:center;justify-content:space-between}
 .logo{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,#fff,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;cursor:pointer}
+body.light .logo{background:linear-gradient(135deg,#1e40af,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+body.light .nl{color:#475569}
+body.light .nl:hover{color:#1e293b}
+body.light .nbtn-ghost{border-color:rgba(0,0,0,.2);color:#475569}
+body.light .nbtn-ghost:hover{border-color:#3b82f6;color:#3b82f6}
+body.light .cat-card,.body.light .doc-card,.body.light .subcat-card{background:rgba(255,255,255,.7)}
+body.light .filter-bar select{background:rgba(255,255,255,.8);color:#1e293b;border-color:rgba(0,0,0,.15)}
+body.light .form-group input{background:rgba(255,255,255,.8);color:#1e293b}
+body.light .pf-input{background:rgba(255,255,255,.8);color:#1e293b}
 .nav-links{display:flex;gap:1.5rem;align-items:center}
 .nl{color:var(--muted);font-size:.9rem;cursor:pointer;transition:color .2s;font-weight:500}
 .nl:hover{color:var(--white)}
@@ -39,6 +89,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .hero-pill{display:inline-block;background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);color:var(--blue2);padding:.5rem 1.2rem;border-radius:50px;font-size:.8rem;font-weight:600;margin-bottom:1.5rem;animation:float 3s ease-in-out infinite}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 .hero-title{font-family:'Playfair Display',serif;font-size:3.5rem;font-weight:800;line-height:1.1;margin-bottom:1rem;background:linear-gradient(135deg,#fff,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+body.light .hero-title{background:linear-gradient(135deg,#1e293b,#1e40af);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .hero-sub{font-size:1.2rem;color:var(--muted);max-width:600px;margin:0 auto 2rem}
 .hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
 .btn{padding:.9rem 2rem;border-radius:10px;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .3s;border:none}
@@ -193,6 +244,86 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .plan-savings{color:var(--green);font-weight:700;font-size:.95rem;margin-bottom:1.5rem}
 .plan-actions{display:flex;flex-direction:column;gap:.8rem}
 
+/* ── SIDEBAR ── */
+.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:998;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(4px)}
+.sidebar-overlay.on{opacity:1;pointer-events:all}
+.sidebar{position:fixed;top:0;left:0;height:100vh;width:280px;background:var(--bg);border-right:1px solid var(--gb);z-index:999;transform:translateX(-100%);transition:transform .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow:hidden}
+.sidebar.on{transform:translateX(0)}
+body.light .sidebar{background:#f8faff;border-right-color:rgba(0,0,0,.1)}
+.sidebar-head{padding:1.5rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--gb)}
+body.light .sidebar-head{border-bottom-color:rgba(0,0,0,.08)}
+.sidebar-logo{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:800;background:linear-gradient(135deg,#fff,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+body.light .sidebar-logo{background:linear-gradient(135deg,#1e40af,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sidebar-close{background:transparent;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;padding:.2rem;line-height:1;transition:color .2s}
+.sidebar-close:hover{color:var(--white)}
+.sidebar-profile{padding:1.2rem 1.5rem;border-bottom:1px solid var(--gb);display:flex;align-items:center;gap:.9rem}
+body.light .sidebar-profile{border-bottom-color:rgba(0,0,0,.08)}
+.sidebar-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700;color:#fff;flex-shrink:0}
+.sidebar-uname{font-weight:700;font-size:.95rem;color:var(--white)}
+body.light .sidebar-uname{color:#1e293b}
+.sidebar-email{font-size:.75rem;color:var(--muted);margin-top:.1rem}
+.sidebar-nav{flex:1;overflow-y:auto;padding:.8rem 0}
+.sidebar-section{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted2);padding:.8rem 1.5rem .4rem}
+.sidebar-item{display:flex;align-items:center;gap:.9rem;padding:.75rem 1.5rem;cursor:pointer;transition:background .15s,color .15s;color:var(--muted);font-size:.9rem;font-weight:500;border:none;background:transparent;width:100%;text-align:left}
+.sidebar-item:hover{background:var(--glass);color:var(--white)}
+body.light .sidebar-item:hover{background:rgba(0,0,0,.05);color:#1e293b}
+.sidebar-item.active{background:rgba(59,130,246,.12);color:var(--blue2);border-right:3px solid var(--blue)}
+.sidebar-icon{width:20px;text-align:center;font-size:1.05rem;flex-shrink:0}
+.sidebar-label{flex:1}
+.sidebar-badge{background:var(--red);color:#fff;border-radius:50px;font-size:.65rem;font-weight:700;padding:1px 6px;min-width:18px;text-align:center}
+.sidebar-badge.blue{background:var(--blue)}
+.sidebar-footer{padding:1rem 1.5rem;border-top:1px solid var(--gb);display:flex;flex-direction:column;gap:.5rem}
+body.light .sidebar-footer{border-top-color:rgba(0,0,0,.08)}
+.sidebar-theme-row{display:flex;align-items:center;justify-content:space-between;padding:.5rem 0}
+.sidebar-theme-label{font-size:.85rem;color:var(--muted);font-weight:500}
+.sidebar-logout{display:flex;align-items:center;gap:.8rem;padding:.7rem 1rem;border-radius:8px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:var(--red);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;width:100%}
+.sidebar-logout:hover{background:rgba(239,68,68,.15)}
+/* Hamburger button in nav */
+.hamburger{background:transparent;border:1px solid var(--gb);border-radius:8px;padding:.5rem .65rem;cursor:pointer;font-size:1.1rem;color:var(--muted);transition:all .2s;line-height:1;display:flex;align-items:center;justify-content:center}
+.hamburger:hover{border-color:var(--blue2);color:var(--blue2)}
+body.light .hamburger{border-color:rgba(0,0,0,.15);color:#475569}
+
+/* ── SIDEBAR ── */
+.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:998;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(4px)}
+.sidebar-overlay.on{opacity:1;pointer-events:all}
+.sidebar{position:fixed;top:0;left:0;height:100vh;width:280px;background:var(--bg);border-right:1px solid var(--gb);z-index:999;transform:translateX(-100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow-y:auto}
+.sidebar.on{transform:translateX(0)}
+body.light .sidebar{background:#f8faff;border-right-color:rgba(0,0,0,.1)}
+.sidebar-header{display:flex;align-items:center;justify-content:space-between;padding:1.4rem 1.2rem 1rem;border-bottom:1px solid var(--gb)}
+.sidebar-logo{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:800;background:linear-gradient(135deg,#fff,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+body.light .sidebar-logo{background:linear-gradient(135deg,#1e40af,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sidebar-close{background:transparent;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;padding:.2rem;line-height:1;transition:color .2s}
+.sidebar-close:hover{color:var(--white)}
+
+/* Profile section at top of sidebar */
+.sidebar-profile{display:flex;align-items:center;gap:.8rem;padding:1.2rem;margin:.8rem;background:var(--glass);border:1px solid var(--gb);border-radius:12px;cursor:pointer;transition:all .2s}
+.sidebar-profile:hover{background:var(--ghov);border-color:rgba(59,130,246,.3)}
+body.light .sidebar-profile{background:rgba(255,255,255,.7)}
+.sidebar-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700;color:#fff;flex-shrink:0}
+.sidebar-username{font-weight:700;font-size:.9rem;color:var(--white)}
+body.light .sidebar-username{color:#1e293b}
+.sidebar-email{font-size:.73rem;color:var(--muted);margin-top:.1rem}
+
+/* Nav items */
+.sidebar-section{padding:.5rem 0}
+.sidebar-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted2);padding:.4rem 1.2rem;margin-top:.3rem}
+.sidebar-item{display:flex;align-items:center;gap:.8rem;padding:.72rem 1.2rem;cursor:pointer;transition:all .2s;color:var(--muted);font-size:.88rem;font-weight:500;border-left:3px solid transparent;margin:1px 0}
+.sidebar-item:hover{background:var(--glass);color:var(--white);border-left-color:var(--blue2)}
+body.light .sidebar-item:hover{background:rgba(59,130,246,.08);color:#1e293b}
+.sidebar-item.active{background:rgba(59,130,246,.1);color:var(--blue2);border-left-color:var(--blue)}
+.sidebar-item-icon{font-size:1.05rem;width:22px;text-align:center;flex-shrink:0}
+.sidebar-item-badge{margin-left:auto;background:var(--red);color:#fff;border-radius:50%;min-width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;padding:0 3px}
+
+/* Sidebar footer */
+.sidebar-footer{margin-top:auto;padding:1rem 1.2rem;border-top:1px solid var(--gb);display:flex;flex-direction:column;gap:.5rem}
+.sidebar-theme-row{display:flex;align-items:center;justify-content:space-between;padding:.5rem .8rem;background:var(--glass);border-radius:8px;font-size:.83rem;color:var(--muted)}
+body.light .sidebar-theme-row{background:rgba(255,255,255,.6)}
+
+/* Hamburger button */
+.hamburger{background:transparent;border:1px solid var(--gb);border-radius:8px;padding:.45rem .6rem;cursor:pointer;color:var(--muted);font-size:1.1rem;line-height:1;transition:all .2s;display:flex;align-items:center;gap:.4rem}
+.hamburger:hover{border-color:var(--blue2);color:var(--blue2)}
+body.light .hamburger{border-color:rgba(0,0,0,.15);color:#475569}
+
 
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -201,17 +332,200 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 <body>
 <div class="orbs"><div class="orb o1"></div><div class="orb o2"></div></div>
 
+<!-- SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <span class="sidebar-logo">SCHOLARSTOCK</span>
+    <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+  </div>
+
+  <!-- Profile (shown when logged in) -->
+  <div id="sidebarProfile" style="display:none" onclick="closeSidebar();go('profile')">
+    <div class="sidebar-profile">
+      <div class="sidebar-avatar" id="sidebarAvatar">👤</div>
+      <div>
+        <div class="sidebar-username" id="sidebarName">Student</div>
+        <div class="sidebar-email" id="sidebarEmail">View Profile →</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Nav -->
+  <div class="sidebar-section">
+    <div class="sidebar-label">Navigate</div>
+    <div class="sidebar-item" onclick="closeSidebar();go('home')">
+      <span class="sidebar-item-icon">🏠</span> Home
+    </div>
+    <div class="sidebar-item" onclick="closeSidebar();go('browse')">
+      <span class="sidebar-item-icon">🔍</span> Browse Materials
+    </div>
+    <div class="sidebar-item" onclick="closeSidebar();go('library')">
+      <span class="sidebar-item-icon">📚</span> My Library
+    </div>
+    <div class="sidebar-item" onclick="closeSidebar();go('materials')">
+      <span class="sidebar-item-icon">📄</span> My Rentals
+    </div>
+  </div>
+
+  <!-- Tools -->
+  <div class="sidebar-section">
+    <div class="sidebar-label">Tools</div>
+    <div class="sidebar-item" onclick="closeSidebar();go('calc')">
+      <span class="sidebar-item-icon">🧮</span> Calculator
+    </div>
+    <div class="sidebar-item" onclick="closeSidebar();go('wishlist')">
+      <span class="sidebar-item-icon">❤️</span> Wishlist
+      <span class="sidebar-item-badge" id="sidebarWishBadge" style="display:none">0</span>
+    </div>
+    <div class="sidebar-item" onclick="closeSidebar();go('cart')">
+      <span class="sidebar-item-icon">🛒</span> Cart
+      <span class="sidebar-item-badge" id="sidebarCartBadge" style="display:none">0</span>
+    </div>
+  </div>
+
+  <!-- Account (shown when logged in) -->
+  <div class="sidebar-section" id="sidebarAccountSection" style="display:none">
+    <div class="sidebar-label">Account</div>
+    <div class="sidebar-item" onclick="closeSidebar();go('profile')">
+      <span class="sidebar-item-icon">👤</span> Profile & Settings
+    </div>
+    <div class="sidebar-item" onclick="closeSidebar();go('pricing-plans')">
+      <span class="sidebar-item-icon">💎</span> Pricing Plans
+    </div>
+    <div class="sidebar-item" onclick="closeSidebar();localStorage.removeItem('guideShown');startGuide()">
+      <span class="sidebar-item-icon">🎓</span> Take the Tour
+    </div>
+    <div class="sidebar-item" style="color:var(--red)" onclick="closeSidebar();logout()">
+      <span class="sidebar-item-icon">🚪</span> Logout
+    </div>
+  </div>
+
+  <!-- Guest links (shown when logged out) -->
+  <div class="sidebar-section" id="sidebarGuestSection" style="display:none">
+    <div class="sidebar-label">Account</div>
+    <div class="sidebar-item" onclick="closeSidebar();go('login')">
+      <span class="sidebar-item-icon">🔑</span> Login
+    </div>
+    <div class="sidebar-item" onclick="closeSidebar();go('signup')">
+      <span class="sidebar-item-icon">✨</span> Get Started
+    </div>
+  </div>
+
+  <!-- Footer: theme toggle -->
+  <div class="sidebar-footer">
+    <div class="sidebar-theme-row">
+      <span id="sidebarThemeLabel">🌙 Dark Mode</span>
+      <button class="theme-toggle" onclick="toggleTheme();updateSidebarThemeLabel()" style="border:none;padding:0;font-size:1rem;background:transparent"></button>
+    </div>
+  </div>
+</div>
+
+
+<!-- SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <!-- Head -->
+  <div class="sidebar-head">
+    <div class="sidebar-logo">SCHOLARSTOCK</div>
+    <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+  </div>
+
+  <!-- Profile (shown when logged in) -->
+  <div class="sidebar-profile" id="sidebarProfile" style="display:none">
+    <div class="sidebar-avatar" id="sidebarAvatar">👤</div>
+    <div>
+      <div class="sidebar-uname" id="sidebarUname">User</div>
+      <div class="sidebar-email" id="sidebarEmail"></div>
+    </div>
+  </div>
+
+  <!-- Nav items -->
+  <div class="sidebar-nav">
+
+    <div class="sidebar-section">Explore</div>
+    <button class="sidebar-item" onclick="go('home');closeSidebar()">
+      <span class="sidebar-icon">🏠</span><span class="sidebar-label">Home</span>
+    </button>
+    <button class="sidebar-item" onclick="go('browse');closeSidebar()">
+      <span class="sidebar-icon">🔍</span><span class="sidebar-label">Browse Materials</span>
+    </button>
+    <button class="sidebar-item" onclick="go('pricing-plans');closeSidebar()">
+      <span class="sidebar-icon">💎</span><span class="sidebar-label">Pricing Plans</span>
+    </button>
+
+    <div id="sidebarLoggedIn" style="display:none">
+      <div class="sidebar-section">My Account</div>
+      <button class="sidebar-item" onclick="go('profile');closeSidebar()">
+        <span class="sidebar-icon">👤</span><span class="sidebar-label">My Profile</span>
+      </button>
+      <button class="sidebar-item" onclick="go('materials');closeSidebar()">
+        <span class="sidebar-icon">📄</span><span class="sidebar-label">My Materials</span>
+      </button>
+      <button class="sidebar-item" onclick="go('library');closeSidebar()">
+        <span class="sidebar-icon">📚</span><span class="sidebar-label">Library</span>
+      </button>
+      <button class="sidebar-item" onclick="go('wishlist');closeSidebar()">
+        <span class="sidebar-icon">❤️</span>
+        <span class="sidebar-label">Wishlist</span>
+        <span class="sidebar-badge" id="sidebarWishBadge" style="display:none">0</span>
+      </button>
+      <button class="sidebar-item" onclick="go('cart');closeSidebar()">
+        <span class="sidebar-icon">🛒</span>
+        <span class="sidebar-label">Cart</span>
+        <span class="sidebar-badge blue" id="sidebarCartBadge" style="display:none">0</span>
+      </button>
+
+      <div class="sidebar-section">Tools</div>
+      <button class="sidebar-item" onclick="go('calc');closeSidebar()">
+        <span class="sidebar-icon">🧮</span><span class="sidebar-label">Calculator</span>
+      </button>
+      <button class="sidebar-item" onclick="localStorage.removeItem('guideShown');startGuide();closeSidebar()">
+        <span class="sidebar-icon">🎓</span><span class="sidebar-label">Take Tour</span>
+      </button>
+    </div>
+
+    <div id="sidebarLoggedOut">
+      <div class="sidebar-section">Account</div>
+      <button class="sidebar-item" onclick="go('login');closeSidebar()">
+        <span class="sidebar-icon">🔑</span><span class="sidebar-label">Login</span>
+      </button>
+      <button class="sidebar-item" onclick="go('signup');closeSidebar()">
+        <span class="sidebar-icon">✨</span><span class="sidebar-label">Get Started</span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="sidebar-footer">
+    <div class="sidebar-theme-row">
+      <span class="sidebar-theme-label" id="sidebarThemeLabel">🌙 Dark mode</span>
+      <button class="theme-toggle" onclick="toggleTheme();updateSidebarThemeLabel()" id="sidebarThemeBtn">☀️</button>
+    </div>
+    <button class="sidebar-logout" id="sidebarLogoutBtn" onclick="logout();closeSidebar()" style="display:none">
+      <span>🚪</span> Logout
+    </button>
+  </div>
+</div>
+
+
 <!-- NAVIGATION -->
 <div class="nav" id="mainNav">
 <div class="nav-inner">
-<div class="logo" onclick="go(&#39;home&#39;)">SCHOLARSTOCK</div>
+<div style="display:flex;align-items:center;gap:1rem">
+  <button class="hamburger" onclick="openSidebar()" title="Menu">☰</button>
+  <div class="logo" onclick="go('home')">SCHOLARSTOCK</div>
+</div>
 <div class="nav-links" id="navLinks">
-<button class="cart-btn" onclick="showCart()">🛒 Cart <span id="cartBadge" class="cart-badge">0</span></button>
-<span class="nl" onclick="go(&#39;home&#39;)">Home</span>
-<span class="nl" onclick="go(&#39;browse&#39;)">Browse</span>
-<span class="nl" onclick="go('materials')">My Materials</span>
-<button class="nbtn nbtn-ghost" onclick="go(&#39;profile&#39;)">👤 john</button>
-<button class="nbtn nbtn-grad" onclick="logout()">Logout</button>
+<span class="nl" onclick="go('browse')">Browse</span>
+<button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" id="themeBtn">☀️</button>
+<button class="nbtn nbtn-ghost" onclick="go('login')" id="navLoginBtn">Login</button>
+<button class="nbtn nbtn-grad" onclick="go('signup')" id="navSignupBtn">Get Started</button>
 </div>
 </div>
 </div>
@@ -938,31 +1252,28 @@ if(page==='checkout')renderCheckoutPage();
 if(page==='pricing-plans')loadPricingPlansPage();
 if(page==='profile')loadProfile();
 if(page==='home')renderCategories();
+if(page==='wishlist') renderWishlistPage();
 }
 
 function updateNav(){
 const nav=document.getElementById('navLinks');
-if(isLoggedIn()){
-const user=getUser();
+const isLI=isLoggedIn();
+const user=isLI?getUser():null;
+const light=document.body.classList.contains('light');
+// Slim top nav — just Browse + theme + auth pill
 nav.innerHTML=`
-<span class="nl" onclick="go('home')">Home</span>
 <span class="nl" onclick="go('browse')">Browse</span>
-<span class="nl" onclick="go('library')">📚 Library</span>
-<span class="nl" onclick="go('calc')">🧮 Calc</span>
-<span class="nl" onclick="go('cart')" style="position:relative">🛒 Cart <span id="cartBadge" style="position:absolute;top:-8px;right:-8px;background:var(--blue);color:white;border-radius:50%;width:18px;height:18px;font-size:.65rem;display:flex;align-items:center;justify-content:center;font-weight:700"></span></span>
-<span class="nl" onclick="localStorage.removeItem('guideShown');startGuide();" style="color:var(--blue2)">🎓 Tour</span>
-<button class="nbtn nbtn-ghost" onclick="go('profile')">👤 ${user.name.split(' ')[0]}</button>
-<button class="nbtn nbtn-grad" onclick="logout()">Logout</button>
-`;
-}else{
-nav.innerHTML=`
-<span class="nl" onclick="go('home')">Home</span>
-<span class="nl" onclick="go('browse')">Browse</span>
-<span class="nl" onclick="localStorage.removeItem('guideShown');startGuide();" style="color:var(--blue2)">🎓 Tour</span>
+<button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" id="themeBtn">${light?'🌙':'☀️'}</button>
+${isLI?`
+<button class="cart-btn" onclick="go('cart')" style="margin-left:.3rem">🛒 <span id="cartBadge" style="font-size:.75rem;font-weight:700">${cartItems.length||''}</span></button>
+<button class="nbtn nbtn-ghost" onclick="openSidebar()">👤 ${user.name.split(' ')[0]}</button>
+`:`
 <button class="nbtn nbtn-ghost" onclick="go('login')">Login</button>
 <button class="nbtn nbtn-grad" onclick="go('signup')">Get Started</button>
+`}
 `;
-}
+// Update sidebar state
+updateSidebar();
 }
 
 function logout(){
@@ -1093,7 +1404,12 @@ grid.innerHTML=subcats.map(sub=>{
 const isFree=sub==='Free Resources';
 const catSafe=categoryName.replace(/'/g,"\\'");
 const subSafe=sub.replace(/'/g,"\\'");
-return `<div class="subcat-card">
+const wishId=`subcat_${catSafe}_${subSafe}`;
+const wished=isWished(wishId);
+return `<div class="subcat-card" style="position:relative">
+<button class="wish-btn ${wished?'active':''}" data-id="${wishId}"
+  onclick="event.stopPropagation();toggleWish('${wishId}','${subSafe} — ${catSafe}','${catSafe}',199,'Subcategory',0)"
+  title="${wished?'Remove from wishlist':'Save to wishlist'}">${wished?'❤️':'🤍'}</button>
 <span class="subcat-icon" onclick="openSubcategoryPage('${catSafe}','${subSafe}')" style="cursor:pointer">${SI[sub]||'📚'}</span>
 <div class="subcat-name" onclick="openSubcategoryPage('${catSafe}','${subSafe}')" style="cursor:pointer">${sub}</div>
 <div class="subcat-count" style="margin-bottom:.8rem">${isFree?'<span style="color:var(--green);font-weight:700">FREE ✅</span>':'<span style="color:var(--blue2);font-weight:700">₹199/month</span>'}</div>
@@ -1244,11 +1560,16 @@ const res=await fetch(url);
 const data=await res.json();
 const grid=document.getElementById('browseGrid');
 if(data.success&&data.materials.length>0){
-grid.innerHTML=data.materials.map(m=>`
-<div class="doc-card" onclick="handleRent('${m._id}')">
+grid.innerHTML=data.materials.map(m=>{
+const w=isWished(m._id);
+const st=m.title.replace(/'/g,"\\'");
+const se=m.examLabel||'';
+const free=m.pricePerDay===0||m.isFreeResource;
+return `<div class="doc-card" onclick="handleRent('${m._id}')">
+<button class="wish-btn ${w?'active':''}" data-id="${m._id}" onclick="event.stopPropagation();toggleWish('${m._id}','${st}','${se}',${m.pricePerDay||0},'${m.type||'PDF'}',${m.pages||0})" title="${w?'Remove':'Save to wishlist'}">${w?'❤️':'🤍'}</button>
 <div class="doc-top">
 <span class="tag tbl">${m.examLabel}</span>
-<div class="doc-rating">⭐ ${m.stars||4.5}</div>
+<div class="doc-rating" onclick="event.stopPropagation();openReviews('${m._id}','${st}',${m.stars||4.5})" style="cursor:pointer" title="See reviews">⭐ ${m.stars||4.5}</div>
 </div>
 <div class="doc-title">${m.title}</div>
 ${m.subcategory?`<span class="subcat-badge">📂 ${m.subcategory}</span>`:''}
@@ -1256,10 +1577,10 @@ ${m.subcategory?`<span class="subcat-badge">📂 ${m.subcategory}</span>`:''}
 <span>📄 ${m.pages} pages</span>
 <span>📚 ${m.type}</span>
 </div>
-<div class="doc-price">${m.pricePerDay === 0 || m.isFreeResource ? '<span style="color:#10b981;font-weight:700;font-size:1.2rem">FREE</span>' : '₹' + m.pricePerDay + '<span style="font-size:.8rem;color:var(--muted)">/day</span>'}</div>
-<button class="btn btn-grad" style="width:100%;padding:.7rem">${m.pricePerDay === 0 || m.isFreeResource ? 'View Free' : 'Rent Now'}</button>
-</div>
-`).join('');
+<div class="doc-price">${free?'<span style="color:#10b981;font-weight:700;font-size:1.2rem">FREE</span>':'₹'+m.pricePerDay+'<span style="font-size:.8rem;color:var(--muted)">/day</span>'}</div>
+<button class="btn btn-grad" style="width:100%;padding:.7rem">${free?'View Free':'Rent Now'}</button>
+</div>`;
+}).join('');
 }else{
 grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted)">No materials found</div>';
 }
@@ -3238,6 +3559,285 @@ function doBitwise(op){
   else if(op==='RSHIFT'){r=a>>1;label='A >> 1';}
   document.getElementById('bitwiseResult').textContent=`${label} = ${r} (dec) | ${r.toString(2)} (bin) | 0x${(r>>>0).toString(16).toUpperCase()} (hex)`;
 }
+</script>
+
+
+<!-- WISHLIST PAGE -->
+<div id="pg-wishlist" class="page">
+<div class="sec" style="margin-top:2rem">
+  <div class="eyebrow">Saved Materials</div>
+  <h2 class="sec-title">❤️ My Wishlist</h2>
+  <div class="doc-grid" id="wishlistGrid"></div>
+</div>
+</div>
+
+<!-- REVIEWS MODAL -->
+<div class="reviews-modal" id="reviewsModal">
+  <div class="reviews-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem">
+      <h3 id="reviewsTitle" style="margin:0">Reviews</h3>
+      <button onclick="closeReviews()" style="background:transparent;border:none;color:var(--muted);font-size:1.5rem;cursor:pointer">✕</button>
+    </div>
+    <div id="reviewsBody"></div>
+  </div>
+</div>
+
+
+<script>
+// ── DARK/LIGHT MODE ──
+function toggleTheme(){
+  const light=document.body.classList.toggle('light');
+  localStorage.setItem('ss_theme',light?'light':'dark');
+  document.querySelectorAll('.theme-toggle').forEach(b=>b.textContent=light?'🌙':'☀️');
+  updateSidebarThemeLabel();
+}
+function initTheme(){
+  if(localStorage.getItem('ss_theme')==='light'){
+    document.body.classList.add('light');
+    document.querySelectorAll('.theme-toggle').forEach(b=>b.textContent='🌙');
+  }
+}
+initTheme();
+
+// ── WISHLIST ──
+function getWishlist(){return JSON.parse(localStorage.getItem('ss_wishlist')||'[]');}
+function saveWishlist(w){localStorage.setItem('ss_wishlist',JSON.stringify(w));}
+function isWished(id){return getWishlist().some(x=>x._id===id);}
+
+function toggleWish(id,title,examLabel,pricePerDay,type,pages){
+  let w=getWishlist();
+  const idx=w.findIndex(x=>x._id===id);
+  if(idx>-1){
+    w.splice(idx,1);
+    toast('Removed from wishlist');
+  }else{
+    w.push({_id:id,title,examLabel,pricePerDay,type,pages,addedAt:new Date().toISOString()});
+    toast('❤️ Saved to wishlist!','success');
+  }
+  saveWishlist(w);
+  // Update heart in UI
+  const btn=document.querySelector(`.wish-btn[data-id="${id}"]`);
+  if(btn){
+    const wished=isWished(id);
+    btn.textContent=wished?'❤️':'🤍';
+    btn.classList.toggle('active',wished);
+    btn.title=wished?'Remove from wishlist':'Save to wishlist';
+  }
+  // Update badge count
+  const wc=document.getElementById('wishCount');
+  if(wc){const len=getWishlist().length;wc.textContent=len;wc.style.display=len>0?'inline':'none';}
+}
+
+function renderWishlistPage(){
+  const grid=document.getElementById('wishlistGrid');
+  if(!grid)return;
+  const w=getWishlist();
+  if(!w.length){
+    grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:4rem 2rem;color:var(--muted)">
+      <div style="font-size:3rem;margin-bottom:1rem">🤍</div>
+      <div style="font-size:1.1rem;font-weight:700;margin-bottom:.5rem">Your wishlist is empty</div>
+      <div style="font-size:.9rem">Browse materials and tap the heart icon to save them here!</div>
+      <button class="btn btn-grad" style="margin-top:1.5rem" onclick="go('browse')">Browse Materials</button>
+    </div>`;
+    return;
+  }
+  grid.innerHTML=w.map(m=>{
+    const st=(m.title||'').replace(/'/g,"\'");
+    const se=m.examLabel||'';
+    const free=m.pricePerDay===0;
+    const isSubcat=m._id.startsWith('subcat_');
+    let actionBtn='';
+    if(isSubcat){
+      const raw=m._id.replace('subcat_','');
+      const sepIdx=raw.indexOf('_');
+      const cat=raw.substring(0,sepIdx);
+      const sub=raw.substring(sepIdx+1);
+      const catE=cat.replace(/'/g,"\'");
+      const subE=sub.replace(/'/g,"\'");
+      actionBtn=`<button class="btn btn-grad" style="width:100%;padding:.7rem" onclick="openSubcategoryPage('${catE}','${subE}')">📖 Browse</button>`;
+    }else{
+      actionBtn=`<button class="btn btn-grad" style="width:100%;padding:.7rem" onclick="handleRent('${m._id}')">${free?'View Free':'Rent Now'}</button>`;
+    }
+    return `<div class="doc-card">
+      <button class="wish-btn active" data-id="${m._id}"
+        onclick="event.stopPropagation();toggleWish('${m._id}','${st}','${se}',${m.pricePerDay||0},'${m.type||'PDF'}',${m.pages||0});renderWishlistPage()"
+        title="Remove from wishlist">❤️</button>
+      <div class="doc-top">
+        <span class="tag ${isSubcat?'tgo':'tbl'}">${isSubcat?'📂 Subcategory':m.examLabel||'Study'}</span>
+        <div style="font-size:.7rem;color:var(--muted2)">Saved ${new Date(m.addedAt).toLocaleDateString()}</div>
+      </div>
+      <div class="doc-title">${m.title}</div>
+      <div class="doc-meta">
+        ${!isSubcat&&m.pages?`<span>📄 ${m.pages} pages</span>`:''}
+        <span>📚 ${m.type||'PDF'}</span>
+      </div>
+      <div class="doc-price">${isSubcat?'<span style="color:var(--blue2);font-weight:700">₹199/month</span>':free?'<span style="color:#10b981;font-weight:700;font-size:1.2rem">FREE</span>':'₹'+m.pricePerDay+'<span style="font-size:.8rem;color:var(--muted)">/day</span>'}</div>
+      ${actionBtn}
+    </div>`;
+  }).join('');
+}
+
+// ── RATINGS & REVIEWS ──
+let currentReviewMaterial=null;
+let selectedStars=0;
+
+function getReviews(id){return JSON.parse(localStorage.getItem('ss_reviews_'+id)||'[]');}
+function saveReviews(id,r){localStorage.setItem('ss_reviews_'+id,JSON.stringify(r));}
+
+function openReviews(materialId,title,avgStars){
+  currentReviewMaterial={id:materialId,title,avgStars};
+  selectedStars=0;
+  document.getElementById('reviewsTitle').textContent=title;
+  renderReviewsBody(materialId,avgStars);
+  document.getElementById('reviewsModal').classList.add('on');
+}
+function closeReviews(){
+  document.getElementById('reviewsModal').classList.remove('on');
+  currentReviewMaterial=null;
+}
+
+function renderReviewsBody(materialId,avgStars){
+  const reviews=getReviews(materialId);
+  const avg=reviews.length?(reviews.reduce((s,r)=>s+r.stars,0)/reviews.length).toFixed(1):avgStars;
+  const sh=v=>'⭐'.repeat(Math.round(v))+'☆'.repeat(5-Math.round(v));
+  const loggedIn=isLoggedIn();
+  document.getElementById('reviewsBody').innerHTML=`
+    <div class="avg-rating">
+      <div class="avg-big">${avg}</div>
+      <div>
+        <div style="color:var(--gold);font-size:1.1rem">${sh(avg)}</div>
+        <div style="font-size:.8rem;color:var(--muted);margin-top:.2rem">${reviews.length} review${reviews.length!==1?'s':''}</div>
+      </div>
+    </div>
+    ${loggedIn?`
+    <div style="background:var(--glass);border:1px solid var(--gb);border-radius:12px;padding:1rem;margin-bottom:1.2rem">
+      <div style="font-weight:700;font-size:.9rem;margin-bottom:.8rem">Write a Review</div>
+      <div class="star-select" id="starSelect">
+        <span onclick="selectStar(1)">⭐</span>
+        <span onclick="selectStar(2)">⭐</span>
+        <span onclick="selectStar(3)">⭐</span>
+        <span onclick="selectStar(4)">⭐</span>
+        <span onclick="selectStar(5)">⭐</span>
+      </div>
+      <textarea id="reviewText" style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--gb);border-radius:8px;padding:.8rem;color:var(--white);font-size:.85rem;outline:none;resize:vertical;min-height:80px;font-family:inherit" placeholder="Share your thoughts about this material..."></textarea>
+      <button class="btn btn-grad" style="width:100%;margin-top:.8rem;padding:.7rem" onclick="submitReview()">Submit Review</button>
+    </div>`:`
+    <div style="background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:10px;padding:.8rem;margin-bottom:1.2rem;text-align:center;font-size:.85rem;color:var(--muted)">
+      <span onclick="closeReviews();go('login')" style="color:var(--blue2);cursor:pointer;font-weight:600">Login</span> to write a review
+    </div>`}
+    <div>
+      ${reviews.length===0?'<div style="text-align:center;padding:2rem;color:var(--muted)">No reviews yet — be the first!</div>':
+        reviews.slice().reverse().map(r=>`
+          <div class="review-item">
+            <div class="review-stars">${'⭐'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</div>
+            ${r.text?`<div class="review-text">${r.text}</div>`:''}
+            <div class="review-author">— ${r.name} · ${new Date(r.date).toLocaleDateString()}</div>
+          </div>`).join('')}
+    </div>`;
+}
+
+function selectStar(n){
+  selectedStars=n;
+  document.querySelectorAll('#starSelect span').forEach((s,i)=>s.classList.toggle('on',i<n));
+}
+
+function submitReview(){
+  if(!currentReviewMaterial)return;
+  if(!selectedStars){toast('Please select a star rating','error');return;}
+  const user=getUser();
+  const review={
+    stars:selectedStars,
+    text:(document.getElementById('reviewText').value||'').trim(),
+    name:user?user.name.split(' ')[0]:'Student',
+    date:new Date().toISOString()
+  };
+  const reviews=getReviews(currentReviewMaterial.id);
+  const existing=reviews.findIndex(r=>r.name===review.name);
+  if(existing>-1)reviews[existing]=review;
+  else reviews.push(review);
+  saveReviews(currentReviewMaterial.id,reviews);
+  toast('✅ Review submitted! Thanks!','success');
+  renderReviewsBody(currentReviewMaterial.id,currentReviewMaterial.avgStars);
+}
+
+document.getElementById('reviewsModal').addEventListener('click',function(e){
+  if(e.target===this)closeReviews();
+});
+</script>
+
+
+<script>
+// ── SIDEBAR JS ──
+function openSidebar(){
+  updateSidebar();
+  document.getElementById('sidebar').classList.add('on');
+  document.getElementById('sidebarOverlay').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('on');
+  document.getElementById('sidebarOverlay').classList.remove('on');
+  document.body.style.overflow='';
+}
+
+function updateSidebar(){
+  const isLI=isLoggedIn();
+  const user=isLI?getUser():null;
+
+  // Profile section
+  const profileEl=document.getElementById('sidebarProfile');
+  if(profileEl) profileEl.style.display=isLI?'block':'none';
+  if(isLI&&user){
+    const av=document.getElementById('sidebarAvatar');
+    const un=document.getElementById('sidebarName');
+    const em=document.getElementById('sidebarEmail');
+    if(av) av.textContent=user.name?user.name[0].toUpperCase():'👤';
+    if(un) un.textContent=user.name||'Student';
+    if(em) em.textContent=user.email||'View Profile →';
+  }
+
+  // Show/hide account vs guest sections
+  const acEl=document.getElementById('sidebarAccountSection');
+  const guEl=document.getElementById('sidebarGuestSection');
+  if(acEl) acEl.style.display=isLI?'block':'none';
+  if(guEl) guEl.style.display=isLI?'none':'block';
+
+  // Wishlist badge
+  const wBadge=document.getElementById('sidebarWishBadge');
+  if(wBadge){
+    const wlen=getWishlist().length;
+    wBadge.textContent=wlen;
+    wBadge.style.display=wlen>0?'flex':'none';
+  }
+
+  // Cart badge
+  const cBadge=document.getElementById('sidebarCartBadge');
+  if(cBadge){
+    const clen=cartItems.length;
+    cBadge.textContent=clen;
+    cBadge.style.display=clen>0?'flex':'none';
+  }
+
+  // Theme label
+  updateSidebarThemeLabel();
+}
+
+function updateSidebarThemeLabel(){
+  const light=document.body.classList.contains('light');
+  const lbl=document.getElementById('sidebarThemeLabel');
+  const btn=document.getElementById('sidebarThemeBtn');
+  if(lbl) lbl.textContent=light?'☀️ Light mode':'🌙 Dark mode';
+  if(btn) btn.textContent=light?'🌙':'☀️';
+  // Also update top nav theme btn
+  const topBtn=document.getElementById('themeBtn');
+  if(topBtn) topBtn.textContent=light?'🌙':'☀️';
+}
+
+// Close sidebar with Escape key
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeSidebar(); });
+
+// Init sidebar on load
+document.addEventListener('DOMContentLoaded',()=>{ updateSidebar(); updateSidebarThemeLabel(); });
 </script>
 
 </body>
