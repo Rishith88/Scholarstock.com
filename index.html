@@ -505,6 +505,347 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 </div>
 </div>
 
+<!-- CALCULATOR PAGE -->
+<div id="pg-calc" class="page">
+<div class="sec" style="margin-top:2rem;max-width:900px;margin-left:auto;margin-right:auto">
+<h2 class="sec-title">🧮 Scientific Calculator</h2>
+
+<style>
+/* CALC TABS */
+.calc-tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.5rem;background:var(--glass);padding:.5rem;border-radius:12px;border:1px solid var(--gb)}
+.calc-tab{padding:.5rem 1rem;border-radius:8px;cursor:pointer;font-size:.8rem;font-weight:700;color:var(--muted);transition:all .2s;border:none;background:transparent}
+.calc-tab.active{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff}
+.calc-tab:hover:not(.active){background:rgba(59,130,246,.1);color:var(--blue2)}
+
+.calc-panel{display:none}
+.calc-panel.active{display:block}
+
+/* DISPLAY */
+.calc-display{background:rgba(0,0,0,.4);border:2px solid var(--gb);border-radius:14px;padding:1.2rem 1.5rem;margin-bottom:1rem;font-family:'Courier New',monospace;position:relative}
+.calc-expr{font-size:.85rem;color:var(--muted);min-height:1.2rem;word-break:break-all;text-align:right}
+.calc-result{font-size:2rem;font-weight:800;color:var(--blue2);text-align:right;word-break:break-all;line-height:1.2;min-height:2.5rem}
+.calc-mode-badge{position:absolute;top:.6rem;left:.8rem;font-size:.65rem;font-weight:700;padding:.2rem .5rem;border-radius:4px;background:rgba(59,130,246,.2);color:var(--blue2)}
+.calc-mem{position:absolute;top:.6rem;right:.8rem;font-size:.65rem;color:var(--green);font-weight:700}
+
+/* BUTTONS */
+.calc-grid{display:grid;gap:.5rem}
+.calc-btn{padding:.75rem .5rem;border-radius:10px;border:none;cursor:pointer;font-size:.85rem;font-weight:700;transition:all .2s;font-family:'Plus Jakarta Sans',sans-serif}
+.calc-btn:hover{transform:translateY(-2px);filter:brightness(1.2)}
+.calc-btn:active{transform:translateY(0);filter:brightness(.9)}
+.cb-num{background:rgba(255,255,255,.08);color:var(--white);border:1px solid var(--gb)}
+.cb-op{background:rgba(59,130,246,.2);color:var(--blue2);border:1px solid rgba(59,130,246,.3)}
+.cb-fn{background:rgba(139,92,246,.15);color:#c4b5fd;border:1px solid rgba(139,92,246,.3);font-size:.75rem}
+.cb-eq{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;font-size:1.1rem}
+.cb-clear{background:rgba(239,68,68,.2);color:var(--red);border:1px solid rgba(239,68,68,.3)}
+.cb-const{background:rgba(16,185,129,.15);color:var(--green);border:1px solid rgba(16,185,129,.3);font-size:.75rem}
+.cb-mem{background:rgba(245,158,11,.15);color:var(--gold);border:1px solid rgba(245,158,11,.3);font-size:.75rem}
+
+/* HISTORY */
+.calc-history{max-height:200px;overflow-y:auto;border:1px solid var(--gb);border-radius:10px;padding:.5rem}
+.hist-item{padding:.4rem .7rem;border-bottom:1px solid var(--gb);font-size:.8rem;cursor:pointer;display:flex;justify-content:space-between;font-family:'Courier New',monospace;transition:background .2s}
+.hist-item:hover{background:rgba(59,130,246,.1);color:var(--blue2)}
+.hist-item:last-child{border-bottom:none}
+
+/* UNIT CONVERTER */
+.conv-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem}
+.conv-input{width:100%;background:rgba(255,255,255,.06);border:2px solid var(--gb);border-radius:10px;padding:.8rem 1rem;color:var(--white);font-size:1rem;outline:none;font-family:'Courier New',monospace;font-weight:700}
+.conv-input:focus{border-color:var(--blue)}
+.conv-select{width:100%;background:rgba(255,255,255,.06);border:2px solid var(--gb);border-radius:10px;padding:.8rem 1rem;color:var(--white);font-size:.9rem;outline:none;margin-bottom:.8rem}
+.conv-result-box{background:rgba(59,130,246,.08);border:2px solid rgba(59,130,246,.3);border-radius:10px;padding:1rem;text-align:center;font-size:1.2rem;font-weight:800;color:var(--blue2);font-family:'Courier New',monospace}
+
+/* MATRIX */
+.matrix-input{width:60px;background:rgba(255,255,255,.06);border:1px solid var(--gb);border-radius:6px;padding:.5rem;color:var(--white);text-align:center;font-size:.9rem;outline:none;font-family:'Courier New',monospace}
+.matrix-input:focus{border-color:var(--blue)}
+.matrix-grid{display:inline-grid;gap:.4rem;margin:.5rem}
+
+/* STATS */
+.stats-input{width:100%;background:rgba(255,255,255,.06);border:2px solid var(--gb);border-radius:10px;padding:.8rem 1rem;color:var(--white);font-size:.9rem;outline:none;min-height:80px;resize:vertical;font-family:'Courier New',monospace}
+.stats-result{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.8rem;margin-top:1rem}
+.stats-card{background:var(--glass);border:1px solid var(--gb);border-radius:10px;padding:.8rem 1rem;text-align:center}
+.stats-label{font-size:.7rem;color:var(--muted);text-transform:uppercase;font-weight:700;margin-bottom:.3rem}
+.stats-val{font-size:1.1rem;font-weight:800;color:var(--blue2);font-family:'Courier New',monospace}
+
+/* BASE CONV */
+.base-display{background:rgba(0,0,0,.4);border:1px solid var(--gb);border-radius:10px;padding:.8rem 1rem;margin-bottom:.5rem;display:flex;justify-content:space-between;align-items:center}
+.base-label{font-size:.7rem;color:var(--muted);font-weight:700;width:50px}
+.base-val{font-family:'Courier New',monospace;font-size:.95rem;color:var(--white);font-weight:700;word-break:break-all;flex:1;text-align:right}
+
+/* EQUATION */
+.eq-result{background:rgba(16,185,129,.08);border:2px solid rgba(16,185,129,.3);border-radius:10px;padding:1rem;margin-top:1rem;font-family:'Courier New',monospace;color:var(--green);font-size:1rem;min-height:50px}
+</style>
+
+<!-- TABS -->
+<div class="calc-tabs">
+  <button class="calc-tab active" onclick="switchCalcTab('scientific')">🔬 Scientific</button>
+  <button class="calc-tab" onclick="switchCalcTab('unitconv')">📐 Unit Converter</button>
+  <button class="calc-tab" onclick="switchCalcTab('matrix')">🔢 Matrix</button>
+  <button class="calc-tab" onclick="switchCalcTab('stats')">📊 Statistics</button>
+  <button class="calc-tab" onclick="switchCalcTab('equation')">📝 Equation Solver</button>
+  <button class="calc-tab" onclick="switchCalcTab('base')">💻 Base Converter</button>
+</div>
+
+<!-- SCIENTIFIC CALCULATOR -->
+<div id="calc-scientific" class="calc-panel active">
+<div style="display:grid;grid-template-columns:1fr 320px;gap:1.5rem;align-items:start">
+<div>
+  <!-- Display -->
+  <div class="calc-display">
+    <div class="calc-mode-badge" id="calcModeBadge">DEG</div>
+    <div class="calc-mem" id="calcMemDisplay"></div>
+    <div class="calc-expr" id="calcExpr"></div>
+    <div class="calc-result" id="calcResult">0</div>
+  </div>
+
+  <!-- Mode + Memory row -->
+  <div class="calc-grid" style="grid-template-columns:repeat(6,1fr);margin-bottom:.5rem">
+    <button class="calc-btn cb-fn" onclick="toggleCalcMode()">DEG/RAD</button>
+    <button class="calc-btn cb-mem" onclick="calcMem('MC')">MC</button>
+    <button class="calc-btn cb-mem" onclick="calcMem('MR')">MR</button>
+    <button class="calc-btn cb-mem" onclick="calcMem('M+')">M+</button>
+    <button class="calc-btn cb-mem" onclick="calcMem('M-')">M-</button>
+    <button class="calc-btn cb-fn" onclick="calcInput('Ans')">Ans</button>
+  </div>
+
+  <!-- Row 1: functions -->
+  <div class="calc-grid" style="grid-template-columns:repeat(6,1fr);margin-bottom:.5rem">
+    <button class="calc-btn cb-fn" onclick="calcInput('sin(')">sin</button>
+    <button class="calc-btn cb-fn" onclick="calcInput('cos(')">cos</button>
+    <button class="calc-btn cb-fn" onclick="calcInput('tan(')">tan</button>
+    <button class="calc-btn cb-fn" onclick="calcInput('asin(')">sin⁻¹</button>
+    <button class="calc-btn cb-fn" onclick="calcInput('acos(')">cos⁻¹</button>
+    <button class="calc-btn cb-fn" onclick="calcInput('atan(')">tan⁻¹</button>
+  </div>
+
+  <!-- Row 2: more functions -->
+  <div class="calc-grid" style="grid-template-columns:repeat(6,1fr);margin-bottom:.5rem">
+    <button class="calc-btn cb-fn" onclick="calcInput('sinh(')">sinh</button>
+    <button class="calc-btn cb-fn" onclick="calcInput('cosh(')">cosh</button>
+    <button class="calc-btn cb-fn" onclick="calcInput('tanh(')">tanh</button>
+    <button class="calc-btn cb-fn" onclick="calcInput('log(')">log₁₀</button>
+    <button class="calc-btn cb-fn" onclick="calcInput('ln(')">ln</button>
+    <button class="calc-btn cb-fn" onclick="calcInput('log2(')">log₂</button>
+  </div>
+
+  <!-- Row 3: powers + roots -->
+  <div class="calc-grid" style="grid-template-columns:repeat(6,1fr);margin-bottom:.5rem">
+    <button class="calc-btn cb-fn" onclick="calcInput('sqrt(')">√x</button>
+    <button class="calc-btn cb-fn" onclick="calcInput('cbrt(')">∛x</button>
+    <button class="calc-btn cb-fn" onclick="calcInput('**2')">x²</button>
+    <button class="calc-btn cb-fn" onclick="calcInput('**3')">x³</button>
+    <button class="calc-btn cb-fn" onclick="calcInput('**(1/')">ˣ√y</button>
+    <button class="calc-btn cb-fn" onclick="calcInput('**')">xʸ</button>
+  </div>
+
+  <!-- Row 4: constants + special -->
+  <div class="calc-grid" style="grid-template-columns:repeat(6,1fr);margin-bottom:.5rem">
+    <button class="calc-btn cb-const" onclick="calcInput('π')">π</button>
+    <button class="calc-btn cb-const" onclick="calcInput('e')">e</button>
+    <button class="calc-btn cb-const" onclick="calcInput('φ')">φ</button>
+    <button class="calc-btn cb-fn" onclick="calcInput('fact(')">n!</button>
+    <button class="calc-btn cb-fn" onclick="calcInput('abs(')">|x|</button>
+    <button class="calc-btn cb-fn" onclick="calcInput('exp(')">eˣ</button>
+  </div>
+
+  <!-- Row 5: nCr nPr + brackets + clear -->
+  <div class="calc-grid" style="grid-template-columns:repeat(6,1fr);margin-bottom:.5rem">
+    <button class="calc-btn cb-fn" onclick="calcInput('nCr(')">nCr</button>
+    <button class="calc-btn cb-fn" onclick="calcInput('nPr(')">nPr</button>
+    <button class="calc-btn cb-fn" onclick="calcInput('round(')">rnd</button>
+    <button class="calc-btn cb-op" onclick="calcInput('(')">(</button>
+    <button class="calc-btn cb-op" onclick="calcInput(')')">)</button>
+    <button class="calc-btn cb-fn" onclick="calcInput('%')">%</button>
+  </div>
+
+  <!-- Main number pad -->
+  <div class="calc-grid" style="grid-template-columns:repeat(4,1fr)">
+    <button class="calc-btn cb-clear" onclick="calcClear()">AC</button>
+    <button class="calc-btn cb-clear" onclick="calcDel()">⌫</button>
+    <button class="calc-btn cb-op" onclick="calcInput('/')">÷</button>
+    <button class="calc-btn cb-op" onclick="calcInput('*')">×</button>
+
+    <button class="calc-btn cb-num" onclick="calcInput('7')">7</button>
+    <button class="calc-btn cb-num" onclick="calcInput('8')">8</button>
+    <button class="calc-btn cb-num" onclick="calcInput('9')">9</button>
+    <button class="calc-btn cb-op" onclick="calcInput('-')">−</button>
+
+    <button class="calc-btn cb-num" onclick="calcInput('4')">4</button>
+    <button class="calc-btn cb-num" onclick="calcInput('5')">5</button>
+    <button class="calc-btn cb-num" onclick="calcInput('6')">6</button>
+    <button class="calc-btn cb-op" onclick="calcInput('+')">+</button>
+
+    <button class="calc-btn cb-num" onclick="calcInput('1')">1</button>
+    <button class="calc-btn cb-num" onclick="calcInput('2')">2</button>
+    <button class="calc-btn cb-num" onclick="calcInput('3')">3</button>
+    <button class="calc-btn cb-eq" onclick="calcEquals()" style="grid-row:span 2">=</button>
+
+    <button class="calc-btn cb-num" style="grid-column:span 2" onclick="calcInput('0')">0</button>
+    <button class="calc-btn cb-num" onclick="calcInput('.')">.</button>
+  </div>
+</div>
+
+<!-- History panel -->
+<div>
+  <div style="font-size:.85rem;font-weight:700;color:var(--blue2);margin-bottom:.5rem">📋 History <button onclick="clearCalcHistory()" style="float:right;background:transparent;border:none;color:var(--red);cursor:pointer;font-size:.75rem">Clear</button></div>
+  <div class="calc-history" id="calcHistory"><div style="text-align:center;color:var(--muted);padding:1rem;font-size:.8rem">No calculations yet</div></div>
+
+  <div style="margin-top:1.5rem;font-size:.85rem;font-weight:700;color:var(--blue2);margin-bottom:.5rem">📌 Constants</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem">
+    <div style="background:var(--glass);border:1px solid var(--gb);border-radius:8px;padding:.5rem;font-size:.75rem"><span style="color:var(--muted)">π</span> <span style="float:right;font-family:monospace;color:var(--green)">3.14159...</span></div>
+    <div style="background:var(--glass);border:1px solid var(--gb);border-radius:8px;padding:.5rem;font-size:.75rem"><span style="color:var(--muted)">e</span> <span style="float:right;font-family:monospace;color:var(--green)">2.71828...</span></div>
+    <div style="background:var(--glass);border:1px solid var(--gb);border-radius:8px;padding:.5rem;font-size:.75rem"><span style="color:var(--muted)">φ</span> <span style="float:right;font-family:monospace;color:var(--green)">1.61803...</span></div>
+    <div style="background:var(--glass);border:1px solid var(--gb);border-radius:8px;padding:.5rem;font-size:.75rem"><span style="color:var(--muted)">√2</span> <span style="float:right;font-family:monospace;color:var(--green)">1.41421...</span></div>
+    <div style="background:var(--glass);border:1px solid var(--gb);border-radius:8px;padding:.5rem;font-size:.75rem"><span style="color:var(--muted)">ln2</span> <span style="float:right;font-family:monospace;color:var(--green)">0.69315...</span></div>
+    <div style="background:var(--glass);border:1px solid var(--gb);border-radius:8px;padding:.5rem;font-size:.75rem"><span style="color:var(--muted)">G</span> <span style="float:right;font-family:monospace;color:var(--green)">6.674e-11</span></div>
+    <div style="background:var(--glass);border:1px solid var(--gb);border-radius:8px;padding:.5rem;font-size:.75rem"><span style="color:var(--muted)">c</span> <span style="float:right;font-family:monospace;color:var(--green)">3e8 m/s</span></div>
+    <div style="background:var(--glass);border:1px solid var(--gb);border-radius:8px;padding:.5rem;font-size:.75rem"><span style="color:var(--muted)">h</span> <span style="float:right;font-family:monospace;color:var(--green)">6.626e-34</span></div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- UNIT CONVERTER -->
+<div id="calc-unitconv" class="calc-panel">
+<div style="max-width:600px;margin:0 auto">
+  <div class="form-group" style="margin-bottom:1rem">
+    <label style="font-size:.8rem;font-weight:700;color:var(--blue2);text-transform:uppercase">Category</label>
+    <select class="conv-select" id="convCategory" onchange="updateConvUnits()">
+      <option value="length">📏 Length</option>
+      <option value="mass">⚖️ Mass / Weight</option>
+      <option value="temperature">🌡️ Temperature</option>
+      <option value="area">◻️ Area</option>
+      <option value="volume">🧪 Volume</option>
+      <option value="speed">🚀 Speed</option>
+      <option value="time">⏱️ Time</option>
+      <option value="energy">⚡ Energy</option>
+      <option value="pressure">💨 Pressure</option>
+      <option value="data">💾 Data / Storage</option>
+      <option value="angle">📐 Angle</option>
+      <option value="force">🔧 Force</option>
+    </select>
+  </div>
+  <div class="conv-grid">
+    <div>
+      <select class="conv-select" id="convFrom" onchange="doConvert()"></select>
+      <input class="conv-input" id="convFromVal" type="number" value="1" oninput="doConvert()">
+    </div>
+    <div>
+      <select class="conv-select" id="convTo" onchange="doConvert()"></select>
+      <div class="conv-result-box" id="convResult">—</div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:1rem">
+    <button class="btn btn-ghost" style="padding:.6rem 1.5rem;font-size:.85rem" onclick="swapConvUnits()">⇄ Swap</button>
+  </div>
+  <div id="convFormula" style="text-align:center;margin-top:.8rem;font-size:.8rem;color:var(--muted);font-family:monospace"></div>
+</div>
+</div>
+
+<!-- MATRIX CALCULATOR -->
+<div id="calc-matrix" class="calc-panel">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;flex-wrap:wrap">
+  <div>
+    <div style="font-weight:700;color:var(--blue2);margin-bottom:.8rem">Matrix A</div>
+    <div style="margin-bottom:.5rem">
+      <select id="matASize" onchange="buildMatrices()" style="background:var(--glass);border:1px solid var(--gb);border-radius:8px;padding:.5rem;color:var(--white);outline:none">
+        <option value="2">2×2</option>
+        <option value="3">3×3</option>
+        <option value="4">4×4</option>
+      </select>
+    </div>
+    <div id="matrixA" class="matrix-grid" style="grid-template-columns:repeat(2,1fr)"></div>
+  </div>
+  <div>
+    <div style="font-weight:700;color:var(--blue2);margin-bottom:.8rem">Matrix B</div>
+    <div style="margin-bottom:.5rem">
+      <select id="matBSize" onchange="buildMatrices()" style="background:var(--glass);border:1px solid var(--gb);border-radius:8px;padding:.5rem;color:var(--white);outline:none">
+        <option value="2">2×2</option>
+        <option value="3">3×3</option>
+        <option value="4">4×4</option>
+      </select>
+    </div>
+    <div id="matrixB" class="matrix-grid" style="grid-template-columns:repeat(2,1fr)"></div>
+  </div>
+</div>
+<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1.5rem">
+  <button class="btn cb-op calc-btn" onclick="matOp('add')">A + B</button>
+  <button class="btn cb-op calc-btn" onclick="matOp('sub')">A − B</button>
+  <button class="btn cb-op calc-btn" onclick="matOp('mul')">A × B</button>
+  <button class="btn cb-fn calc-btn" onclick="matOp('detA')">det(A)</button>
+  <button class="btn cb-fn calc-btn" onclick="matOp('detB')">det(B)</button>
+  <button class="btn cb-fn calc-btn" onclick="matOp('transposeA')">Aᵀ</button>
+  <button class="btn cb-fn calc-btn" onclick="matOp('transposeB')">Bᵀ</button>
+  <button class="btn cb-fn calc-btn" onclick="matOp('traceA')">trace(A)</button>
+  <button class="btn cb-fn calc-btn" onclick="matOp('invA')">A⁻¹</button>
+</div>
+<div id="matResult" style="background:rgba(0,0,0,.3);border:1px solid var(--gb);border-radius:10px;padding:1rem;margin-top:1rem;font-family:'Courier New',monospace;color:var(--blue2);font-size:.9rem;min-height:80px;white-space:pre-wrap"></div>
+</div>
+
+<!-- STATISTICS -->
+<div id="calc-stats" class="calc-panel">
+<div style="max-width:600px;margin:0 auto">
+  <div style="font-weight:700;color:var(--blue2);margin-bottom:.5rem">Enter numbers (comma or space separated):</div>
+  <textarea class="stats-input" id="statsInput" placeholder="e.g. 2, 4, 4, 4, 5, 5, 7, 9" oninput="calcStats()"></textarea>
+  <div class="stats-result" id="statsResult"></div>
+  <div style="margin-top:1.5rem;font-weight:700;color:var(--blue2);margin-bottom:.5rem">Frequency Distribution</div>
+  <div id="statsFreq" style="font-family:monospace;font-size:.85rem;color:var(--muted)"></div>
+</div>
+</div>
+
+<!-- EQUATION SOLVER -->
+<div id="calc-equation" class="calc-panel">
+<div style="max-width:600px;margin:0 auto">
+  <div style="display:flex;gap:.5rem;margin-bottom:1.5rem">
+    <button class="calc-btn cb-fn" onclick="setEqType('linear')" id="eqLinearBtn" style="flex:1">Linear (ax+b=0)</button>
+    <button class="calc-btn cb-fn" onclick="setEqType('quadratic')" id="eqQuadBtn" style="flex:1">Quadratic (ax²+bx+c=0)</button>
+    <button class="calc-btn cb-fn" onclick="setEqType('cubic')" id="eqCubicBtn" style="flex:1">Cubic</button>
+    <button class="calc-btn cb-fn" onclick="setEqType('simultaneous')" id="eqSimBtn" style="flex:1">2 Simultaneous</button>
+  </div>
+  <div id="eqInputs"></div>
+  <button class="btn btn-grad" style="width:100%;margin-top:1rem" onclick="solveEquation()">🔍 Solve</button>
+  <div class="eq-result" id="eqResult">Fill in the coefficients above and press Solve.</div>
+</div>
+</div>
+
+<!-- BASE CONVERTER -->
+<div id="calc-base" class="calc-panel">
+<div style="max-width:500px;margin:0 auto">
+  <div style="font-weight:700;color:var(--blue2);margin-bottom:.8rem">Enter a number:</div>
+  <div style="display:flex;gap:.5rem;margin-bottom:1rem">
+    <select id="baseInputType" style="background:var(--glass);border:1px solid var(--gb);border-radius:8px;padding:.6rem;color:var(--white);outline:none" onchange="doBaseConvert()">
+      <option value="10">Decimal</option>
+      <option value="2">Binary</option>
+      <option value="8">Octal</option>
+      <option value="16">Hexadecimal</option>
+    </select>
+    <input id="baseInput" style="flex:1;background:rgba(255,255,255,.06);border:2px solid var(--gb);border-radius:10px;padding:.7rem 1rem;color:var(--white);font-size:1rem;outline:none;font-family:monospace;font-weight:700" placeholder="Enter number..." oninput="doBaseConvert()">
+  </div>
+  <div class="base-display"><span class="base-label">DEC</span><span class="base-val" id="baseDec">—</span></div>
+  <div class="base-display"><span class="base-label">BIN</span><span class="base-val" id="baseBin">—</span></div>
+  <div class="base-display"><span class="base-label">OCT</span><span class="base-val" id="baseOct">—</span></div>
+  <div class="base-display"><span class="base-label">HEX</span><span class="base-val" id="baseHex">—</span></div>
+  <div style="margin-top:1.5rem;font-weight:700;color:var(--blue2);margin-bottom:.5rem">Bitwise Operations</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
+    <input id="bitwiseA" style="background:rgba(255,255,255,.06);border:1px solid var(--gb);border-radius:8px;padding:.6rem;color:var(--white);font-family:monospace;outline:none" placeholder="A (decimal)">
+    <input id="bitwiseB" style="background:rgba(255,255,255,.06);border:1px solid var(--gb);border-radius:8px;padding:.6rem;color:var(--white);font-family:monospace;outline:none" placeholder="B (decimal)">
+  </div>
+  <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.5rem">
+    <button class="calc-btn cb-fn" onclick="doBitwise('AND')">AND</button>
+    <button class="calc-btn cb-fn" onclick="doBitwise('OR')">OR</button>
+    <button class="calc-btn cb-fn" onclick="doBitwise('XOR')">XOR</button>
+    <button class="calc-btn cb-fn" onclick="doBitwise('NOT')">NOT A</button>
+    <button class="calc-btn cb-fn" onclick="doBitwise('LSHIFT')">A &lt;&lt; 1</button>
+    <button class="calc-btn cb-fn" onclick="doBitwise('RSHIFT')">A &gt;&gt; 1</button>
+  </div>
+  <div id="bitwiseResult" style="background:rgba(0,0,0,.3);border:1px solid var(--gb);border-radius:8px;padding:.8rem;margin-top:.5rem;font-family:monospace;color:var(--blue2);min-height:40px;font-size:.9rem"></div>
+</div>
+</div>
+
+</div><!-- end sec -->
+</div><!-- end pg-calc -->
+
+<!-- FLOATING CALC BUTTON -->
+<div id="floatingCalcBtn" style="position:fixed;bottom:6rem;left:1.5rem;width:52px;height:52px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 20px rgba(59,130,246,.5);z-index:1000;transition:all .3s;font-size:1.4rem" onclick="goCalc()" title="Scientific Calculator">🧮</div>
+
 <!-- FOOTER -->
 <div class="footer">
 <div class="footer-grid">
@@ -587,6 +928,7 @@ document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
 document.getElementById('pg-'+page).classList.add('on');
 updateNav();
 window.scrollTo(0,0);
+if(page==='calc'){if(!isLoggedIn()){toast('Please login to use the calculator','error');go('login');return;}initCalc();}
 if(page==='browse')loadMaterials();
 if(page==='materials')loadMyRentals();
 if(page==='library')loadLibrary();
@@ -605,6 +947,7 @@ nav.innerHTML=`
 <span class="nl" onclick="go('home')">Home</span>
 <span class="nl" onclick="go('browse')">Browse</span>
 <span class="nl" onclick="go('library')">📚 Library</span>
+<span class="nl" onclick="go('calc')">🧮 Calc</span>
 <span class="nl" onclick="go('cart')" style="position:relative">🛒 Cart <span id="cartBadge" style="position:absolute;top:-8px;right:-8px;background:var(--blue);color:white;border-radius:50%;width:18px;height:18px;font-size:.65rem;display:flex;align-items:center;justify-content:center;font-weight:700"></span></span>
 <span class="nl" onclick="localStorage.removeItem('guideShown');startGuide();" style="color:var(--blue2)">🎓 Tour</span>
 <button class="nbtn nbtn-ghost" onclick="go('profile')">👤 ${user.name.split(' ')[0]}</button>
@@ -2504,6 +2847,396 @@ Promise.all([loadSubcategories(), loadProgramSettings()]).then(()=>{
 
 // Guide runs immediately, independent of backend
 initGuide();
+</script>
+<script>
+// ─── SCIENTIFIC CALCULATOR ───
+let calcExpr = '';
+let calcMemory = 0;
+let calcAns = 0;
+let calcDeg = true;
+let calcHistoryArr = [];
+let eqType = 'quadratic';
+
+function goCalc(){
+  if(!isLoggedIn()){toast('Please login to use the calculator','error');go('login');return;}
+  go('calc');
+}
+
+function initCalc(){
+  buildMatrices();
+  updateConvUnits();
+  setEqType('quadratic');
+  renderCalcHistory();
+}
+
+function switchCalcTab(tab){
+  document.querySelectorAll('.calc-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.calc-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('calc-'+tab).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function toggleCalcMode(){
+  calcDeg = !calcDeg;
+  document.getElementById('calcModeBadge').textContent = calcDeg?'DEG':'RAD';
+}
+
+function calcInput(v){
+  calcExpr += v;
+  document.getElementById('calcExpr').textContent = calcExpr;
+}
+
+function calcDel(){
+  calcExpr = calcExpr.slice(0,-1);
+  document.getElementById('calcExpr').textContent = calcExpr;
+}
+
+function calcClear(){
+  calcExpr = '';
+  document.getElementById('calcExpr').textContent = '';
+  document.getElementById('calcResult').textContent = '0';
+}
+
+function calcMem(op){
+  const cur = parseFloat(document.getElementById('calcResult').textContent)||0;
+  if(op==='MC'){calcMemory=0;document.getElementById('calcMemDisplay').textContent='';}
+  else if(op==='MR'){calcExpr+=String(calcMemory);document.getElementById('calcExpr').textContent=calcExpr;}
+  else if(op==='M+'){calcMemory+=cur;document.getElementById('calcMemDisplay').textContent=`M:${calcMemory}`;}
+  else if(op==='M-'){calcMemory-=cur;document.getElementById('calcMemDisplay').textContent=`M:${calcMemory}`;}
+}
+
+function calcEquals(){
+  try{
+    let expr = calcExpr;
+    // Replace constants
+    expr = expr.replace(/π/g, 'Math.PI').replace(/φ/g,'1.6180339887').replace(/\be\b/g,'Math.E');
+    expr = expr.replace(/Ans/g, String(calcAns));
+    // Replace functions
+    const toRad = calcDeg ? '*(Math.PI/180)' : '';
+    expr = expr.replace(/sin\(/g, calcDeg?'Math.sin(d2r(':'Math.sin(');
+    expr = expr.replace(/cos\(/g, calcDeg?'Math.cos(d2r(':'Math.cos(');
+    expr = expr.replace(/tan\(/g, calcDeg?'Math.tan(d2r(':'Math.tan(');
+    expr = expr.replace(/asin\(/g, calcDeg?'r2d(Math.asin(':'Math.asin(');
+    expr = expr.replace(/acos\(/g, calcDeg?'r2d(Math.acos(':'Math.acos(');
+    expr = expr.replace(/atan\(/g, calcDeg?'r2d(Math.atan(':'Math.atan(');
+    expr = expr.replace(/sinh\(/g,'Math.sinh(');
+    expr = expr.replace(/cosh\(/g,'Math.cosh(');
+    expr = expr.replace(/tanh\(/g,'Math.tanh(');
+    expr = expr.replace(/log2\(/g,'Math.log2(');
+    expr = expr.replace(/log\(/g,'Math.log10(');
+    expr = expr.replace(/ln\(/g,'Math.log(');
+    expr = expr.replace(/sqrt\(/g,'Math.sqrt(');
+    expr = expr.replace(/cbrt\(/g,'Math.cbrt(');
+    expr = expr.replace(/abs\(/g,'Math.abs(');
+    expr = expr.replace(/exp\(/g,'Math.exp(');
+    expr = expr.replace(/round\(/g,'Math.round(');
+    expr = expr.replace(/fact\(([^)]+)\)/g, (m,n)=>`calcFactorial(${n})`);
+    expr = expr.replace(/nCr\(([^,]+),([^)]+)\)/g,(m,n,r)=>`calcNCR(${n},${r})`);
+    expr = expr.replace(/nPr\(([^,]+),([^)]+)\)/g,(m,n,r)=>`calcNPR(${n},${r})`);
+
+    // Add closing parens for degree wrapping
+    if(calcDeg){
+      expr = expr.replace(/d2r\(/g,'(').replace(/\(d2r\(/g,'((').replace(/r2d\(/g,'(');
+    }
+
+    const result = Function(`
+      function d2r(x){return x*Math.PI/180;}
+      function r2d(x){return x*180/Math.PI;}
+      function calcFactorial(n){n=Math.round(n);if(n<0)return NaN;if(n===0||n===1)return 1;let r=1;for(let i=2;i<=n;i++)r*=i;return r;}
+      function calcNCR(n,r){return calcFactorial(n)/(calcFactorial(r)*calcFactorial(n-r));}
+      function calcNPR(n,r){return calcFactorial(n)/calcFactorial(n-r);}
+      return ${expr};
+    `)();
+
+    const formatted = formatCalcNum(result);
+    document.getElementById('calcResult').textContent = formatted;
+    calcHistoryArr.unshift({expr:calcExpr, result:formatted});
+    if(calcHistoryArr.length>50) calcHistoryArr.pop();
+    renderCalcHistory();
+    calcAns = result;
+    calcExpr = '';
+    document.getElementById('calcExpr').textContent = '';
+  }catch(e){
+    document.getElementById('calcResult').textContent = 'Error';
+    document.getElementById('calcExpr').textContent = calcExpr;
+  }
+}
+
+function formatCalcNum(n){
+  if(isNaN(n)||!isFinite(n)) return 'Error';
+  if(Number.isInteger(n)&&Math.abs(n)<1e15) return String(n);
+  if(Math.abs(n)>1e10||Math.abs(n)<1e-6&&n!==0) return n.toExponential(6);
+  return parseFloat(n.toPrecision(12)).toString();
+}
+
+function renderCalcHistory(){
+  const el = document.getElementById('calcHistory');
+  if(!calcHistoryArr.length){el.innerHTML='<div style="text-align:center;color:var(--muted);padding:1rem;font-size:.8rem">No calculations yet</div>';return;}
+  el.innerHTML = calcHistoryArr.map(h=>`<div class="hist-item" onclick="calcRestoreFromHistory('${h.result}')"><span style="color:var(--muted)">${h.expr}</span><span style="color:var(--blue2)">${h.result}</span></div>`).join('');
+}
+
+function calcRestoreFromHistory(val){
+  calcExpr = val;
+  document.getElementById('calcExpr').textContent = val;
+  document.getElementById('calcResult').textContent = val;
+}
+
+function clearCalcHistory(){
+  calcHistoryArr=[];
+  renderCalcHistory();
+}
+
+// Keyboard support for scientific calc
+document.addEventListener('keydown', e=>{
+  const pg = document.querySelector('.page.on');
+  if(!pg||pg.id!=='pg-calc') return;
+  const activePanel = document.querySelector('.calc-panel.active');
+  if(!activePanel||activePanel.id!=='calc-scientific') return;
+  if(e.key>='0'&&e.key<='9') calcInput(e.key);
+  else if(e.key==='.') calcInput('.');
+  else if(e.key==='+') calcInput('+');
+  else if(e.key==='-') calcInput('-');
+  else if(e.key==='*') calcInput('*');
+  else if(e.key==='/'){e.preventDefault();calcInput('/');}
+  else if(e.key==='Enter') calcEquals();
+  else if(e.key==='Backspace') calcDel();
+  else if(e.key==='Escape') calcClear();
+});
+
+// ─── UNIT CONVERTER ───
+const CONV_UNITS = {
+  length:{m:1,km:1000,cm:.01,mm:.001,mi:1609.344,yd:.9144,ft:.3048,in:.0254,'nm':1e-9,'μm':1e-6,'nautical mi':1852},
+  mass:{kg:1,g:.001,mg:1e-6,lb:.453592,oz:.0283495,t:1000,'μg':1e-9,'st':6.35029},
+  area:{'m²':1,'km²':1e6,'cm²':1e-4,'mm²':1e-6,'ft²':.0929,'in²':6.452e-4,'acre':4046.86,'hectare':10000},
+  volume:{'L':1,'mL':.001,'m³':1000,'cm³':.001,'ft³':28.3168,'in³':.0163871,'gal(US)':3.78541,'fl oz(US)':.0295735,'tsp':.00492882,'tbsp':.0147868,'cup':.236588},
+  speed:{'m/s':1,'km/h':1/3.6,'mph':0.44704,'knot':0.514444,'ft/s':0.3048,'mach':340.29},
+  time:{s:1,ms:.001,'μs':1e-6,min:60,h:3600,day:86400,week:604800,month:2629800,year:31557600},
+  energy:{J:1,kJ:1000,cal:4.184,kcal:4184,'Wh':3600,'kWh':3.6e6,eV:1.602e-19,BTU:1055.06},
+  pressure:{Pa:1,kPa:1000,MPa:1e6,bar:100000,atm:101325,mmHg:133.322,psi:6894.76,torr:133.322},
+  data:{B:1,KB:1024,MB:1048576,GB:1073741824,TB:1.099511627776e12,bit:0.125,Kbit:128,Mbit:131072,Gbit:134217728},
+  angle:{deg:1,rad:180/Math.PI,grad:0.9,arcmin:1/60,arcsec:1/3600,'turn':360},
+  force:{N:1,kN:1000,lbf:4.44822,kgf:9.80665,dyn:1e-5}
+};
+const TEMP_UNITS = ['°C','°F','K','°R'];
+
+function updateConvUnits(){
+  const cat = document.getElementById('convCategory').value;
+  let units;
+  if(cat==='temperature') units=TEMP_UNITS;
+  else units=Object.keys(CONV_UNITS[cat]||{});
+  const opts = units.map((u,i)=>`<option value="${u}">${u}</option>`).join('');
+  document.getElementById('convFrom').innerHTML=opts;
+  document.getElementById('convTo').innerHTML=opts;
+  document.getElementById('convTo').selectedIndex=1;
+  doConvert();
+}
+
+function doConvert(){
+  const cat = document.getElementById('convCategory').value;
+  const from = document.getElementById('convFrom').value;
+  const to = document.getElementById('convTo').value;
+  const val = parseFloat(document.getElementById('convFromVal').value)||0;
+  let result;
+  if(cat==='temperature'){
+    let celsius;
+    if(from==='°C') celsius=val;
+    else if(from==='°F') celsius=(val-32)*5/9;
+    else if(from==='K') celsius=val-273.15;
+    else celsius=(val-491.67)*5/9;
+    if(to==='°C') result=celsius;
+    else if(to==='°F') result=celsius*9/5+32;
+    else if(to==='K') result=celsius+273.15;
+    else result=(celsius+273.15)*9/5;
+  }else{
+    const tbl=CONV_UNITS[cat];
+    result=val*tbl[from]/tbl[to];
+  }
+  const fmt = Math.abs(result)>1e9||Math.abs(result)<1e-5&&result!==0 ? result.toExponential(6) : parseFloat(result.toPrecision(10)).toString();
+  document.getElementById('convResult').textContent=fmt+' '+to;
+  document.getElementById('convFormula').textContent=`${val} ${from} = ${fmt} ${to}`;
+}
+
+function swapConvUnits(){
+  const f=document.getElementById('convFrom'),t=document.getElementById('convTo');
+  [f.value,t.value]=[t.value,f.value];
+  doConvert();
+}
+
+// ─── MATRIX CALCULATOR ───
+function buildMatrices(){
+  const sA=parseInt(document.getElementById('matASize').value);
+  const sB=parseInt(document.getElementById('matBSize').value);
+  const buildGrid=(id,s)=>{
+    const el=document.getElementById(id);
+    el.style.gridTemplateColumns=`repeat(${s},1fr)`;
+    el.innerHTML='';
+    for(let i=0;i<s;i++) for(let j=0;j<s;j++){
+      const inp=document.createElement('input');
+      inp.className='matrix-input';
+      inp.id=`${id}_${i}_${j}`;
+      inp.value='0';
+      el.appendChild(inp);
+    }
+  };
+  buildGrid('matrixA',sA);
+  buildGrid('matrixB',sB);
+}
+
+function getMatrix(id){
+  const el=document.getElementById(id);
+  const size=parseInt(el.style.gridTemplateColumns.match(/\d/)[0]);
+  const m=[];
+  for(let i=0;i<size;i++){m[i]=[];for(let j=0;j<size;j++) m[i][j]=parseFloat(document.getElementById(`${id}_${i}_${j}`).value)||0;}
+  return m;
+}
+
+function matAdd(a,b){return a.map((r,i)=>r.map((v,j)=>v+b[i][j]));}
+function matSub(a,b){return a.map((r,i)=>r.map((v,j)=>v-b[i][j]));}
+function matMul(a,b){const n=a.length;return a.map((r,i)=>b[0].map((_,j)=>r.reduce((s,_,k)=>s+a[i][k]*b[k][j],0)));}
+function matTranspose(a){return a[0].map((_,i)=>a.map(r=>r[i]));}
+function matTrace(a){return a.reduce((s,r,i)=>s+r[i],0);}
+function matDet(m){
+  const n=m.length;
+  if(n===1) return m[0][0];
+  if(n===2) return m[0][0]*m[1][1]-m[0][1]*m[1][0];
+  return m[0].reduce((s,v,j)=>s+v*(j%2===0?1:-1)*matDet(m.slice(1).map(r=>[...r.slice(0,j),...r.slice(j+1)])),0);
+}
+function matInv(m){
+  const n=m.length;const det=matDet(m);
+  if(Math.abs(det)<1e-12) return null;
+  const adj=m.map((r,i)=>r.map((_,j)=>{
+    const sub=m.filter((_,ri)=>ri!==i).map(ro=>[...ro.slice(0,j),...ro.slice(j+1)]);
+    return ((i+j)%2===0?1:-1)*matDet(sub);
+  }));
+  return matTranspose(adj).map(r=>r.map(v=>v/det));
+}
+
+function matOp(op){
+  const A=getMatrix('matrixA'),B=getMatrix('matrixB');
+  let res;
+  const fmt=m=>m.map(r=>r.map(v=>parseFloat(v.toPrecision(6))).join('\t')).join('\n');
+  try{
+    if(op==='add') res='A + B =\n'+fmt(matAdd(A,B));
+    else if(op==='sub') res='A - B =\n'+fmt(matSub(A,B));
+    else if(op==='mul'){if(A.length!==B.length){res='Error: sizes must match for multiply';} else res='A × B =\n'+fmt(matMul(A,B));}
+    else if(op==='detA') res=`det(A) = ${parseFloat(matDet(A).toPrecision(8))}`;
+    else if(op==='detB') res=`det(B) = ${parseFloat(matDet(B).toPrecision(8))}`;
+    else if(op==='transposeA') res='Aᵀ =\n'+fmt(matTranspose(A));
+    else if(op==='transposeB') res='Bᵀ =\n'+fmt(matTranspose(B));
+    else if(op==='traceA') res=`trace(A) = ${matTrace(A)}`;
+    else if(op==='invA'){const inv=matInv(A);res=inv?'A⁻¹ =\n'+fmt(inv):'A is singular (no inverse)';}
+  }catch(e){res='Error: '+e.message;}
+  document.getElementById('matResult').textContent=res;
+}
+
+// ─── STATISTICS ───
+function calcStats(){
+  const raw=document.getElementById('statsInput').value;
+  const nums=raw.split(/[\s,]+/).map(Number).filter(n=>!isNaN(n)&&n!=='');
+  if(!nums.length){document.getElementById('statsResult').innerHTML='';return;}
+  const n=nums.length;
+  const sum=nums.reduce((a,b)=>a+b,0);
+  const mean=sum/n;
+  const sorted=[...nums].sort((a,b)=>a-b);
+  const median=n%2===0?(sorted[n/2-1]+sorted[n/2])/2:sorted[Math.floor(n/2)];
+  const variance=nums.reduce((s,x)=>s+(x-mean)**2,0)/n;
+  const stddev=Math.sqrt(variance);
+  const sampleVar=n>1?nums.reduce((s,x)=>s+(x-mean)**2,0)/(n-1):0;
+  const sampleStd=Math.sqrt(sampleVar);
+  const mode=(()=>{const freq={};nums.forEach(x=>freq[x]=(freq[x]||0)+1);const max=Math.max(...Object.values(freq));return Object.keys(freq).filter(k=>freq[k]===max).join(', ');})();
+  const range=sorted[n-1]-sorted[0];
+  const q1=sorted[Math.floor(n/4)];
+  const q3=sorted[Math.floor(3*n/4)];
+  const iqr=q3-q1;
+  const gmean=Math.exp(nums.reduce((s,x)=>s+Math.log(Math.abs(x)),0)/n);
+  const cv=(stddev/Math.abs(mean)*100);
+  const fmt=v=>parseFloat(v.toPrecision(8)).toString();
+  document.getElementById('statsResult').innerHTML=[
+    {l:'Count (n)',v:n},{l:'Sum',v:fmt(sum)},{l:'Mean',v:fmt(mean)},{l:'Median',v:fmt(median)},
+    {l:'Mode',v:mode},{l:'Range',v:fmt(range)},{l:'Min',v:sorted[0]},{l:'Max',v:sorted[n-1]},
+    {l:'Std Dev (pop)',v:fmt(stddev)},{l:'Std Dev (sample)',v:fmt(sampleStd)},{l:'Variance (pop)',v:fmt(variance)},
+    {l:'Variance (sample)',v:fmt(sampleVar)},{l:'Q1',v:fmt(q1)},{l:'Q3',v:fmt(q3)},{l:'IQR',v:fmt(iqr)},
+    {l:'Geo Mean',v:fmt(gmean)},{l:'CV%',v:fmt(cv)}
+  ].map(x=>`<div class="stats-card"><div class="stats-label">${x.l}</div><div class="stats-val">${x.v}</div></div>`).join('');
+  // Frequency
+  const freq={};nums.forEach(x=>freq[x]=(freq[x]||0)+1);
+  document.getElementById('statsFreq').innerHTML=Object.entries(freq).sort((a,b)=>b[1]-a[1]).map(([v,f])=>`${v}: ${f} (${(f/n*100).toFixed(1)}%)`).join(' &nbsp;|&nbsp; ');
+}
+
+// ─── EQUATION SOLVER ───
+function setEqType(t){
+  eqType=t;
+  ['linear','quadratic','cubic','simultaneous'].forEach(x=>{
+    document.getElementById('eq'+x.charAt(0).toUpperCase()+x.slice(1)+'Btn').style.background='rgba(139,92,246,.15)';
+  });
+  document.getElementById('eq'+t.charAt(0).toUpperCase()+t.slice(1)+'Btn').style.background='rgba(59,130,246,.3)';
+  const ip=document.getElementById('eqInputs');
+  if(t==='linear') ip.innerHTML=`<div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap"><span style="font-family:monospace;color:var(--blue2)">a·x + b = 0</span></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-top:.8rem"><div><label style="font-size:.75rem;color:var(--muted)">a</label><input id="eqA" class="conv-input" value="1"></div><div><label style="font-size:.75rem;color:var(--muted)">b</label><input id="eqB" class="conv-input" value="0"></div></div>`;
+  else if(t==='quadratic') ip.innerHTML=`<div style="font-family:monospace;color:var(--blue2)">a·x² + b·x + c = 0</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.8rem;margin-top:.8rem"><div><label style="font-size:.75rem;color:var(--muted)">a</label><input id="eqA" class="conv-input" value="1"></div><div><label style="font-size:.75rem;color:var(--muted)">b</label><input id="eqB" class="conv-input" value="0"></div><div><label style="font-size:.75rem;color:var(--muted)">c</label><input id="eqC" class="conv-input" value="-4"></div></div>`;
+  else if(t==='cubic') ip.innerHTML=`<div style="font-family:monospace;color:var(--blue2)">a·x³ + b·x² + c·x + d = 0</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:.8rem;margin-top:.8rem"><div><label style="font-size:.75rem;color:var(--muted)">a</label><input id="eqA" class="conv-input" value="1"></div><div><label style="font-size:.75rem;color:var(--muted)">b</label><input id="eqB" class="conv-input" value="0"></div><div><label style="font-size:.75rem;color:var(--muted)">c</label><input id="eqC" class="conv-input" value="-3"></div><div><label style="font-size:.75rem;color:var(--muted)">d</label><input id="eqD" class="conv-input" value="2"></div></div>`;
+  else if(t==='simultaneous') ip.innerHTML=`<div style="font-family:monospace;color:var(--blue2)">a₁x + b₁y = c₁ &nbsp; | &nbsp; a₂x + b₂y = c₂</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.8rem;margin-top:.8rem"><div><label style="font-size:.75rem;color:var(--muted)">a₁</label><input id="eqA1" class="conv-input" value="2"></div><div><label style="font-size:.75rem;color:var(--muted)">b₁</label><input id="eqB1" class="conv-input" value="3"></div><div><label style="font-size:.75rem;color:var(--muted)">c₁</label><input id="eqC1" class="conv-input" value="7"></div><div><label style="font-size:.75rem;color:var(--muted)">a₂</label><input id="eqA2" class="conv-input" value="1"></div><div><label style="font-size:.75rem;color:var(--muted)">b₂</label><input id="eqB2" class="conv-input" value="-1"></div><div><label style="font-size:.75rem;color:var(--muted)">c₂</label><input id="eqC2" class="conv-input" value="1"></div></div>`;
+}
+
+function solveEquation(){
+  const g=id=>parseFloat(document.getElementById(id)?.value)||0;
+  const res=document.getElementById('eqResult');
+  const fmt=v=>parseFloat(v.toPrecision(8)).toString();
+  if(eqType==='linear'){
+    const a=g('eqA'),b=g('eqB');
+    if(a===0){res.textContent=b===0?'Infinite solutions':'No solution';return;}
+    res.textContent=`x = ${fmt(-b/a)}`;
+  }else if(eqType==='quadratic'){
+    const a=g('eqA'),b=g('eqB'),c=g('eqC');
+    if(a===0){res.textContent='Not quadratic (a=0)';return;}
+    const disc=b*b-4*a*c;
+    if(disc>0) res.textContent=`x₁ = ${fmt((-b+Math.sqrt(disc))/(2*a))}\nx₂ = ${fmt((-b-Math.sqrt(disc))/(2*a))}\nDiscriminant = ${fmt(disc)} (two real roots)`;
+    else if(disc===0) res.textContent=`x = ${fmt(-b/(2*a))}\nDiscriminant = 0 (one real root — double root)`;
+    else res.textContent=`Complex roots:\nx₁ = ${fmt(-b/(2*a))} + ${fmt(Math.sqrt(-disc)/(2*a))}i\nx₂ = ${fmt(-b/(2*a))} - ${fmt(Math.sqrt(-disc)/(2*a))}i\nDiscriminant = ${fmt(disc)}`;
+  }else if(eqType==='cubic'){
+    const a=g('eqA'),b=g('eqB'),c=g('eqC'),d=g('eqD');
+    // Numerical root finding using Newton-Raphson + deflation
+    const f=x=>a*x**3+b*x**2+c*x+d;
+    const df=x=>3*a*x**2+2*b*x+c;
+    const findRoot=(x0)=>{let x=x0;for(let i=0;i<1000;i++){const fx=f(x);if(Math.abs(fx)<1e-12)break;const dfx=df(x);if(Math.abs(dfx)<1e-15)break;x-=fx/dfx;}return x;};
+    const roots=new Set();
+    [-10,-1,0,1,10,-5,5,-2,2,-0.5,0.5].forEach(s=>{const r=findRoot(s);if(isFinite(r)&&Math.abs(f(r))<1e-8)roots.add(parseFloat(r.toPrecision(8)));});
+    res.textContent=roots.size?[...roots].map((r,i)=>`x${i+1} = ${r}`).join('\n'):'Could not find real roots numerically';
+  }else if(eqType==='simultaneous'){
+    const a1=g('eqA1'),b1=g('eqB1'),c1=g('eqC1'),a2=g('eqA2'),b2=g('eqB2'),c2=g('eqC2');
+    const det=a1*b2-a2*b1;
+    if(Math.abs(det)<1e-12){res.textContent=Math.abs(c1*b2-c2*b1)<1e-12?'Infinite solutions (dependent equations)':'No solution (parallel lines)';return;}
+    const x=(c1*b2-c2*b1)/det,y=(a1*c2-a2*c1)/det;
+    res.textContent=`x = ${fmt(x)}\ny = ${fmt(y)}`;
+  }
+}
+
+// ─── BASE CONVERTER ───
+function doBaseConvert(){
+  const base=parseInt(document.getElementById('baseInputType').value);
+  const raw=document.getElementById('baseInput').value.trim().toUpperCase();
+  if(!raw){['baseDec','baseBin','baseOct','baseHex'].forEach(id=>document.getElementById(id).textContent='—');return;}
+  try{
+    const dec=parseInt(raw,base);
+    if(isNaN(dec)){document.getElementById('baseDec').textContent='Invalid';return;}
+    document.getElementById('baseDec').textContent=dec;
+    document.getElementById('baseBin').textContent=dec.toString(2);
+    document.getElementById('baseOct').textContent=dec.toString(8);
+    document.getElementById('baseHex').textContent=dec.toString(16).toUpperCase();
+  }catch(e){document.getElementById('baseDec').textContent='Error';}
+}
+
+function doBitwise(op){
+  const a=parseInt(document.getElementById('bitwiseA').value)||0;
+  const b=parseInt(document.getElementById('bitwiseB').value)||0;
+  let r,label;
+  if(op==='AND'){r=a&b;label='A AND B';}
+  else if(op==='OR'){r=a|b;label='A OR B';}
+  else if(op==='XOR'){r=a^b;label='A XOR B';}
+  else if(op==='NOT'){r=~a;label='NOT A';}
+  else if(op==='LSHIFT'){r=a<<1;label='A << 1';}
+  else if(op==='RSHIFT'){r=a>>1;label='A >> 1';}
+  document.getElementById('bitwiseResult').textContent=`${label} = ${r} (dec) | ${r.toString(2)} (bin) | 0x${(r>>>0).toString(16).toUpperCase()} (hex)`;
+}
 </script>
 </body>
 </html>
