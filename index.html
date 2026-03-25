@@ -324,6 +324,63 @@ body.light .sidebar-theme-row{background:rgba(255,255,255,.6)}
 .hamburger:hover{border-color:var(--blue2);color:var(--blue2)}
 body.light .hamburger{border-color:rgba(0,0,0,.15);color:#475569}
 
+/* ── MOCK TEST GENERATOR ── */
+.mock-modal{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:10000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(12px)}
+.mock-modal.on{display:flex}
+.mock-box{background:var(--bg);border:1px solid var(--gb);border-radius:20px;width:740px;max-width:96vw;max-height:94vh;overflow-y:auto;display:flex;flex-direction:column}
+.mock-header{padding:1.2rem 1.8rem;border-bottom:1px solid var(--gb);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--bg);z-index:2;gap:1rem}
+.mock-header h3{font-size:1rem;font-weight:800;margin:0;flex:1}
+.mock-timer{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:var(--blue2);min-width:64px;text-align:center}
+.mock-timer.warn{color:var(--gold)}
+.mock-timer.danger{color:var(--red);animation:pulse .8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.mock-body{padding:1.5rem 1.8rem;flex:1}
+.mock-progress{height:4px;background:var(--gb);border-radius:4px;margin-bottom:1.5rem;overflow:hidden}
+.mock-progress-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--purple));border-radius:4px;transition:width .4s}
+.mock-q-num{font-size:.75rem;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:1px;margin-bottom:.5rem}
+.mock-q-text{font-size:1rem;font-weight:600;line-height:1.6;margin-bottom:1.2rem;color:var(--white)}
+.mock-options{display:flex;flex-direction:column;gap:.7rem}
+.mock-opt{background:var(--glass);border:1.5px solid var(--gb);border-radius:10px;padding:.9rem 1.2rem;cursor:pointer;transition:all .2s;font-size:.9rem;display:flex;align-items:center;gap:.8rem}
+.mock-opt:hover{border-color:var(--blue2);background:rgba(59,130,246,.08)}
+.mock-opt.selected{border-color:var(--blue);background:rgba(59,130,246,.15);color:var(--blue2)}
+.mock-opt.correct{border-color:var(--green);background:rgba(16,185,129,.15);color:var(--green)}
+.mock-opt.wrong{border-color:var(--red);background:rgba(239,68,68,.15);color:var(--red)}
+.mock-opt.disabled{pointer-events:none}
+.mock-opt-letter{width:26px;height:26px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0}
+.mock-nav{display:flex;justify-content:space-between;align-items:center;margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid var(--gb);gap:1rem}
+.mock-q-dots{display:flex;flex-wrap:wrap;gap:.4rem;flex:1;justify-content:center}
+.mock-dot{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--gb);background:var(--glass);cursor:pointer;font-size:.7rem;font-weight:700;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all .2s}
+.mock-dot.answered{background:rgba(59,130,246,.2);border-color:var(--blue);color:var(--blue2)}
+.mock-dot.current{background:linear-gradient(135deg,var(--blue),var(--purple));border-color:transparent;color:#fff}
+.mock-dot.correct{background:rgba(16,185,129,.2);border-color:var(--green);color:var(--green)}
+.mock-dot.wrong{background:rgba(239,68,68,.2);border-color:var(--red);color:var(--red)}
+.mock-result{text-align:center;padding:1rem 0}
+.mock-score-big{font-family:'Playfair Display',serif;font-size:4rem;font-weight:900;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.mock-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1.5rem 0}
+.mock-stat{background:var(--glass);border:1px solid var(--gb);border-radius:12px;padding:1rem;text-align:center}
+.mock-stat-val{font-size:1.5rem;font-weight:900;margin-bottom:.2rem}
+.mock-stat-lbl{font-size:.72rem;color:var(--muted)}
+.mock-review{margin-top:1.5rem;text-align:left}
+.mock-review-item{background:var(--glass);border:1px solid var(--gb);border-radius:12px;padding:1.2rem;margin-bottom:.8rem}
+.mock-review-item.correct-r{border-color:rgba(16,185,129,.4)}
+.mock-review-item.wrong-r{border-color:rgba(239,68,68,.4)}
+.mock-explanation{font-size:.82rem;color:var(--muted);margin-top:.6rem;line-height:1.5;border-top:1px solid var(--gb);padding-top:.6rem}
+.mock-loading{text-align:center;padding:3rem}
+.mock-loading-dots{display:flex;justify-content:center;gap:.4rem;margin:1rem 0}
+.mock-loading-dots span{width:10px;height:10px;border-radius:50%;background:var(--blue);animation:dotBounce .8s ease-in-out infinite}
+.mock-loading-dots span:nth-child(2){animation-delay:.15s;background:var(--purple)}
+.mock-loading-dots span:nth-child(3){animation-delay:.3s;background:var(--cyan)}
+@keyframes dotBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.mock-setup{padding:.5rem 0}
+.mock-setup-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.mock-select{width:100%;background:var(--glass);border:1px solid var(--gb);border-radius:10px;padding:.8rem 1rem;color:var(--white);font-size:.9rem;outline:none;font-family:inherit}
+.mock-select:focus{border-color:var(--blue)}
+.mock-select option{background:#020817}
+body.light .mock-select{background:rgba(255,255,255,.8);color:#1e293b}
+body.light .mock-select option{background:#f0f4ff}
+body.light .mock-q-text{color:#1e293b}
+body.light .mock-box{background:#f0f4ff}
+body.light .mock-header{background:#f0f4ff}
 
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -595,7 +652,12 @@ body.light .hamburger{border-color:rgba(0,0,0,.15);color:#475569}
 <div id="pg-subcategory" class="page">
 <div class="sec" style="margin-top:2rem">
 <button class="back-btn" id="backToCategoryBtn">← Back</button>
-<h2 class="sec-title" id="subcategoryPageTitle"></h2>
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1rem">
+  <h2 class="sec-title" id="subcategoryPageTitle" style="margin-bottom:0"></h2>
+  <button class="btn btn-grad" id="mockTestBtn" onclick="openMockTest()" style="display:none;gap:.5rem;align-items:center">
+    🧪 Take Mock Test
+  </button>
+</div>
 <div class="doc-grid" id="subcategoryMaterialsGrid"></div>
 </div>
 </div>
@@ -1423,6 +1485,12 @@ async function openSubcategoryPage(categoryName,subcategoryName){
 const isFree=subcategoryName==='Free Resources';
 document.getElementById('subcategoryPageTitle').textContent=`${categoryName} — ${subcategoryName}`;
 document.getElementById('backToCategoryBtn').setAttribute('onclick',`openCategoryPage('${categoryName}')`);
+// Store current context for mock test
+window._mockCategory = categoryName;
+window._mockSubcategory = subcategoryName;
+// Show mock test button
+const mockBtn = document.getElementById('mockTestBtn');
+if(mockBtn) mockBtn.style.display = 'flex';
 go('subcategory');
 const grid=document.getElementById('subcategoryMaterialsGrid');
 
@@ -3838,6 +3906,383 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeSidebar(); })
 
 // Init sidebar on load
 document.addEventListener('DOMContentLoaded',()=>{ updateSidebar(); updateSidebarThemeLabel(); });
+</script>
+
+
+<!-- ══════════════════════════════════════════ -->
+<!-- MOCK TEST MODAL                            -->
+<!-- ══════════════════════════════════════════ -->
+<div class="mock-modal" id="mockModal">
+<div class="mock-box">
+
+  <!-- Header -->
+  <div class="mock-header">
+    <h3 id="mockTitle">Mock Test</h3>
+    <div class="mock-timer" id="mockTimer">--:--</div>
+    <button onclick="closeMockTest()" style="background:transparent;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;line-height:1;flex-shrink:0">✕</button>
+  </div>
+
+  <!-- Body -->
+  <div class="mock-body" id="mockBody">
+    <!-- Setup screen shown first, then loading, then questions, then results -->
+    <div id="mockSetupScreen" class="mock-setup">
+      <p style="color:var(--muted);font-size:.9rem;margin-bottom:1.5rem">Configure your mock test for <strong id="mockSubjectLabel" style="color:var(--white)"></strong></p>
+      <div class="mock-setup-row">
+        <div>
+          <label style="font-size:.75rem;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:.5rem">Number of Questions</label>
+          <select class="mock-select" id="mockQCount">
+            <option value="5">5 Questions (Quick)</option>
+            <option value="10" selected>10 Questions</option>
+            <option value="15">15 Questions</option>
+            <option value="20">20 Questions (Full)</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:.75rem;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:.5rem">Difficulty</label>
+          <select class="mock-select" id="mockDifficulty">
+            <option value="easy">Easy</option>
+            <option value="medium" selected>Medium</option>
+            <option value="hard">Hard</option>
+            <option value="mixed">Mixed</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:.75rem;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:.5rem">Time per Question</label>
+          <select class="mock-select" id="mockTimePerQ">
+            <option value="30">30 seconds</option>
+            <option value="60" selected>1 minute</option>
+            <option value="90">90 seconds</option>
+            <option value="120">2 minutes</option>
+            <option value="0">No timer</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:.75rem;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:.5rem">Question Type</label>
+          <select class="mock-select" id="mockQType">
+            <option value="mcq">Multiple Choice (MCQ)</option>
+            <option value="truefalse">True / False</option>
+            <option value="mixed">Mixed</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-grad" style="width:100%;padding:1rem;font-size:1rem;margin-top:.5rem" onclick="startMockTest()">
+        🚀 Generate & Start Test
+      </button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+
+<script>
+// ══════════════════════════════════════════════════════
+// MOCK TEST GENERATOR — Powered by Claude AI
+// ══════════════════════════════════════════════════════
+
+// API key is stored securely on the backend — never in frontend code
+
+let mockQuestions   = [];
+let mockCurrent     = 0;
+let mockAnswers     = {};
+let mockTimerInt    = null;
+let mockTimeLeft    = 0;
+let mockTotalTime   = 0;
+let mockStartTime   = null;
+let mockSubmitted   = false;
+
+// ── Open setup screen ──
+function openMockTest(){
+  const cat = window._mockCategory || '';
+  const sub = window._mockSubcategory || '';
+  const lbl = document.getElementById('mockSubjectLabel');
+  if(lbl) lbl.textContent = `${cat} — ${sub}`;
+  document.getElementById('mockTitle').textContent = '🧪 Mock Test';
+  showMockScreen('setup');
+  document.getElementById('mockTimer').textContent = '--:--';
+  document.getElementById('mockModal').classList.add('on');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeMockTest(){
+  clearInterval(mockTimerInt);
+  document.getElementById('mockModal').classList.remove('on');
+  document.body.style.overflow = '';
+  mockQuestions = [];
+  mockAnswers   = {};
+  mockCurrent   = 0;
+  mockSubmitted = false;
+}
+
+function showMockScreen(screen){
+  const body = document.getElementById('mockBody');
+  if(screen === 'setup'){
+    document.getElementById('mockSetupScreen').style.display = 'block';
+  } else {
+    document.getElementById('mockSetupScreen').style.display = 'none';
+  }
+}
+
+// ── Generate questions via Claude API ──
+async function startMockTest(){
+  const qCount  = parseInt(document.getElementById('mockQCount').value);
+  const diff    = document.getElementById('mockDifficulty').value;
+  const timePerQ= parseInt(document.getElementById('mockTimePerQ').value);
+  const qType   = document.getElementById('mockQType').value;
+  const cat     = window._mockCategory  || 'General Knowledge';
+  const sub     = window._mockSubcategory || 'General';
+
+  // Show loading
+  showMockScreen('loading');
+  const body = document.getElementById('mockBody');
+  body.innerHTML = `
+    <div class="mock-loading">
+      <div style="font-size:2rem;margin-bottom:1rem">🤖</div>
+      <div style="font-weight:700;font-size:1rem;margin-bottom:.5rem">Generating your test...</div>
+      <div style="color:var(--muted);font-size:.85rem">Claude AI is creating ${qCount} ${diff} questions on ${sub}</div>
+      <div class="mock-loading-dots"><span></span><span></span><span></span></div>
+    </div>`;
+
+  try {
+    const prompt = `You are an expert exam question generator for ${cat} — ${sub}.
+
+Generate exactly ${qCount} ${diff} difficulty ${qType === 'mcq' ? 'multiple choice' : qType === 'truefalse' ? 'true/false' : 'mixed (MCQ and true/false)'} questions.
+
+Rules:
+- Questions must be specific to ${sub} in ${cat}
+- Each MCQ must have exactly 4 options (A, B, C, D)
+- True/False questions must have exactly 2 options: "True" and "False"
+- Include a brief explanation for each correct answer
+- Vary question difficulty as ${diff}
+
+Respond ONLY with a valid JSON array, no markdown, no extra text:
+[
+  {
+    "question": "Question text here?",
+    "type": "mcq",
+    "options": ["Option A", "Option B", "Option C", "Option D"],
+    "correct": 0,
+    "explanation": "Brief explanation why this is correct"
+  }
+]
+For true/false use type "tf" and options ["True","False"] with correct being 0 or 1.`;
+
+    // Call our backend which holds the API key securely
+    const response = await fetch(`${API_URL}/api/mocktest/generate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getToken()}`
+      },
+      body: JSON.stringify({
+        category: cat,
+        subcategory: sub,
+        qCount,
+        difficulty: diff,
+        qType
+      })
+    });
+
+    if(!response.ok){
+      const err = await response.json();
+      throw new Error(err.message || 'Failed to generate questions');
+    }
+
+    const data = await response.json();
+    mockQuestions = data.questions;
+
+    // Setup timer
+    mockCurrent   = 0;
+    mockAnswers   = {};
+    mockSubmitted = false;
+    mockStartTime = Date.now();
+    mockTotalTime = timePerQ > 0 ? qCount * timePerQ : 0;
+    mockTimeLeft  = mockTotalTime;
+
+    if(mockTotalTime > 0) startMockTimer();
+    else document.getElementById('mockTimer').textContent = '∞';
+
+    renderMockQuestion();
+
+  } catch(err) {
+    document.getElementById('mockBody').innerHTML = `
+      <div style="text-align:center;padding:3rem">
+        <div style="font-size:2rem;margin-bottom:1rem">⚠️</div>
+        <div style="font-weight:700;margin-bottom:.5rem">Failed to generate questions</div>
+        <div style="color:var(--muted);font-size:.85rem;margin-bottom:1.5rem">${err.message}</div>
+        <div style="font-size:.8rem;color:var(--muted2);margin-bottom:1.5rem;background:var(--glass);padding:.8rem;border-radius:8px">
+          Make sure <code>CLAUDE_MOCK_API_KEY</code> is set in your backend <code>.env</code> file
+        </div>
+        <button class="btn btn-grad" onclick="openMockTest()">Try Again</button>
+      </div>`;
+  }
+}
+
+// ── Timer ──
+function startMockTimer(){
+  clearInterval(mockTimerInt);
+  mockTimerInt = setInterval(()=>{
+    mockTimeLeft--;
+    updateTimerDisplay();
+    if(mockTimeLeft <= 0){
+      clearInterval(mockTimerInt);
+      submitMockTest();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay(){
+  const el = document.getElementById('mockTimer');
+  if(!el) return;
+  if(mockTotalTime === 0){ el.textContent = '∞'; return; }
+  const m = Math.floor(mockTimeLeft / 60);
+  const s = mockTimeLeft % 60;
+  el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  el.className = 'mock-timer';
+  if(mockTimeLeft <= mockTotalTime * 0.25) el.classList.add('danger');
+  else if(mockTimeLeft <= mockTotalTime * 0.5) el.classList.add('warn');
+}
+
+// ── Render question ──
+function renderMockQuestion(){
+  const q   = mockQuestions[mockCurrent];
+  const n   = mockQuestions.length;
+  const pct = ((mockCurrent) / n * 100).toFixed(0);
+  const letters = ['A','B','C','D'];
+
+  const dotsHtml = mockQuestions.map((_, i) => {
+    let cls = 'mock-dot';
+    if(i === mockCurrent) cls += ' current';
+    else if(mockSubmitted){
+      if(mockAnswers[i] === undefined) cls += ' answered';
+      else if(mockAnswers[i] === mockQuestions[i].correct) cls += ' correct';
+      else cls += ' wrong';
+    } else if(mockAnswers[i] !== undefined) cls += ' answered';
+    return `<div class="${cls}" onclick="jumpMockQ(${i})">${i+1}</div>`;
+  }).join('');
+
+  const optionsHtml = q.options.map((opt, i) => {
+    let cls = 'mock-opt';
+    const chosen = mockAnswers[mockCurrent];
+    if(mockSubmitted){
+      if(i === q.correct) cls += ' correct disabled';
+      else if(chosen === i && i !== q.correct) cls += ' wrong disabled';
+      else cls += ' disabled';
+    } else if(chosen === i) cls += ' selected';
+    return `<div class="${cls}" onclick="selectMockAnswer(${i})">
+      <div class="mock-opt-letter">${letters[i]||'T'}</div>
+      <span>${opt}</span>
+    </div>`;
+  }).join('');
+
+  const explanationHtml = mockSubmitted && q.explanation
+    ? `<div class="mock-explanation">💡 <strong>Explanation:</strong> ${q.explanation}</div>` : '';
+
+  document.getElementById('mockBody').innerHTML = `
+    <div class="mock-progress"><div class="mock-progress-fill" style="width:${pct}%"></div></div>
+    <div class="mock-q-num">Question ${mockCurrent + 1} of ${n} · ${q.type === 'tf' ? 'True / False' : 'MCQ'}</div>
+    <div class="mock-q-text">${q.question}</div>
+    <div class="mock-options">${optionsHtml}</div>
+    ${explanationHtml}
+    <div class="mock-nav">
+      <button class="btn btn-ghost" style="padding:.6rem 1.2rem;font-size:.85rem" onclick="prevMockQ()" ${mockCurrent===0?'disabled style="opacity:.4"':''}>← Prev</button>
+      <div class="mock-q-dots">${dotsHtml}</div>
+      ${mockCurrent === n-1
+        ? `<button class="btn btn-grad" style="padding:.6rem 1.2rem;font-size:.85rem" onclick="submitMockTest()">Submit ✓</button>`
+        : `<button class="btn btn-grad" style="padding:.6rem 1.2rem;font-size:.85rem" onclick="nextMockQ()">Next →</button>`}
+    </div>`;
+}
+
+function selectMockAnswer(i){
+  if(mockSubmitted) return;
+  mockAnswers[mockCurrent] = i;
+  renderMockQuestion();
+}
+
+function nextMockQ(){
+  if(mockCurrent < mockQuestions.length - 1){ mockCurrent++; renderMockQuestion(); }
+}
+function prevMockQ(){
+  if(mockCurrent > 0){ mockCurrent--; renderMockQuestion(); }
+}
+function jumpMockQ(i){ mockCurrent = i; renderMockQuestion(); }
+
+// ── Submit & results ──
+function submitMockTest(){
+  if(mockSubmitted) return;
+  clearInterval(mockTimerInt);
+  mockSubmitted = true;
+
+  const n       = mockQuestions.length;
+  const correct = mockQuestions.filter((q,i) => mockAnswers[i] === q.correct).length;
+  const wrong   = mockQuestions.filter((q,i) => mockAnswers[i] !== undefined && mockAnswers[i] !== q.correct).length;
+  const skipped = n - correct - wrong;
+  const pct     = Math.round(correct / n * 100);
+  const timeTaken = mockTotalTime > 0 ? mockTotalTime - mockTimeLeft : Math.round((Date.now() - mockStartTime) / 1000);
+  const grade   = pct >= 90?'A+':pct >= 80?'A':pct >= 70?'B':pct >= 60?'C':pct >= 50?'D':'F';
+  const msg     = pct >= 80?'Excellent work! 🎉':pct >= 60?'Good job! Keep it up 👍':pct >= 40?'Keep practicing! 💪':'Need more revision 📚';
+
+  const reviewHtml = mockQuestions.map((q,i)=>{
+    const isCorrect = mockAnswers[i] === q.correct;
+    const isSkipped = mockAnswers[i] === undefined;
+    const userAns   = isSkipped ? 'Skipped' : q.options[mockAnswers[i]];
+    const correctAns= q.options[q.correct];
+    return `<div class="mock-review-item ${isCorrect?'correct-r':isSkipped?'':'wrong-r'}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem;margin-bottom:.5rem">
+        <div style="font-size:.85rem;font-weight:700;flex:1">Q${i+1}. ${q.question}</div>
+        <span style="font-size:.75rem;font-weight:700;color:${isCorrect?'var(--green)':isSkipped?'var(--muted)':'var(--red)'}">
+          ${isCorrect?'✅ Correct':isSkipped?'⏭ Skipped':'❌ Wrong'}
+        </span>
+      </div>
+      ${!isCorrect?`<div style="font-size:.8rem;color:var(--muted);margin-bottom:.3rem">Your answer: <span style="color:${isSkipped?'var(--muted)':'var(--red)'}">${userAns}</span></div>`:''}
+      <div style="font-size:.8rem;color:var(--green)">Correct: ${correctAns}</div>
+      ${q.explanation?`<div class="mock-explanation">💡 ${q.explanation}</div>`:''}
+    </div>`;
+  }).join('');
+
+  document.getElementById('mockTitle').textContent = '📊 Test Results';
+  document.getElementById('mockTimer').textContent  = formatMockTime(timeTaken);
+
+  document.getElementById('mockBody').innerHTML = `
+    <div class="mock-result">
+      <div style="font-size:.9rem;color:var(--muted);margin-bottom:.3rem">Your Score</div>
+      <div class="mock-score-big">${pct}%</div>
+      <div style="font-size:1.1rem;font-weight:700;color:var(--white);margin:.3rem 0">${msg}</div>
+      <div style="color:var(--blue2);font-size:.9rem">Grade: <strong>${grade}</strong> · ${correct}/${n} correct</div>
+    </div>
+    <div class="mock-stat-row">
+      <div class="mock-stat"><div class="mock-stat-val" style="color:var(--green)">${correct}</div><div class="mock-stat-lbl">Correct</div></div>
+      <div class="mock-stat"><div class="mock-stat-val" style="color:var(--red)">${wrong}</div><div class="mock-stat-lbl">Wrong</div></div>
+      <div class="mock-stat"><div class="mock-stat-val" style="color:var(--muted)">${skipped}</div><div class="mock-stat-lbl">Skipped</div></div>
+    </div>
+    <div style="display:flex;gap:.8rem;margin-bottom:1.5rem;flex-wrap:wrap">
+      <button class="btn btn-grad" style="flex:1;padding:.8rem" onclick="retryMockTest()">🔄 Retry Test</button>
+      <button class="btn btn-ghost" style="flex:1;padding:.8rem" onclick="openMockTest()">⚙️ New Settings</button>
+    </div>
+    <div class="mock-review">
+      <div style="font-weight:800;font-size:1rem;margin-bottom:1rem">📝 Answer Review</div>
+      ${reviewHtml}
+    </div>`;
+}
+
+function retryMockTest(){
+  // Same settings, regenerate
+  mockSubmitted = false;
+  mockAnswers   = {};
+  mockCurrent   = 0;
+  startMockTest();
+}
+
+function formatMockTime(secs){
+  const m = Math.floor(secs/60);
+  const s = secs % 60;
+  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+// Close on backdrop click
+document.getElementById('mockModal').addEventListener('click', function(e){
+  if(e.target === this) closeMockTest();
+});
 </script>
 
 </body>
