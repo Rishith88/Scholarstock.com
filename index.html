@@ -1259,7 +1259,7 @@ body.light .mock-header{background:#f0f4ff}
 
 <!-- Cloudflare email-decode removed for local testing -->
 <script>
-const API_URL='https://scholarstock-backend-rfr4.onrender.com';
+const API_URL='https://scholarstock-com-backend-6.onrender.com';
 
 let SUBCATEGORIES_DATA={};
 let allSubcategories=[];
@@ -1511,8 +1511,11 @@ grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:3rem">
 <button class="btn btn-grad" onclick="rentSubcategory('${categoryName.replace(/'/g,"\\'")}','${subcategoryName.replace(/'/g,"\\'")}',199)">🔓 Rent Now — ₹199/month</button>
 <button class="btn btn-ghost" onclick="addToCart('${categoryName.replace(/'/g,"\\'")}','${subcategoryName.replace(/'/g,"\\'")}',199)">🛒 Add to Cart</button>
 </div>
+<div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--gb)">
+<div style="font-size:.85rem;color:var(--muted);margin-bottom:.8rem">You can still try a free mock test for this topic!</div>
+</div>
 </div>`;
-return;
+// Don't return — still show mock test button below
 }else{
 const expiry=checkData.expiryDate?`<div style="color:var(--green);font-size:.85rem;margin-bottom:1.5rem">✅ Active rental • Expires ${new Date(checkData.expiryDate).toLocaleDateString()} (${checkData.daysLeft} days left)</div>`:'';
 grid.innerHTML=`<div id="subcatHeader" style="grid-column:1/-1;margin-bottom:1rem">${expiry}</div>`;
@@ -1546,7 +1549,7 @@ grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:3rem;colo
 // LOAD SUBCATEGORIES FROM API
 async function loadSubcategories(){
 try{
-const res=await fetch('https://scholarstock-backend-rfr4.onrender.com/api/categories/structure');
+const res=await fetch('https://scholarstock-com-backend-6.onrender.com/api/categories/structure');
 const data=await res.json();
 if(data.success&&data.categories&&Object.keys(data.categories).length>0){
 SUBCATEGORIES_DATA=data.categories;
