@@ -1259,7 +1259,7 @@ body.light .mock-header{background:#f0f4ff}
 
 <!-- Cloudflare email-decode removed for local testing -->
 <script>
-const API_URL='https://scholarstock-com-backend-6.onrender.com';
+const API_URL='https://scholarstock-backend-rfr4.onrender.com';
 
 let SUBCATEGORIES_DATA={};
 let allSubcategories=[];
@@ -1549,7 +1549,7 @@ grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:3rem;colo
 // LOAD SUBCATEGORIES FROM API
 async function loadSubcategories(){
 try{
-const res=await fetch('https://scholarstock-com-backend-6.onrender.com/api/categories/structure');
+const res=await fetch('https://scholarstock-backend-rfr4.onrender.com/api/categories/structure');
 const data=await res.json();
 if(data.success&&data.categories&&Object.keys(data.categories).length>0){
 SUBCATEGORIES_DATA=data.categories;
@@ -3925,11 +3925,40 @@ document.addEventListener('DOMContentLoaded',()=>{ updateSidebar(); updateSideba
     <button onclick="closeMockTest()" style="background:transparent;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;line-height:1;flex-shrink:0">✕</button>
   </div>
 
-  <!-- Body -->
-  <div class="mock-body" id="mockBody">
-    <!-- Setup screen shown first, then loading, then questions, then results -->
+  <!-- Body — content built dynamically by openMockTest() -->
+  <div class="mock-body" id="mockBody"></div>
+
+</div>
+</div>
+
+
+<script>
+// ══════════════════════════════════════════════════════
+// MOCK TEST GENERATOR — Powered by Claude AI
+// ══════════════════════════════════════════════════════
+
+// API key is stored securely on the backend — never in frontend code
+
+let mockQuestions   = [];
+let mockCurrent     = 0;
+let mockAnswers     = {};
+let mockTimerInt    = null;
+let mockTimeLeft    = 0;
+let mockTotalTime   = 0;
+let mockStartTime   = null;
+let mockSubmitted   = false;
+
+// ── Open setup screen ──
+function openMockTest(){
+  const cat = window._mockCategory || '';
+  const sub = window._mockSubcategory || '';
+  document.getElementById('mockTitle').textContent = '🧪 Mock Test';
+  document.getElementById('mockTimer').textContent = '--:--';
+
+  // Always rebuild the body fresh — avoids null errors from previous runs
+  document.getElementById('mockBody').innerHTML = `
     <div id="mockSetupScreen" class="mock-setup">
-      <p style="color:var(--muted);font-size:.9rem;margin-bottom:1.5rem">Configure your mock test for <strong id="mockSubjectLabel" style="color:var(--white)"></strong></p>
+      <p style="color:var(--muted);font-size:.9rem;margin-bottom:1.5rem">Configure your mock test for <strong style="color:var(--white)">${cat} — ${sub}</strong></p>
       <div class="mock-setup-row">
         <div>
           <label style="font-size:.75rem;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:.5rem">Number of Questions</label>
@@ -3969,40 +3998,10 @@ document.addEventListener('DOMContentLoaded',()=>{ updateSidebar(); updateSideba
         </div>
       </div>
       <button class="btn btn-grad" style="width:100%;padding:1rem;font-size:1rem;margin-top:.5rem" onclick="startMockTest()">
-        🚀 Generate & Start Test
+        🚀 Generate &amp; Start Test
       </button>
-    </div>
-  </div>
+    </div>`;
 
-</div>
-</div>
-
-
-<script>
-// ══════════════════════════════════════════════════════
-// MOCK TEST GENERATOR — Powered by Claude AI
-// ══════════════════════════════════════════════════════
-
-// API key is stored securely on the backend — never in frontend code
-
-let mockQuestions   = [];
-let mockCurrent     = 0;
-let mockAnswers     = {};
-let mockTimerInt    = null;
-let mockTimeLeft    = 0;
-let mockTotalTime   = 0;
-let mockStartTime   = null;
-let mockSubmitted   = false;
-
-// ── Open setup screen ──
-function openMockTest(){
-  const cat = window._mockCategory || '';
-  const sub = window._mockSubcategory || '';
-  const lbl = document.getElementById('mockSubjectLabel');
-  if(lbl) lbl.textContent = `${cat} — ${sub}`;
-  document.getElementById('mockTitle').textContent = '🧪 Mock Test';
-  showMockScreen('setup');
-  document.getElementById('mockTimer').textContent = '--:--';
   document.getElementById('mockModal').classList.add('on');
   document.body.style.overflow = 'hidden';
 }
@@ -4018,11 +4017,14 @@ function closeMockTest(){
 }
 
 function showMockScreen(screen){
-  const body = document.getElementById('mockBody');
+  // mockSetupScreen is dynamically created inside mockBody
+  // so we only need to handle hiding it when switching to loading/questions
+  const setupEl = document.getElementById('mockSetupScreen');
+  if(!setupEl) return; // already replaced by loading/question screen
   if(screen === 'setup'){
-    document.getElementById('mockSetupScreen').style.display = 'block';
+    setupEl.style.display = 'block';
   } else {
-    document.getElementById('mockSetupScreen').style.display = 'none';
+    setupEl.style.display = 'none';
   }
 }
 
