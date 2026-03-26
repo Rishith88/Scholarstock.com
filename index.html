@@ -384,39 +384,55 @@ body.light .mock-q-text{color:#1e293b}
 body.light .mock-box{background:#f0f4ff}
 body.light .mock-header{background:#f0f4ff}
 
-/* ── EXAM COUNTDOWN PAGE ── */
-.cd-search-input{background:var(--glass);border:1px solid var(--gb);border-radius:8px;padding:.45rem 1rem;color:var(--white);font-size:.82rem;outline:none;width:200px;font-family:inherit}
-.cd-search-input:focus{border-color:var(--blue)}
-body.light .cd-search-input{background:rgba(255,255,255,.8);color:#1e293b}
-.cd-filter-btn{background:var(--glass);border:1px solid var(--gb);border-radius:8px;padding:.45rem .9rem;color:var(--muted);font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s}
-.cd-filter-btn.active{background:linear-gradient(135deg,var(--blue),var(--purple));border-color:transparent;color:#fff}
-.cd-filter-btn:hover:not(.active){border-color:var(--blue2);color:var(--blue2)}
-.cd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
-.cd-card{background:var(--glass);border:1px solid var(--gb);border-radius:14px;padding:1.2rem;backdrop-filter:blur(20px);transition:all .3s}
-.cd-card:hover{transform:translateY(-3px);border-color:rgba(59,130,246,.3)}
-.cd-card.pinned{border-color:var(--blue);background:rgba(59,130,246,.08)}
-.cd-card.unpublished{opacity:.65}
-.cd-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.8rem}
-.cd-cat-badge{font-size:.62rem;font-weight:700;padding:.2rem .6rem;border-radius:50px;text-transform:uppercase}
-.cd-pin-btn{background:transparent;border:none;cursor:pointer;font-size:1rem;color:var(--muted);transition:color .2s;padding:0}
-.cd-pin-btn:hover{color:var(--gold)}
-.cd-pin-btn.pinned{color:var(--gold)}
-.cd-exam-name{font-size:.95rem;font-weight:800;color:var(--white);margin-bottom:.3rem;line-height:1.3}
-.cd-exam-date{font-size:.75rem;color:var(--muted);margin-bottom:.8rem}
-.cd-blocks{display:flex;gap:.4rem;align-items:center;margin-bottom:.7rem}
-.cd-block{text-align:center;background:rgba(0,0,0,.2);border-radius:7px;padding:.4rem .6rem;min-width:44px;border:1px solid rgba(255,255,255,.08)}
-.cd-num{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;color:var(--white);line-height:1}
-.cd-lbl{font-size:.55rem;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-top:.1rem}
-.cd-sep{font-size:1rem;font-weight:900;color:var(--blue2);margin-bottom:.3rem}
-.cd-urgency{font-size:.72rem;font-weight:700;padding:.2rem .6rem;border-radius:6px;display:inline-block}
-.cd-urgency.hot{background:rgba(239,68,68,.15);color:var(--red)}
-.cd-urgency.soon{background:rgba(245,158,11,.15);color:var(--gold)}
-.cd-urgency.ok{background:rgba(16,185,129,.15);color:var(--green)}
-.cd-unpub{font-size:.82rem;color:var(--muted);font-style:italic;padding:.4rem 0}
-body.light .cd-exam-name{color:#1e293b}
-body.light .cd-block{background:rgba(0,0,0,.06)}
-body.light .cd-num{color:#1e293b}
-@media(max-width:600px){.cd-grid{grid-template-columns:1fr}}
+/* ── AI DOUBT SOLVER ── */
+.ai-circle{position:fixed;bottom:2rem;right:2rem;z-index:10001;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));border:none;cursor:pointer;display:none;align-items:center;justify-content:center;font-size:1.4rem;box-shadow:0 4px 20px rgba(59,130,246,.5);transition:transform .2s,box-shadow .2s;animation:aiPulse 2s ease-in-out infinite}
+.ai-circle:hover{transform:scale(1.1);box-shadow:0 6px 28px rgba(59,130,246,.7)}
+.ai-circle.visible{display:flex}
+.ai-circle.has-selection{animation:aiGlow 1s ease-in-out infinite}
+@keyframes aiPulse{0%,100%{box-shadow:0 4px 20px rgba(59,130,246,.5)}50%{box-shadow:0 4px 30px rgba(139,92,246,.7)}}
+@keyframes aiGlow{0%,100%{box-shadow:0 0 0 0 rgba(59,130,246,.6)}50%{box-shadow:0 0 0 12px rgba(59,130,246,0)}}
+.ai-tooltip{position:fixed;bottom:6.5rem;right:2rem;z-index:10001;background:rgba(8,15,32,.95);border:1px solid var(--gb);border-radius:10px;padding:.6rem 1rem;font-size:.78rem;color:var(--white);white-space:nowrap;display:none;backdrop-filter:blur(10px)}
+.ai-tooltip.show{display:block}
+.doubt-panel{position:fixed;top:0;right:-520px;width:500px;max-width:95vw;height:100vh;background:var(--bg);border-left:1px solid var(--gb);z-index:10002;display:flex;flex-direction:column;transition:right .35s cubic-bezier(.4,0,.2,1);box-shadow:-8px 0 40px rgba(0,0,0,.4)}
+.doubt-panel.open{right:0}
+body.light .doubt-panel{background:#f0f4ff}
+.doubt-panel-header{padding:1.2rem 1.5rem;border-bottom:1px solid var(--gb);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.doubt-panel-header h3{font-size:1rem;font-weight:800;margin:0;display:flex;align-items:center;gap:.5rem}
+.doubt-close{background:transparent;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer;transition:color .2s;line-height:1}
+.doubt-close:hover{color:var(--white)}
+.doubt-messages{flex:1;overflow-y:auto;padding:1rem 1.5rem;display:flex;flex-direction:column;gap:1rem}
+.doubt-msg{border-radius:12px;padding:1rem 1.2rem;font-size:.88rem;line-height:1.6;max-width:92%}
+.doubt-msg.user{background:linear-gradient(135deg,rgba(59,130,246,.2),rgba(139,92,246,.2));border:1px solid rgba(59,130,246,.25);align-self:flex-end;color:var(--white)}
+.doubt-msg.ai{background:var(--glass);border:1px solid var(--gb);align-self:flex-start;color:var(--white)}
+body.light .doubt-msg.ai{color:#1e293b}
+body.light .doubt-msg.user{color:#1e293b}
+.doubt-msg.ai h4{font-size:.85rem;font-weight:800;color:var(--blue2);margin:0 0 .5rem}
+.doubt-msg.ai .step{background:rgba(59,130,246,.08);border-left:3px solid var(--blue);padding:.5rem .8rem;border-radius:0 6px 6px 0;margin:.3rem 0;font-size:.83rem}
+.doubt-msg.ai .material-chip{display:inline-block;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:var(--green);padding:.2rem .6rem;border-radius:50px;font-size:.72rem;margin:.2rem .2rem 0 0;cursor:pointer}
+.doubt-typing{display:flex;gap:.3rem;align-items:center;padding:.8rem 1rem}
+.doubt-typing span{width:8px;height:8px;border-radius:50%;background:var(--blue);animation:typingDot .8s ease-in-out infinite}
+.doubt-typing span:nth-child(2){animation-delay:.15s}
+.doubt-typing span:nth-child(3){animation-delay:.3s}
+@keyframes typingDot{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-4px)}}
+.doubt-input-area{padding:1rem 1.5rem;border-top:1px solid var(--gb);flex-shrink:0}
+.doubt-selected-text{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);border-radius:8px;padding:.6rem .9rem;font-size:.78rem;color:var(--gold);margin-bottom:.8rem;display:none;line-height:1.4}
+.doubt-selected-text.show{display:block}
+.doubt-selected-text strong{display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:.3rem;color:var(--muted)}
+.doubt-input-row{display:flex;gap:.5rem;align-items:flex-end}
+.doubt-textarea{flex:1;background:var(--glass);border:1px solid var(--gb);border-radius:10px;padding:.7rem 1rem;color:var(--white);font-size:.85rem;outline:none;resize:none;font-family:inherit;min-height:40px;max-height:120px}
+.doubt-textarea:focus{border-color:var(--blue)}
+body.light .doubt-textarea{background:rgba(255,255,255,.8);color:#1e293b}
+.doubt-send-btn{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--purple));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;transition:opacity .2s}
+.doubt-send-btn:hover{opacity:.85}
+.doubt-send-btn:disabled{opacity:.4;cursor:not-allowed}
+.doubt-mic-btn{width:40px;height:40px;border-radius:10px;background:var(--glass);border:1px solid var(--gb);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;transition:all .2s;color:var(--muted)}
+.doubt-mic-btn:hover{border-color:var(--blue2);color:var(--blue2)}
+.doubt-mic-btn.recording{background:rgba(239,68,68,.15);border-color:var(--red);color:var(--red);animation:aiPulse 1s ease-in-out infinite}
+.doubt-context-bar{background:rgba(59,130,246,.08);border-bottom:1px solid rgba(59,130,246,.15);padding:.5rem 1.5rem;font-size:.75rem;color:var(--blue2);flex-shrink:0}
+.doubt-overlay{position:fixed;inset:0;z-index:10001;display:none;background:transparent}
+.doubt-overlay.open{display:block}
+/* Selection highlight on canvas */
+.selection-box{position:absolute;border:2px dashed var(--blue2);background:rgba(59,130,246,.1);border-radius:4px;pointer-events:none;z-index:100}
 
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -468,9 +484,6 @@ body.light .cd-num{color:#1e293b}
     <div class="sidebar-label">Tools</div>
     <div class="sidebar-item" onclick="closeSidebar();go('calc')">
       <span class="sidebar-item-icon">🧮</span> Calculator
-    </div>
-    <div class="sidebar-item" onclick="closeSidebar();go('countdown')">
-      <span class="sidebar-item-icon">⏳</span> Exam Countdown
     </div>
     <div class="sidebar-item" onclick="closeSidebar();go('wishlist')">
       <span class="sidebar-item-icon">❤️</span> Wishlist
@@ -912,6 +925,7 @@ body.light .cd-num{color:#1e293b}
 <span id="pdfPageInfo" style="font-size:.85rem;color:var(--muted)"></span>
 <button onclick="pdfPrevPage()">◀ Prev</button>
 <button onclick="pdfNextPage()">Next ▶</button>
+<button onclick="toggleDoubtPanel()" id="aiDoubtBtn" style="background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;border-color:transparent">🧠 Ask AI</button>
 <button onclick="closePDF()">✕ Close</button>
 </div>
 </div>
@@ -1354,7 +1368,6 @@ if(page==='pricing-plans')loadPricingPlansPage();
 if(page==='profile')loadProfile();
 if(page==='home')renderCategories();
 if(page==='wishlist') renderWishlistPage();
-if(page==='countdown') setTimeout(initCountdown,50);
 }
 
 function updateNav(){
@@ -1768,8 +1781,13 @@ try{
 // Set PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-const url=`${API_URL}/api/materials/${materialId}/stream?token=${getToken()}`;
-const loadingTask=pdfjsLib.getDocument({url,withCredentials:false});
+const token = getToken();
+const url=`${API_URL}/api/materials/${materialId}/stream?token=${token}`;
+const loadingTask=pdfjsLib.getDocument({
+  url,
+  withCredentials:false,
+  httpHeaders: token ? {'Authorization': `Bearer ${token}`} : {}
+});
 pdfDoc=await loadingTask.promise;
 pdfTotalPages=pdfDoc.numPages;
 document.getElementById('pdfPageInfo').textContent=`Page 1 of ${pdfTotalPages}`;
@@ -4326,257 +4344,400 @@ document.getElementById('mockModal').addEventListener('click', function(e){
 </script>
 
 
-<!-- ═══════════════════════════════════════ -->
-<!-- EXAM COUNTDOWN PAGE                    -->
-<!-- ═══════════════════════════════════════ -->
-<div id="pg-countdown" class="page">
-<div class="sec" style="margin-top:2rem">
-  <div class="eyebrow">Live Exam Dates</div>
-  <h2 class="sec-title">⏳ Exam Countdowns</h2>
-  <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:1.2rem">
-    <input class="cd-search-input" id="cdSearch" placeholder="🔍 Search exam..." oninput="filterCountdowns()">
-    <button class="cd-filter-btn active" onclick="setCdFilter(this,'All')">All</button>
-    <button class="cd-filter-btn" onclick="setCdFilter(this,'Engineering')">🏗 Engineering</button>
-    <button class="cd-filter-btn" onclick="setCdFilter(this,'Medical')">🏥 Medical</button>
-    <button class="cd-filter-btn" onclick="setCdFilter(this,'Government')">🏛 Govt</button>
-    <button class="cd-filter-btn" onclick="setCdFilter(this,'Banking')">🏦 Banking</button>
-    <button class="cd-filter-btn" onclick="setCdFilter(this,'Management')">💼 MBA</button>
-    <button class="cd-filter-btn" onclick="setCdFilter(this,'GATE')">⚙️ GATE</button>
-    <button class="cd-filter-btn" onclick="setCdFilter(this,'International')">🌍 Intl</button>
-    <button class="cd-filter-btn" onclick="setCdFilter(this,'Olympiad')">🏆 Olympiad</button>
-    <button class="cd-filter-btn" onclick="setCdFilter(this,'Boards')">📋 Boards</button>
+<!-- AI FLOATING CIRCLE -->
+<div class="ai-circle" id="aiCircle" onclick="aiCircleClick()" title="Ask AI about this">🧠</div>
+<div class="ai-tooltip" id="aiTooltip">Select text from PDF to ask AI</div>
+
+<!-- DOUBT SOLVER PANEL -->
+<div class="doubt-overlay" id="doubtOverlay" onclick="closeDoubtPanel()"></div>
+<div class="doubt-panel" id="doubtPanel">
+  <div class="doubt-context-bar" id="doubtContextBar">📚 Context: Loading...</div>
+  <div class="doubt-panel-header">
+    <h3>🧠 AI Doubt Solver</h3>
+    <div style="display:flex;gap:.5rem;align-items:center">
+      <button onclick="clearDoubtChat()" style="background:transparent;border:1px solid var(--gb);border-radius:6px;padding:.3rem .7rem;color:var(--muted);font-size:.75rem;cursor:pointer">Clear</button>
+      <button class="doubt-close" onclick="closeDoubtPanel()">✕</button>
+    </div>
   </div>
-  <p style="font-size:.78rem;color:var(--muted);margin-bottom:1.2rem">
-    ⭐ Star any exam to pin it to top &nbsp;·&nbsp; 📅 <em>Not published</em> = date not yet announced &nbsp;·&nbsp; Dates updated when officially released
-  </p>
-  <div class="cd-grid" id="cdGrid"></div>
+  <div class="doubt-messages" id="doubtMessages">
+    <div class="doubt-msg ai">
+      <h4>👋 Hi! I'm your AI Doubt Solver</h4>
+      Select any text from the PDF and tap the 🧠 button, or type your doubt below. I'll give you step-by-step explanations!
+    </div>
+  </div>
+  <div class="doubt-input-area">
+    <div class="doubt-selected-text" id="doubtSelectedText">
+      <strong>📌 Selected text</strong>
+      <span id="doubtSelectedTextContent"></span>
+    </div>
+    <div class="doubt-input-row">
+      <textarea class="doubt-textarea" id="doubtInput" placeholder="Type your doubt or question..." rows="1"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendDoubt()}"
+        oninput="this.style.height='40px';this.style.height=this.scrollHeight+'px'"></textarea>
+      <button class="doubt-mic-btn" id="doubtMicBtn" onclick="toggleVoiceInput()" title="Voice input">🎤</button>
+      <button class="doubt-send-btn" id="doubtSendBtn" onclick="sendDoubt()" title="Send">➤</button>
+    </div>
+  </div>
 </div>
-</div>
+
 
 <script>
 // ══════════════════════════════════════════════════════
-// EXAM COUNTDOWN — null date = not yet published
+// AI DOUBT SOLVER — Powered by Gemini 2.5 Flash
 // ══════════════════════════════════════════════════════
-const EXAM_DATES = [
-  // Engineering
-  {name:'JEE Mains Session 1',date:'2026-01-22',cat:'Engineering'},
-  {name:'JEE Mains Session 2',date:'2026-04-05',cat:'Engineering'},
-  {name:'JEE Advanced',date:'2026-05-24',cat:'Engineering'},
-  {name:'BITSAT',date:'2026-05-20',cat:'Engineering'},
-  {name:'VITEEE',date:'2026-04-15',cat:'Engineering'},
-  {name:'SRMJEEE',date:'2026-04-10',cat:'Engineering'},
-  {name:'MHT CET',date:'2026-05-02',cat:'Engineering'},
-  {name:'WBJEE',date:'2026-04-19',cat:'Engineering'},
-  {name:'KCET',date:'2026-04-22',cat:'Engineering'},
-  {name:'COMEDK',date:'2026-05-10',cat:'Engineering'},
-  {name:'KEAM',date:null,cat:'Engineering'},
-  // Medical
-  {name:'NEET UG',date:'2026-05-03',cat:'Medical'},
-  {name:'NEET PG',date:'2026-06-14',cat:'Medical'},
-  {name:'AIIMS PG',date:'2026-05-18',cat:'Medical'},
-  {name:'JIPMER',date:'2026-06-07',cat:'Medical'},
-  {name:'INI CET',date:'2026-11-01',cat:'Medical'},
-  {name:'FMGE',date:'2026-06-15',cat:'Medical'},
-  {name:'NEET MDS',date:null,cat:'Medical'},
-  {name:'NEET SS',date:null,cat:'Medical'},
-  // Government
-  {name:'UPSC CSE Prelims',date:'2026-05-24',cat:'Government'},
-  {name:'UPSC CSE Mains',date:'2026-09-18',cat:'Government'},
-  {name:'SSC CGL Tier 1',date:'2026-06-13',cat:'Government'},
-  {name:'SSC CHSL',date:'2026-06-25',cat:'Government'},
-  {name:'RRB NTPC',date:'2026-09-05',cat:'Government'},
-  {name:'RRB Group D',date:'2026-08-10',cat:'Government'},
-  {name:'CAPF AC',date:'2026-08-02',cat:'Government'},
-  // Defence
-  {name:'CDS I',date:'2026-04-05',cat:'Defence'},
-  {name:'NDA I',date:'2026-04-13',cat:'Defence'},
-  {name:'NDA II',date:'2026-09-06',cat:'Defence'},
-  // Banking
-  {name:'IBPS PO',date:'2026-10-04',cat:'Banking'},
-  {name:'IBPS Clerk',date:'2026-08-23',cat:'Banking'},
-  {name:'SBI PO',date:'2026-06-06',cat:'Banking'},
-  {name:'SBI Clerk',date:'2026-07-25',cat:'Banking'},
-  {name:'RBI Grade B',date:'2026-07-12',cat:'Banking'},
-  {name:'IBPS RRB PO',date:null,cat:'Banking'},
-  // Management
-  {name:'CAT',date:'2026-11-29',cat:'Management'},
-  {name:'XAT',date:'2027-01-05',cat:'Management'},
-  {name:'SNAP',date:'2026-12-13',cat:'Management'},
-  {name:'NMAT',date:'2026-10-10',cat:'Management'},
-  {name:'CMAT',date:'2026-03-22',cat:'Management'},
-  {name:'MAT',date:'2026-05-17',cat:'Management'},
-  {name:'IIFT',date:'2026-12-07',cat:'Management'},
-  {name:'ATMA',date:null,cat:'Management'},
-  // GATE
-  {name:'GATE CS',date:'2027-02-01',cat:'GATE'},
-  {name:'GATE EC',date:'2027-02-07',cat:'GATE'},
-  {name:'GATE EE',date:'2027-02-08',cat:'GATE'},
-  {name:'GATE ME',date:'2027-02-15',cat:'GATE'},
-  {name:'GATE CE',date:'2027-02-14',cat:'GATE'},
-  {name:'GATE CH',date:null,cat:'GATE'},
-  {name:'GATE BT',date:null,cat:'GATE'},
-  // International
-  {name:'SAT',date:'2026-05-02',cat:'International'},
-  {name:'ACT',date:'2026-04-18',cat:'International'},
-  {name:'GRE',date:'2026-06-01',cat:'International'},
-  {name:'GMAT',date:'2026-05-15',cat:'International'},
-  {name:'TOEFL',date:'2026-04-11',cat:'International'},
-  {name:'IELTS',date:'2026-04-18',cat:'International'},
-  {name:'PTE Academic',date:'2026-04-20',cat:'International'},
-  {name:'MCAT',date:'2026-05-16',cat:'International'},
-  {name:'LSAT',date:'2026-06-08',cat:'International'},
-  // Olympiad
-  {name:'IMO (Math)',date:'2026-07-10',cat:'Olympiad'},
-  {name:'IPhO (Physics)',date:'2026-07-18',cat:'Olympiad'},
-  {name:'IChO (Chemistry)',date:'2026-07-22',cat:'Olympiad'},
-  {name:'IBO (Biology)',date:'2026-07-14',cat:'Olympiad'},
-  {name:'IOI (Informatics)',date:'2026-08-08',cat:'Olympiad'},
-  {name:'IOAA (Astronomy)',date:null,cat:'Olympiad'},
-  {name:'IJSO',date:null,cat:'Olympiad'},
-  // Finance & Law
-  {name:'CFA Level 1 (Feb)',date:'2026-02-17',cat:'Finance'},
-  {name:'CFA Level 1 (May)',date:'2026-05-14',cat:'Finance'},
-  {name:'CA Foundation (May)',date:'2026-05-15',cat:'Finance'},
-  {name:'ACCA',date:'2026-06-01',cat:'Finance'},
-  {name:'CLAT',date:'2026-05-01',cat:'Law'},
-  {name:'AILET',date:'2026-05-10',cat:'Law'},
-  // Design
-  {name:'NATA',date:'2026-04-18',cat:'Design'},
-  {name:'NID DAT',date:'2026-01-12',cat:'Design'},
-  {name:'NIFT',date:'2026-02-08',cat:'Design'},
-  // Boards
-  {name:'CBSE Class 12',date:'2026-02-15',cat:'Boards'},
-  {name:'CBSE Class 10',date:'2026-02-15',cat:'Boards'},
-  {name:'ICSE Class 12',date:'2026-02-16',cat:'Boards'},
-  {name:'CUET UG',date:'2026-05-08',cat:'University'},
-  {name:'DUET',date:'2026-05-25',cat:'University'},
-];
 
-const CAT_COLORS={
-  Engineering:'rgba(59,130,246,.15)|var(--blue2)',
-  Medical:'rgba(16,185,129,.15)|var(--green)',
-  Government:'rgba(245,158,11,.15)|var(--gold)',
-  Defence:'rgba(245,158,11,.15)|var(--gold)',
-  Banking:'rgba(139,92,246,.15)|var(--purple)',
-  Management:'rgba(6,182,212,.15)|var(--cyan)',
-  GATE:'rgba(59,130,246,.15)|var(--blue2)',
-  International:'rgba(239,68,68,.15)|var(--red)',
-  Olympiad:'rgba(245,158,11,.15)|var(--gold)',
-  Finance:'rgba(16,185,129,.15)|var(--green)',
-  Law:'rgba(139,92,246,.15)|var(--purple)',
-  Design:'rgba(236,72,153,.15)|#ec4899',
-  Boards:'rgba(59,130,246,.15)|var(--blue2)',
-  University:'rgba(59,130,246,.15)|var(--blue2)',
+let doubtSelectedText = '';
+let doubtContext = { category: '', subcategory: '', material: '' };
+let doubtMessages = [];
+let isDoubtLoading = false;
+let doubtRecognition = null;
+let isRecording = false;
+
+// ── Show/hide circle when PDF opens/closes ──
+const _origOpenPDF = openPDF;
+window.openPDF = async function(materialId){
+  await _origOpenPDF(materialId);
+  document.getElementById('aiCircle').classList.add('visible');
+  // Set context from current page
+  doubtContext.material = document.getElementById('pdfTitle')?.textContent || 'Study Material';
+  updateDoubtContextBar();
+  setupCanvasSelection();
 };
 
-let cdFilter='All';
-let cdIntervals={};
-let cdPinned=JSON.parse(localStorage.getItem('ss_cd_pinned')||'[]');
+const _origClosePDF = closePDF;
+window.closePDF = function(){
+  _origClosePDF();
+  document.getElementById('aiCircle').classList.remove('visible');
+  closeDoubtPanel();
+  doubtSelectedText = '';
+};
 
-function initCountdown(){ renderCdGrid(); }
+// ── Canvas text selection via mouse drag ──
+function setupCanvasSelection(){
+  const wrap = document.getElementById('pdfCanvasWrap');
+  if(!wrap) return;
 
-function setCdFilter(btn,cat){
-  cdFilter=cat;
-  document.querySelectorAll('.cd-filter-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  renderCdGrid();
-}
+  let isSelecting = false;
+  let startX, startY;
+  let selBox = null;
 
-function filterCountdowns(){ renderCdGrid(); }
-
-function toggleCdPin(name){
-  const idx=cdPinned.indexOf(name);
-  if(idx>-1) cdPinned.splice(idx,1); else cdPinned.unshift(name);
-  localStorage.setItem('ss_cd_pinned',JSON.stringify(cdPinned));
-  renderCdGrid();
-}
-
-function renderCdGrid(){
-  const grid=document.getElementById('cdGrid');
-  if(!grid) return;
-  Object.values(cdIntervals).forEach(clearInterval);
-  cdIntervals={};
-  const search=(document.getElementById('cdSearch')?.value||'').toLowerCase();
-  const today=new Date(); today.setHours(0,0,0,0);
-  let exams=EXAM_DATES.filter(e=>{
-    if(cdFilter!=='All'&&e.cat!==cdFilter) return false;
-    if(search&&!e.name.toLowerCase().includes(search)&&!e.cat.toLowerCase().includes(search)) return false;
-    return true;
-  }).sort((a,b)=>{
-    const ap=cdPinned.includes(a.name)?0:1, bp=cdPinned.includes(b.name)?0:1;
-    if(ap!==bp) return ap-bp;
-    if(!a.date&&!b.date) return 0;
-    if(!a.date) return 1; if(!b.date) return -1;
-    return new Date(a.date)-new Date(b.date);
+  wrap.addEventListener('mousedown', e => {
+    if(e.target.tagName !== 'CANVAS') return;
+    isSelecting = true;
+    const rect = e.target.getBoundingClientRect();
+    startX = e.clientX; startY = e.clientY;
+    if(selBox) selBox.remove();
+    selBox = document.createElement('div');
+    selBox.className = 'selection-box';
+    selBox.style.position = 'fixed';
+    selBox.style.left = startX + 'px';
+    selBox.style.top  = startY + 'px';
+    selBox.style.width = '0'; selBox.style.height = '0';
+    document.body.appendChild(selBox);
   });
-  if(!exams.length){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted)">No exams found</div>';return;}
-  grid.innerHTML=exams.map(e=>buildCdCard(e)).join('');
-  exams.filter(e=>e.date).forEach(e=>{
-    const id='cds_'+e.name.replace(/[^a-z0-9]/gi,'_');
-    cdIntervals[id]=setInterval(()=>{
-      const el=document.getElementById(id); if(!el){clearInterval(cdIntervals[id]);return;}
-      const diff=new Date(e.date+'T00:00:00')-new Date();
-      if(diff<=0){el.textContent='00';clearInterval(cdIntervals[id]);return;}
-      el.textContent=String(Math.floor((diff%60000)/1000)).padStart(2,'0');
-    },1000);
+
+  wrap.addEventListener('mousemove', e => {
+    if(!isSelecting || !selBox) return;
+    const x = Math.min(e.clientX, startX);
+    const y = Math.min(e.clientY, startY);
+    const w = Math.abs(e.clientX - startX);
+    const h = Math.abs(e.clientY - startY);
+    selBox.style.left = x + 'px'; selBox.style.top = y + 'px';
+    selBox.style.width = w + 'px'; selBox.style.height = h + 'px';
+  });
+
+  wrap.addEventListener('mouseup', async e => {
+    if(!isSelecting) return;
+    isSelecting = false;
+    const w = parseInt(selBox?.style.width || '0');
+    const h = parseInt(selBox?.style.height || '0');
+
+    if(w > 20 && h > 20 && e.target.tagName === 'CANVAS'){
+      // Extract text from selected canvas region using PDF.js text layer
+      const canvases = wrap.querySelectorAll('canvas');
+      const pageIdx = Array.from(canvases).indexOf(e.target);
+      if(pageIdx >= 0 && pdfDoc){
+        try {
+          const page = await pdfDoc.getPage(pageIdx + 1);
+          const textContent = await page.getTextContent();
+          const text = textContent.items.map(i => i.str).join(' ').trim();
+          if(text.length > 10){
+            doubtSelectedText = text.length > 500 ? text.substring(0, 500) + '...' : text;
+            showSelectedText(doubtSelectedText);
+            document.getElementById('aiCircle').classList.add('has-selection');
+            showAiTooltip('✨ Click 🧠 to explain this!');
+          }
+        } catch(err){ }
+      }
+    }
+
+    if(selBox){ selBox.remove(); selBox = null; }
+  });
+
+  // Also detect window text selection (fallback)
+  document.addEventListener('mouseup', () => {
+    const sel = window.getSelection()?.toString().trim();
+    if(sel && sel.length > 10 && document.getElementById('pdfViewer')?.classList.contains('on')){
+      doubtSelectedText = sel.length > 500 ? sel.substring(0, 500) + '...' : sel;
+      showSelectedText(doubtSelectedText);
+      document.getElementById('aiCircle').classList.add('has-selection');
+      showAiTooltip('✨ Click 🧠 to explain this!');
+    }
   });
 }
 
-function buildCdCard(e){
-  const isPinned=cdPinned.includes(e.name);
-  const colors=(CAT_COLORS[e.cat]||'rgba(255,255,255,.05)|var(--muted)').split('|');
-  const secId='cds_'+e.name.replace(/[^a-z0-9]/gi,'_');
-  const safeName=e.name.replace(/'/g,"\\'");
-  if(!e.date){
-    return `<div class="cd-card unpublished">
-      <div class="cd-card-top">
-        <span class="cd-cat-badge" style="background:${colors[0]};color:${colors[1]}">${e.cat}</span>
-        <button class="cd-pin-btn ${isPinned?'pinned':''}" onclick="toggleCdPin('${safeName}')">${isPinned?'★':'☆'}</button>
-      </div>
-      <div class="cd-exam-name">${e.name}</div>
-      <div class="cd-unpub">📅 Date not yet announced</div>
-      <div style="font-size:.7rem;color:var(--muted2)">Updated when officially published</div>
-    </div>`;
-  }
-  const diffMs=new Date(e.date+'T00:00:00')-new Date();
-  if(diffMs<=0){
-    return `<div class="cd-card" style="opacity:.5">
-      <div class="cd-card-top">
-        <span class="cd-cat-badge" style="background:${colors[0]};color:${colors[1]}">${e.cat}</span>
-        <button class="cd-pin-btn ${isPinned?'pinned':''}" onclick="toggleCdPin('${safeName}')">${isPinned?'★':'☆'}</button>
-      </div>
-      <div class="cd-exam-name">${e.name}</div>
-      <div class="cd-exam-date">✅ Exam was on ${fmtCdDate(e.date)}</div>
-    </div>`;
-  }
-  const days=Math.floor(diffMs/86400000);
-  const hrs=Math.floor((diffMs%86400000)/3600000);
-  const mins=Math.floor((diffMs%3600000)/60000);
-  const secs=Math.floor((diffMs%60000)/1000);
-  const urgency=days<=30?'hot':days<=90?'soon':'ok';
-  const urgencyText=days<=30?'🔥 Very soon!':days<=90?'⚡ Coming up':'📅 Upcoming';
-  return `<div class="cd-card ${isPinned?'pinned':''}">
-    <div class="cd-card-top">
-      <span class="cd-cat-badge" style="background:${colors[0]};color:${colors[1]}">${e.cat}</span>
-      <button class="cd-pin-btn ${isPinned?'pinned':''}" onclick="toggleCdPin('${safeName}')">${isPinned?'★':'☆'}</button>
-    </div>
-    <div class="cd-exam-name">${e.name}</div>
-    <div class="cd-exam-date">📅 ${fmtCdDate(e.date)}</div>
-    <div class="cd-blocks">
-      <div class="cd-block"><div class="cd-num">${String(days).padStart(2,'0')}</div><div class="cd-lbl">Days</div></div>
-      <div class="cd-sep">:</div>
-      <div class="cd-block"><div class="cd-num">${String(hrs).padStart(2,'0')}</div><div class="cd-lbl">Hrs</div></div>
-      <div class="cd-sep">:</div>
-      <div class="cd-block"><div class="cd-num">${String(mins).padStart(2,'0')}</div><div class="cd-lbl">Min</div></div>
-      <div class="cd-sep">:</div>
-      <div class="cd-block"><div class="cd-num" id="${secId}">${String(secs).padStart(2,'0')}</div><div class="cd-lbl">Sec</div></div>
-    </div>
-    <span class="cd-urgency ${urgency}">${urgencyText} — ${days} days left</span>
-  </div>`;
+function showAiTooltip(msg){
+  const t = document.getElementById('aiTooltip');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-function fmtCdDate(d){
-  return new Date(d+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+function showSelectedText(text){
+  const el = document.getElementById('doubtSelectedText');
+  const content = document.getElementById('doubtSelectedTextContent');
+  if(el && content){
+    content.textContent = text.length > 120 ? text.substring(0, 120) + '...' : text;
+    el.classList.add('show');
+  }
+}
+
+// ── AI Circle click ──
+function aiCircleClick(){
+  if(doubtSelectedText){
+    openDoubtPanel();
+    setTimeout(() => {
+      const input = document.getElementById('doubtInput');
+      if(input) input.placeholder = 'Ask something specific or press Send to explain the selection...';
+    }, 300);
+  } else {
+    openDoubtPanel();
+    showAiTooltip('Select text from the PDF then ask me!');
+  }
+}
+
+// ── Panel open/close ──
+function openDoubtPanel(){
+  document.getElementById('doubtPanel').classList.add('open');
+  document.getElementById('doubtOverlay').classList.add('open');
+  document.getElementById('doubtInput')?.focus();
+}
+
+function closeDoubtPanel(){
+  document.getElementById('doubtPanel').classList.remove('open');
+  document.getElementById('doubtOverlay').classList.remove('open');
+}
+
+function toggleDoubtPanel(){
+  const panel = document.getElementById('doubtPanel');
+  if(panel.classList.contains('open')) closeDoubtPanel();
+  else openDoubtPanel();
+}
+
+function updateDoubtContextBar(){
+  const bar = document.getElementById('doubtContextBar');
+  if(!bar) return;
+  const ctx = [
+    window._mockCategory && `📚 ${window._mockCategory}`,
+    window._mockSubcategory && `• ${window._mockSubcategory}`,
+    doubtContext.material && `• ${doubtContext.material}`
+  ].filter(Boolean).join(' ');
+  bar.textContent = ctx || '📚 General Study Assistant';
+}
+
+// ── Send doubt to Gemini ──
+async function sendDoubt(){
+  if(isDoubtLoading) return;
+  const input = document.getElementById('doubtInput');
+  const userText = (input?.value || '').trim();
+
+  // Build question: selected text + user question
+  let question = '';
+  if(doubtSelectedText && userText){
+    question = `Context from PDF: "${doubtSelectedText}"
+
+My question: ${userText}`;
+  } else if(doubtSelectedText){
+    question = `Please explain this from my PDF in detail: "${doubtSelectedText}"`;
+  } else if(userText){
+    question = userText;
+  } else {
+    showAiTooltip('Please type a question or select text first');
+    return;
+  }
+
+  // Clear input
+  if(input){ input.value = ''; input.style.height = '40px'; }
+  doubtSelectedText = '';
+  document.getElementById('doubtSelectedText')?.classList.remove('show');
+  document.getElementById('aiCircle')?.classList.remove('has-selection');
+
+  // Add user message
+  addDoubtMessage('user', userText || 'Explain the selected text');
+
+  // Show typing
+  isDoubtLoading = true;
+  document.getElementById('doubtSendBtn').disabled = true;
+  const typingEl = addTypingIndicator();
+
+  // Build context-aware system prompt
+  const examCtx = window._mockCategory || 'competitive exams';
+  const subCtx  = window._mockSubcategory || 'general topics';
+
+  const systemPrompt = `You are an expert AI tutor for ${examCtx} — specifically ${subCtx}. 
+The student is studying from a PDF and needs help understanding concepts.
+
+When answering:
+1. Give a clear, concise explanation first
+2. Break it into numbered steps if it's a problem/concept
+3. Use simple language a student can understand
+4. If it's a math/physics/chemistry problem, show the solution step by step with formulas
+5. End with 2-3 related topics they should study next (as short chips)
+
+Format your response as JSON:
+{
+  "explanation": "Main explanation here",
+  "steps": ["Step 1...", "Step 2...", "Step 3..."],
+  "relatedTopics": ["Topic 1", "Topic 2", "Topic 3"],
+  "tip": "One quick exam tip"
+}`;
+
+  try {
+    const apiKey = '${process.env.GEMINI_API_KEY}'; // Handled by backend
+    const response = await fetch(\`\${API_URL}/api/doubt/solve\`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': \`Bearer \${getToken()}\`
+      },
+      body: JSON.stringify({
+        question,
+        examCategory: window._mockCategory || '',
+        subcategory: window._mockSubcategory || '',
+        material: doubtContext.material || ''
+      })
+    });
+
+    typingEl.remove();
+
+    if(!response.ok) throw new Error('Failed to get answer');
+    const data = await response.json();
+
+    if(data.success && data.answer){
+      renderDoubtAnswer(data.answer);
+    } else {
+      throw new Error(data.message || 'No answer received');
+    }
+
+  } catch(err){
+    typingEl?.remove();
+    addDoubtMessage('ai', '⚠️ ' + err.message + '. Make sure the doubt solver backend route is set up.');
+  } finally {
+    isDoubtLoading = false;
+    document.getElementById('doubtSendBtn').disabled = false;
+  }
+}
+
+function renderDoubtAnswer(answer){
+  const msgs = document.getElementById('doubtMessages');
+  if(!msgs) return;
+
+  let html = '<div class="doubt-msg ai">';
+
+  // Try parse as JSON
+  try {
+    const parsed = typeof answer === 'string' ? JSON.parse(answer) : answer;
+
+    if(parsed.explanation){
+      html += \`<h4>💡 Explanation</h4><div style="margin-bottom:.8rem">\${parsed.explanation}</div>\`;
+    }
+    if(parsed.steps && parsed.steps.length){
+      html += '<h4>📋 Step-by-step</h4>';
+      parsed.steps.forEach((s, i) => {
+        html += \`<div class="step"><strong>Step \${i+1}:</strong> \${s}</div>\`;
+      });
+    }
+    if(parsed.tip){
+      html += \`<div style="margin-top:.8rem;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);border-radius:6px;padding:.5rem .8rem;font-size:.8rem;color:var(--gold)">💡 <strong>Exam Tip:</strong> \${parsed.tip}</div>\`;
+    }
+    if(parsed.relatedTopics && parsed.relatedTopics.length){
+      html += '<div style="margin-top:.8rem"><strong style="font-size:.78rem;color:var(--muted)">📚 Study next:</strong><div style="margin-top:.3rem">';
+      parsed.relatedTopics.forEach(t => {
+        html += \`<span class="material-chip" onclick="askRelatedTopic('\${t}')">\${t}</span>\`;
+      });
+      html += '</div></div>';
+    }
+  } catch(e) {
+    // Plain text answer
+    html += answer.replace(/\n/g, '<br>');
+  }
+
+  html += '</div>';
+  msgs.insertAdjacentHTML('beforeend', html);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function askRelatedTopic(topic){
+  const input = document.getElementById('doubtInput');
+  if(input){ input.value = 'Explain ' + topic; sendDoubt(); }
+}
+
+function addDoubtMessage(role, text){
+  const msgs = document.getElementById('doubtMessages');
+  if(!msgs) return;
+  const div = document.createElement('div');
+  div.className = 'doubt-msg ' + role;
+  div.textContent = text;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addTypingIndicator(){
+  const msgs = document.getElementById('doubtMessages');
+  const div = document.createElement('div');
+  div.className = 'doubt-msg ai doubt-typing';
+  div.innerHTML = '<span></span><span></span><span></span>';
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+function clearDoubtChat(){
+  const msgs = document.getElementById('doubtMessages');
+  if(msgs) msgs.innerHTML = '<div class="doubt-msg ai"><h4>👋 Chat cleared!</h4>Select text from the PDF or type a new question.</div>';
+  doubtMessages = [];
+}
+
+// ── Voice Input ──
+function toggleVoiceInput(){
+  if(!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)){
+    showAiTooltip('Voice input not supported in this browser');
+    return;
+  }
+  if(isRecording){
+    doubtRecognition?.stop();
+    isRecording = false;
+    document.getElementById('doubtMicBtn').classList.remove('recording');
+    return;
+  }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  doubtRecognition = new SR();
+  doubtRecognition.lang = 'en-IN';
+  doubtRecognition.continuous = false;
+  doubtRecognition.interimResults = false;
+  doubtRecognition.onresult = e => {
+    const transcript = e.results[0][0].transcript;
+    const input = document.getElementById('doubtInput');
+    if(input) input.value = (input.value + ' ' + transcript).trim();
+  };
+  doubtRecognition.onend = () => {
+    isRecording = false;
+    document.getElementById('doubtMicBtn').classList.remove('recording');
+  };
+  doubtRecognition.start();
+  isRecording = true;
+  document.getElementById('doubtMicBtn').classList.add('recording');
+  showAiTooltip('🎤 Listening... speak your doubt');
 }
 </script>
 
