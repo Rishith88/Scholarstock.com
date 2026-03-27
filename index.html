@@ -1780,22 +1780,11 @@ try{
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
 const token = getToken();
-
-// First fetch material info to check if it has a cloud URL
-let pdfUrl = `${API_URL}/api/materials/${materialId}/stream?token=${token}`;
-try{
-  const matRes = await fetch(`${API_URL}/api/materials/${materialId}`);
-  const matData = await matRes.json();
-  if(matData.success && matData.material?.pdfUrl?.startsWith('http')){
-    // Use Cloudinary URL directly — much faster and more reliable
-    pdfUrl = matData.material.pdfUrl;
-  }
-}catch(e){ /* fallback to stream route */ }
-
+const url=`${API_URL}/api/materials/${materialId}/stream?token=${token||'guest'}`;
 const loadingTask=pdfjsLib.getDocument({
-  url: pdfUrl,
+  url,
   withCredentials:false,
-  httpHeaders: (!pdfUrl.startsWith('https://res.cloudinary.com') && token) ? {'Authorization': `Bearer ${token}`} : {}
+  httpHeaders: token ? {'Authorization':`Bearer ${token}`} : {}
 });
 pdfDoc=await loadingTask.promise;
 pdfTotalPages=pdfDoc.numPages;
