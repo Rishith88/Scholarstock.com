@@ -1771,22 +1771,31 @@ async function openPDF(materialId){
 currentMaterialId=materialId;
 const viewer=document.getElementById('pdfViewer');
 const wrap=document.getElementById('pdfCanvasWrap');
-const loading=document.getElementById('pdfLoading');
 wrap.innerHTML='<div id="pdfLoading" style="color:white;padding:3rem;font-size:1rem">⏳ Loading PDF...</div>';
 viewer.classList.add('on');
 pdfDoc=null;
 pdfCurrentPage=1;
 
 try{
-// Set PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
 const token = getToken();
-const url=`${API_URL}/api/materials/${materialId}/stream?token=${token}`;
+
+// First fetch material info to check if it has a cloud URL
+let pdfUrl = `${API_URL}/api/materials/${materialId}/stream?token=${token}`;
+try{
+  const matRes = await fetch(`${API_URL}/api/materials/${materialId}`);
+  const matData = await matRes.json();
+  if(matData.success && matData.material?.pdfUrl?.startsWith('http')){
+    // Use Cloudinary URL directly — much faster and more reliable
+    pdfUrl = matData.material.pdfUrl;
+  }
+}catch(e){ /* fallback to stream route */ }
+
 const loadingTask=pdfjsLib.getDocument({
-  url,
+  url: pdfUrl,
   withCredentials:false,
-  httpHeaders: token ? {'Authorization': `Bearer ${token}`} : {}
+  httpHeaders: (!pdfUrl.startsWith('https://res.cloudinary.com') && token) ? {'Authorization': `Bearer ${token}`} : {}
 });
 pdfDoc=await loadingTask.promise;
 pdfTotalPages=pdfDoc.numPages;
