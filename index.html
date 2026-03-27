@@ -4584,31 +4584,16 @@ My question: ${userText}`;
   const examCtx = window._mockCategory || 'competitive exams';
   const subCtx  = window._mockSubcategory || 'general topics';
 
-  const systemPrompt = `You are an expert AI tutor for ${examCtx} — specifically ${subCtx}. 
-The student is studying from a PDF and needs help understanding concepts.
-
-When answering:
-1. Give a clear, concise explanation first
-2. Break it into numbered steps if it's a problem/concept
-3. Use simple language a student can understand
-4. If it's a math/physics/chemistry problem, show the solution step by step with formulas
-5. End with 2-3 related topics they should study next (as short chips)
-
-Format your response as JSON:
-{
-  "explanation": "Main explanation here",
-  "steps": ["Step 1...", "Step 2...", "Step 3..."],
-  "relatedTopics": ["Topic 1", "Topic 2", "Topic 3"],
-  "tip": "One quick exam tip"
-}`;
+  const systemPrompt = 'You are an expert AI tutor for ' + examCtx + ' — specifically ' + subCtx + '. ' +
+    'The student is studying from a PDF and needs help understanding concepts. ' +
+    'Give a clear explanation, break it into steps, and suggest related topics to study next.';
 
   try {
-    const apiKey = '${process.env.GEMINI_API_KEY}'; // Handled by backend
-    const response = await fetch(\`\${API_URL}/api/doubt/solve\`, {
+    const response = await fetch(`${API_URL}/api/doubt/solve`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': \`Bearer \${getToken()}\`
+        'Authorization': `Bearer ${getToken()}`
       },
       body: JSON.stringify({
         question,
@@ -4631,7 +4616,7 @@ Format your response as JSON:
 
   } catch(err){
     typingEl?.remove();
-    addDoubtMessage('ai', '⚠️ ' + err.message + '. Make sure the doubt solver backend route is set up.');
+    addDoubtMessage('ai', '[Error] ' + err.message + '. Make sure the doubt solver backend route is set up.');
   } finally {
     isDoubtLoading = false;
     document.getElementById('doubtSendBtn').disabled = false;
