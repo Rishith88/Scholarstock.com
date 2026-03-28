@@ -1780,12 +1780,19 @@ try{
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
 const token = getToken();
-const url=`${API_URL}/api/materials/${materialId}/stream?token=${token||'guest'}`;
-const loadingTask=pdfjsLib.getDocument({
-  url,
-  withCredentials:false,
-  httpHeaders: token ? {'Authorization':`Bearer ${token}`} : {}
+const streamUrl = `${API_URL}/api/materials/${materialId}/stream?token=${token||'guest'}`;
+
+// Fetch as blob to handle redirects properly
+const response = await fetch(streamUrl, {
+  headers: token ? {'Authorization': `Bearer ${token}`} : {}
 });
+
+if(!response.ok) throw new Error(`HTTP ${response.status}`);
+
+const blob = await response.blob();
+const arrayBuffer = await blob.arrayBuffer();
+
+const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
 pdfDoc=await loadingTask.promise;
 pdfTotalPages=pdfDoc.numPages;
 document.getElementById('pdfPageInfo').textContent=`Page 1 of ${pdfTotalPages}`;
