@@ -434,6 +434,39 @@ body.light .doubt-textarea{background:rgba(255,255,255,.8);color:#1e293b}
 /* Selection highlight on canvas */
 .selection-box{position:absolute;border:2px dashed var(--blue2);background:rgba(59,130,246,.1);border-radius:4px;pointer-events:none;z-index:100}
 
+/* ── EXAM COUNTDOWN PAGE ── */
+.cd-search-input{background:var(--glass);border:1px solid var(--gb);border-radius:8px;padding:.45rem 1rem;color:var(--white);font-size:.82rem;outline:none;width:200px;font-family:inherit}
+.cd-search-input:focus{border-color:var(--blue)}
+body.light .cd-search-input{background:rgba(255,255,255,.8);color:#1e293b}
+.cd-filter-btn{background:var(--glass);border:1px solid var(--gb);border-radius:8px;padding:.45rem .9rem;color:var(--muted);font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s}
+.cd-filter-btn.active{background:linear-gradient(135deg,var(--blue),var(--purple));border-color:transparent;color:#fff}
+.cd-filter-btn:hover:not(.active){border-color:var(--blue2);color:var(--blue2)}
+.cd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
+.cd-card{background:var(--glass);border:1px solid var(--gb);border-radius:14px;padding:1.2rem;transition:all .3s}
+.cd-card:hover{transform:translateY(-3px);border-color:rgba(59,130,246,.3)}
+.cd-card.pinned{border-color:var(--blue);background:rgba(59,130,246,.08)}
+.cd-card.unpublished{opacity:.7}
+.cd-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.8rem}
+.cd-cat-badge{font-size:.62rem;font-weight:700;padding:.2rem .6rem;border-radius:50px;text-transform:uppercase;letter-spacing:.5px}
+.cd-pin-btn{background:transparent;border:none;cursor:pointer;font-size:1rem;color:var(--muted);transition:color .2s;padding:.1rem;line-height:1}
+.cd-pin-btn:hover,.cd-pin-btn.pinned{color:var(--gold)}
+.cd-exam-name{font-size:.95rem;font-weight:800;color:var(--white);margin-bottom:.3rem;line-height:1.3}
+body.light .cd-exam-name{color:#1e293b}
+.cd-exam-date{font-size:.75rem;color:var(--muted);margin-bottom:.8rem}
+.cd-blocks{display:flex;gap:.4rem;align-items:center;margin-bottom:.6rem}
+.cd-block{text-align:center;background:rgba(0,0,0,.2);border-radius:7px;padding:.4rem .6rem;min-width:44px;border:1px solid rgba(255,255,255,.08)}
+body.light .cd-block{background:rgba(0,0,0,.06)}
+.cd-num{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;color:var(--white);line-height:1}
+body.light .cd-num{color:#1e293b}
+.cd-lbl{font-size:.55rem;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-top:.1rem}
+.cd-sep{font-size:1rem;font-weight:900;color:var(--blue2);margin-bottom:.3rem}
+.cd-urgency{font-size:.72rem;font-weight:700;padding:.2rem .6rem;border-radius:6px;display:inline-block}
+.cd-urgency.hot{background:rgba(239,68,68,.15);color:var(--red)}
+.cd-urgency.soon{background:rgba(245,158,11,.15);color:var(--gold)}
+.cd-urgency.ok{background:rgba(16,185,129,.15);color:var(--green)}
+.cd-unpub{font-size:.82rem;color:var(--muted);font-style:italic;padding:.4rem 0}
+@media(max-width:600px){.cd-grid{grid-template-columns:1fr}}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
@@ -484,6 +517,9 @@ body.light .doubt-textarea{background:rgba(255,255,255,.8);color:#1e293b}
     <div class="sidebar-label">Tools</div>
     <div class="sidebar-item" onclick="closeSidebar();go('calc')">
       <span class="sidebar-item-icon">🧮</span> Calculator
+    </div>
+    <div class="sidebar-item" onclick="closeSidebar();go('countdown')">
+      <span class="sidebar-item-icon">⏳</span> Exam Countdown
     </div>
     <div class="sidebar-item" onclick="closeSidebar();go('wishlist')">
       <span class="sidebar-item-icon">❤️</span> Wishlist
@@ -1368,6 +1404,7 @@ if(page==='pricing-plans')loadPricingPlansPage();
 if(page==='profile')loadProfile();
 if(page==='home')renderCategories();
 if(page==='wishlist') renderWishlistPage();
+if(page==='countdown') setTimeout(initCountdown,50);
 }
 
 function updateNav(){
@@ -4728,6 +4765,250 @@ function toggleVoiceInput(){
   isRecording = true;
   document.getElementById('doubtMicBtn').classList.add('recording');
   showAiTooltip('🎤 Listening... speak your doubt');
+}
+</script>
+
+
+<!-- EXAM COUNTDOWN PAGE -->
+<div id="pg-countdown" class="page">
+<div class="sec" style="margin-top:2rem">
+  <div class="eyebrow">Live Exam Dates</div>
+  <h2 class="sec-title">⏳ Exam Countdowns</h2>
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:1.2rem">
+    <input class="cd-search-input" id="cdSearch" placeholder="🔍 Search exam..." oninput="filterCountdowns()">
+    <button class="cd-filter-btn active" onclick="setCdFilter(this,'All')">All</button>
+    <button class="cd-filter-btn" onclick="setCdFilter(this,'Engineering')">🏗 Engineering</button>
+    <button class="cd-filter-btn" onclick="setCdFilter(this,'Medical')">🏥 Medical</button>
+    <button class="cd-filter-btn" onclick="setCdFilter(this,'Government')">🏛 Govt</button>
+    <button class="cd-filter-btn" onclick="setCdFilter(this,'Banking')">🏦 Banking</button>
+    <button class="cd-filter-btn" onclick="setCdFilter(this,'Management')">💼 MBA</button>
+    <button class="cd-filter-btn" onclick="setCdFilter(this,'GATE')">⚙️ GATE</button>
+    <button class="cd-filter-btn" onclick="setCdFilter(this,'International')">🌍 International</button>
+    <button class="cd-filter-btn" onclick="setCdFilter(this,'Olympiad')">🏆 Olympiad</button>
+    <button class="cd-filter-btn" onclick="setCdFilter(this,'Boards')">📋 Boards</button>
+  </div>
+  <div style="font-size:.78rem;color:var(--muted);margin-bottom:1.2rem">
+    ⭐ Star any exam to pin it to the top &nbsp;·&nbsp; Dates updated when officially announced &nbsp;·&nbsp;
+    <strong style="color:var(--muted)">📅 Not published</strong> = date not yet announced
+  </div>
+  <div class="cd-grid" id="cdGrid"></div>
+</div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// EXAM COUNTDOWN — All exams with live countdowns
+// null date = not yet published, update when announced
+// ══════════════════════════════════════════════════════
+const EXAM_DATES = [
+  {name:'JEE Mains Session 1',date:'2026-01-22',cat:'Engineering'},
+  {name:'JEE Mains Session 2',date:'2026-04-05',cat:'Engineering'},
+  {name:'JEE Advanced',date:'2026-05-24',cat:'Engineering'},
+  {name:'BITSAT',date:'2026-05-20',cat:'Engineering'},
+  {name:'VITEEE',date:'2026-04-15',cat:'Engineering'},
+  {name:'SRMJEEE',date:'2026-04-10',cat:'Engineering'},
+  {name:'MHT CET',date:'2026-05-02',cat:'Engineering'},
+  {name:'WBJEE',date:'2026-04-19',cat:'Engineering'},
+  {name:'KCET',date:'2026-04-22',cat:'Engineering'},
+  {name:'COMEDK',date:'2026-05-10',cat:'Engineering'},
+  {name:'KEAM',date:null,cat:'Engineering'},
+  {name:'NEET UG',date:'2026-05-03',cat:'Medical'},
+  {name:'NEET PG',date:'2026-06-14',cat:'Medical'},
+  {name:'AIIMS PG',date:'2026-05-18',cat:'Medical'},
+  {name:'JIPMER',date:'2026-06-07',cat:'Medical'},
+  {name:'INI CET',date:'2026-11-01',cat:'Medical'},
+  {name:'FMGE',date:'2026-06-15',cat:'Medical'},
+  {name:'NEET MDS',date:null,cat:'Medical'},
+  {name:'NEET SS',date:null,cat:'Medical'},
+  {name:'UPSC CSE Prelims',date:'2026-05-24',cat:'Government'},
+  {name:'UPSC CSE Mains',date:'2026-09-18',cat:'Government'},
+  {name:'SSC CGL Tier 1',date:'2026-06-13',cat:'Government'},
+  {name:'SSC CHSL',date:'2026-06-25',cat:'Government'},
+  {name:'RRB NTPC',date:'2026-09-05',cat:'Government'},
+  {name:'RRB Group D',date:'2026-08-10',cat:'Government'},
+  {name:'CAPF AC',date:'2026-08-02',cat:'Government'},
+  {name:'CDS I',date:'2026-04-05',cat:'Defence'},
+  {name:'NDA I',date:'2026-04-13',cat:'Defence'},
+  {name:'NDA II',date:'2026-09-06',cat:'Defence'},
+  {name:'IBPS PO',date:'2026-10-04',cat:'Banking'},
+  {name:'IBPS Clerk',date:'2026-08-23',cat:'Banking'},
+  {name:'SBI PO',date:'2026-06-06',cat:'Banking'},
+  {name:'SBI Clerk',date:'2026-07-25',cat:'Banking'},
+  {name:'RBI Grade B',date:'2026-07-12',cat:'Banking'},
+  {name:'IBPS RRB PO',date:null,cat:'Banking'},
+  {name:'CAT',date:'2026-11-29',cat:'Management'},
+  {name:'XAT',date:'2027-01-05',cat:'Management'},
+  {name:'SNAP',date:'2026-12-13',cat:'Management'},
+  {name:'NMAT',date:'2026-10-10',cat:'Management'},
+  {name:'CMAT',date:'2026-03-22',cat:'Management'},
+  {name:'MAT',date:'2026-05-17',cat:'Management'},
+  {name:'IIFT',date:'2026-12-07',cat:'Management'},
+  {name:'ATMA',date:null,cat:'Management'},
+  {name:'GATE CS',date:'2027-02-01',cat:'GATE'},
+  {name:'GATE EC',date:'2027-02-07',cat:'GATE'},
+  {name:'GATE EE',date:'2027-02-08',cat:'GATE'},
+  {name:'GATE ME',date:'2027-02-15',cat:'GATE'},
+  {name:'GATE CE',date:'2027-02-14',cat:'GATE'},
+  {name:'GATE CH',date:null,cat:'GATE'},
+  {name:'GATE BT',date:null,cat:'GATE'},
+  {name:'SAT',date:'2026-05-02',cat:'International'},
+  {name:'ACT',date:'2026-04-18',cat:'International'},
+  {name:'GRE',date:'2026-06-01',cat:'International'},
+  {name:'GMAT',date:'2026-05-15',cat:'International'},
+  {name:'TOEFL',date:'2026-04-11',cat:'International'},
+  {name:'IELTS',date:'2026-04-18',cat:'International'},
+  {name:'PTE Academic',date:'2026-04-20',cat:'International'},
+  {name:'MCAT',date:'2026-05-16',cat:'International'},
+  {name:'LSAT',date:'2026-06-08',cat:'International'},
+  {name:'IMO (Math)',date:'2026-07-10',cat:'Olympiad'},
+  {name:'IPhO (Physics)',date:'2026-07-18',cat:'Olympiad'},
+  {name:'IChO (Chemistry)',date:'2026-07-22',cat:'Olympiad'},
+  {name:'IBO (Biology)',date:'2026-07-14',cat:'Olympiad'},
+  {name:'IOI (Informatics)',date:'2026-08-08',cat:'Olympiad'},
+  {name:'IOAA (Astronomy)',date:null,cat:'Olympiad'},
+  {name:'IJSO',date:null,cat:'Olympiad'},
+  {name:'CFA Level 1 (Feb)',date:'2026-02-17',cat:'Finance'},
+  {name:'CFA Level 1 (May)',date:'2026-05-14',cat:'Finance'},
+  {name:'CA Foundation (May)',date:'2026-05-15',cat:'Finance'},
+  {name:'ACCA',date:'2026-06-01',cat:'Finance'},
+  {name:'CLAT',date:'2026-05-01',cat:'Law'},
+  {name:'AILET',date:'2026-05-10',cat:'Law'},
+  {name:'NATA',date:'2026-04-18',cat:'Design'},
+  {name:'NID DAT',date:'2026-01-12',cat:'Design'},
+  {name:'NIFT',date:'2026-02-08',cat:'Design'},
+  {name:'CBSE Class 12',date:'2026-02-15',cat:'Boards'},
+  {name:'CBSE Class 10',date:'2026-02-15',cat:'Boards'},
+  {name:'ICSE Class 12',date:'2026-02-16',cat:'Boards'},
+  {name:'CUET UG',date:'2026-05-08',cat:'University'},
+  {name:'DUET',date:'2026-05-25',cat:'University'},
+];
+
+const CAT_COLORS={
+  Engineering:'rgba(59,130,246,.15)|var(--blue2)',
+  Medical:'rgba(16,185,129,.15)|var(--green)',
+  Government:'rgba(245,158,11,.15)|var(--gold)',
+  Defence:'rgba(245,158,11,.15)|var(--gold)',
+  Banking:'rgba(139,92,246,.15)|var(--purple)',
+  Management:'rgba(6,182,212,.15)|var(--cyan)',
+  GATE:'rgba(59,130,246,.15)|var(--blue2)',
+  International:'rgba(239,68,68,.15)|var(--red)',
+  Olympiad:'rgba(245,158,11,.15)|var(--gold)',
+  Finance:'rgba(16,185,129,.15)|var(--green)',
+  Law:'rgba(139,92,246,.15)|var(--purple)',
+  Design:'rgba(236,72,153,.15)|#ec4899',
+  Boards:'rgba(59,130,246,.15)|var(--blue2)',
+  University:'rgba(59,130,246,.15)|var(--blue2)',
+  Tech:'rgba(6,182,212,.15)|var(--cyan)',
+};
+
+let cdFilter='All';
+let cdIntervals={};
+let cdPinned=JSON.parse(localStorage.getItem('ss_cd_pinned')||'[]');
+
+function initCountdown(){ renderCdGrid(); }
+
+function setCdFilter(btn,cat){
+  cdFilter=cat;
+  document.querySelectorAll('.cd-filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCdGrid();
+}
+
+function filterCountdowns(){ renderCdGrid(); }
+
+function toggleCdPin(name){
+  const idx=cdPinned.indexOf(name);
+  if(idx>-1) cdPinned.splice(idx,1);
+  else cdPinned.unshift(name);
+  localStorage.setItem('ss_cd_pinned',JSON.stringify(cdPinned));
+  renderCdGrid();
+}
+
+function renderCdGrid(){
+  const grid=document.getElementById('cdGrid');
+  if(!grid) return;
+  Object.values(cdIntervals).forEach(clearInterval);
+  cdIntervals={};
+  const search=(document.getElementById('cdSearch')?.value||'').toLowerCase();
+  const today=new Date(); today.setHours(0,0,0,0);
+  let exams=EXAM_DATES.filter(e=>{
+    if(cdFilter!=='All'&&e.cat!==cdFilter) return false;
+    if(search&&!e.name.toLowerCase().includes(search)&&!e.cat.toLowerCase().includes(search)) return false;
+    return true;
+  });
+  exams.sort((a,b)=>{
+    const ap=cdPinned.includes(a.name)?0:1, bp=cdPinned.includes(b.name)?0:1;
+    if(ap!==bp) return ap-bp;
+    if(!a.date&&!b.date) return 0;
+    if(!a.date) return 1; if(!b.date) return -1;
+    return new Date(a.date)-new Date(b.date);
+  });
+  if(!exams.length){ grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted)">No exams found</div>'; return; }
+  grid.innerHTML=exams.map(e=>buildCdCard(e,today)).join('');
+  exams.filter(e=>e.date).forEach(e=>{
+    const id='cds_'+e.name.replace(/[^a-z0-9]/gi,'_');
+    cdIntervals[id]=setInterval(()=>{
+      const el=document.getElementById(id);
+      if(!el){clearInterval(cdIntervals[id]);return;}
+      const diff=new Date(e.date+'T00:00:00')-new Date();
+      if(diff<=0){el.textContent='00';clearInterval(cdIntervals[id]);return;}
+      el.textContent=String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+    },1000);
+  });
+}
+
+function buildCdCard(e,today){
+  const isPinned=cdPinned.includes(e.name);
+  const cols=(CAT_COLORS[e.cat]||'rgba(255,255,255,.05)|var(--muted)').split('|');
+  const secId='cds_'+e.name.replace(/[^a-z0-9]/gi,'_');
+  const nameSafe=e.name.replace(/'/g,"\'");
+  if(!e.date) return `<div class="cd-card unpublished">
+    <div class="cd-card-top">
+      <span class="cd-cat-badge" style="background:${cols[0]};color:${cols[1]}">${e.cat}</span>
+      <button class="cd-pin-btn ${isPinned?'pinned':''}" onclick="toggleCdPin('${nameSafe}')">${isPinned?'★':'☆'}</button>
+    </div>
+    <div class="cd-exam-name">${e.name}</div>
+    <div class="cd-unpub">📅 Date not yet announced</div>
+    <div style="font-size:.7rem;color:var(--muted2)">We'll update when officially published</div>
+  </div>`;
+  const examDate=new Date(e.date+'T00:00:00');
+  const diffMs=examDate-new Date();
+  if(diffMs<=0) return `<div class="cd-card" style="opacity:.5">
+    <div class="cd-card-top">
+      <span class="cd-cat-badge" style="background:${cols[0]};color:${cols[1]}">${e.cat}</span>
+      <button class="cd-pin-btn ${isPinned?'pinned':''}" onclick="toggleCdPin('${nameSafe}')">${isPinned?'★':'☆'}</button>
+    </div>
+    <div class="cd-exam-name">${e.name}</div>
+    <div class="cd-exam-date">Exam was on ${fmtCdDate(e.date)}</div>
+  </div>`;
+  const days=Math.floor(diffMs/86400000);
+  const hrs=Math.floor((diffMs%86400000)/3600000);
+  const mins=Math.floor((diffMs%3600000)/60000);
+  const secs=Math.floor((diffMs%60000)/1000);
+  const urg=days<=30?'hot':days<=90?'soon':'ok';
+  const urgTxt=days<=30?'🔥 Very soon!':days<=90?'⚡ Coming up':'📅 Upcoming';
+  return `<div class="cd-card ${isPinned?'pinned':''}">
+    <div class="cd-card-top">
+      <span class="cd-cat-badge" style="background:${cols[0]};color:${cols[1]}">${e.cat}</span>
+      <button class="cd-pin-btn ${isPinned?'pinned':''}" onclick="toggleCdPin('${nameSafe}')">${isPinned?'★':'☆'}</button>
+    </div>
+    <div class="cd-exam-name">${e.name}</div>
+    <div class="cd-exam-date">📅 ${fmtCdDate(e.date)}</div>
+    <div class="cd-blocks">
+      <div class="cd-block"><div class="cd-num">${String(days).padStart(2,'0')}</div><div class="cd-lbl">Days</div></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-block"><div class="cd-num">${String(hrs).padStart(2,'0')}</div><div class="cd-lbl">Hrs</div></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-block"><div class="cd-num">${String(mins).padStart(2,'0')}</div><div class="cd-lbl">Min</div></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-block"><div class="cd-num" id="${secId}">${String(secs).padStart(2,'0')}</div><div class="cd-lbl">Sec</div></div>
+    </div>
+    <span class="cd-urgency ${urg}">${urgTxt} — ${days} days left</span>
+  </div>`;
+}
+
+function fmtCdDate(d){
+  return new Date(d+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
 }
 </script>
 
