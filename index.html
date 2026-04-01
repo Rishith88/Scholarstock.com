@@ -961,7 +961,7 @@ body.light .cd-num{color:#1e293b}
 <span id="pdfPageInfo" style="font-size:.85rem;color:var(--muted)"></span>
 <button onclick="pdfPrevPage()">◀ Prev</button>
 <button onclick="pdfNextPage()">Next ▶</button>
-<button onclick="toggleDoubtPanel()" id="aiDoubtBtn" style="background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;border-color:transparent">🧠 Ask AI</button>
+<button onclick="if(typeof toggleDoubtPanel==='function')toggleDoubtPanel();" id="aiDoubtBtn" style="background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;border-color:transparent">🧠 Ask AI</button>
 <button onclick="closePDF()">✕ Close</button>
 </div>
 </div>
