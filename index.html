@@ -3395,9 +3395,96 @@ function calcMem(op){
   else if(op==='M-'){calcMemory-=cur;document.getElementById('calcMemDisplay').textContent=`M:${calcMemory}`;}
 }
 
-function calcEquals(){
-  try{
-    let expr = calcExpr;
+async function calcEquals(){
+  const problem = calcExpr;
+  if(!problem) return;
+
+  document.getElementById('calcResult').textContent = '⏳';
+
+  try {
+    const res = await fetch(`${API_URL}/api/calculator/solve`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getToken()}`
+      },
+      body: JSON.stringify({
+        problem,
+        history: calcHistoryArr.slice(-10).map(h=>[
+          {role:'user', content: h.expr},
+          {role:'assistant', content: h.result}
+        ]).flat()
+      })
+    });
+
+    const data = await res.json();
+
+    if(data.success){
+      const reply = data.result;
+      const answerMatch = reply.match(/Answer:\s*([^\n]+)/i);
+      const displayed = answerMatch ? answerMatch[1].trim() : reply.split('\n')[0].trim();
+
+      document.getElementById('calcResult').textContent = displayed;
+      document.getElementById('calcExpr').textContent = problem + ' =';
+
+      calcHistoryArr.unshift({ expr: problem, result: displayed });
+      if(calcHistoryArr.length > 50) calcHistoryArr.pop();
+      calcAns = parseFloat(displayed) || 0;
+      renderCalcHistory();
+      calcExpr = '';
+    } else {
+      throw new Error(data.error);
+    }
+
+  } catch(err) {
+    // fallback to local JS
+    try {
+      let expr = calcExpr;
+      expr = expr.replace(/π/g, 'Math.PI').replace(/φ/g,'1.6180339887').replace(/\be\b/g,'Math.E');
+      expr = expr.replace(/Ans/g, String(calcAns));
+      expr = expr.replace(/sin\(/g, calcDeg?'Math.sin(d2r(':'Math.sin(');
+      expr = expr.replace(/cos\(/g, calcDeg?'Math.cos(d2r(':'Math.cos(');
+      expr = expr.replace(/tan\(/g, calcDeg?'Math.tan(d2r(':'Math.tan(');
+      expr = expr.replace(/asin\(/g, calcDeg?'r2d(Math.asin(':'Math.asin(');
+      expr = expr.replace(/acos\(/g, calcDeg?'r2d(Math.acos(':'Math.acos(');
+      expr = expr.replace(/atan\(/g, calcDeg?'r2d(Math.atan(':'Math.atan(');
+      expr = expr.replace(/sinh\(/g,'Math.sinh(');
+      expr = expr.replace(/cosh\(/g,'Math.cosh(');
+      expr = expr.replace(/tanh\(/g,'Math.tanh(');
+      expr = expr.replace(/log2\(/g,'Math.log2(');
+      expr = expr.replace(/log\(/g,'Math.log10(');
+      expr = expr.replace(/ln\(/g,'Math.log(');
+      expr = expr.replace(/sqrt\(/g,'Math.sqrt(');
+      expr = expr.replace(/cbrt\(/g,'Math.cbrt(');
+      expr = expr.replace(/abs\(/g,'Math.abs(');
+      expr = expr.replace(/exp\(/g,'Math.exp(');
+      expr = expr.replace(/round\(/g,'Math.round(');
+      expr = expr.replace(/fact\(([^)]+)\)/g, (m,n)=>`calcFactorial(${n})`);
+      expr = expr.replace(/nCr\(([^,]+),([^)]+)\)/g,(m,n,r)=>`calcNCR(${n},${r})`);
+      expr = expr.replace(/nPr\(([^,]+),([^)]+)\)/g,(m,n,r)=>`calcNPR(${n},${r})`);
+
+      const result = Function(`
+        function d2r(x){return x*Math.PI/180;}
+        function r2d(x){return x*180/Math.PI;}
+        function calcFactorial(n){n=Math.round(n);if(n<0)return NaN;if(n===0||n===1)return 1;let r=1;for(let i=2;i<=n;i++)r*=i;return r;}
+        function calcNCR(n,r){return calcFactorial(n)/(calcFactorial(r)*calcFactorial(n-r));}
+        function calcNPR(n,r){return calcFactorial(n)/calcFactorial(n-r);}
+        return ${expr};
+      `)();
+
+      const formatted = formatCalcNum(result);
+      document.getElementById('calcResult').textContent = formatted;
+      document.getElementById('calcExpr').textContent = calcExpr + ' =';
+      calcHistoryArr.unshift({expr:calcExpr, result:formatted});
+      if(calcHistoryArr.length>50) calcHistoryArr.pop();
+      renderCalcHistory();
+      calcAns = result;
+      calcExpr = '';
+    } catch(e){
+      document.getElementById('calcResult').textContent = 'Error';
+    }
+  }
+}
     // Replace constants
     expr = expr.replace(/π/g, 'Math.PI').replace(/φ/g,'1.6180339887').replace(/\be\b/g,'Math.E');
     expr = expr.replace(/Ans/g, String(calcAns));
