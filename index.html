@@ -1308,7 +1308,8 @@ body.light .cd-num{color:#1e293b}
 
 </div><!-- end sec -->
 </div><!-- end pg-calc -->
-
+<script>function goCalc(){if(!isLoggedIn()){toast('Please login to use the calculator','error');go('login');return;}go('calc');}</script>
+  
 <!-- FLOATING CALC BUTTON -->
 <div id="floatingCalcBtn" style="position:fixed;bottom:6rem;left:1.5rem;width:52px;height:52px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 20px rgba(59,130,246,.5);z-index:1000;transition:all .3s;font-size:1.4rem" onclick="goCalc()" title="Scientific Calculator">🧮</div>
 
