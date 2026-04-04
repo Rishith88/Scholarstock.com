@@ -467,6 +467,31 @@ body.light .cd-num{color:#1e293b}
 .cd-unpub{font-size:.82rem;color:var(--muted);font-style:italic;padding:.4rem 0}
 @media(max-width:600px){.cd-grid{grid-template-columns:1fr}}
 
+/* AI STUDY STRATEGIST */
+.ss-wrap{max-width:920px;margin:0 auto}
+.ss-hero{background:linear-gradient(135deg,rgba(59,130,246,.14),rgba(139,92,246,.12));border:1px solid var(--gb);border-radius:18px;padding:1.6rem 2rem;margin-bottom:1.8rem;position:relative;overflow:hidden}
+.ss-hero::after{content:'';position:absolute;top:-40%;right:-20%;width:280px;height:280px;background:radial-gradient(circle,rgba(59,130,246,.15),transparent);pointer-events:none}
+body.light .ss-hero{background:linear-gradient(135deg,rgba(59,130,246,.1),rgba(139,92,246,.08))}
+.ss-form{background:var(--glass);border:1px solid var(--gb);border-radius:16px;padding:1.5rem 1.6rem;margin-bottom:2rem}
+.ss-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:640px){.ss-form-grid{grid-template-columns:1fr}}
+.ss-label{display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted2);margin-bottom:.35rem}
+.ss-inp,.ss-sel{width:100%;background:rgba(255,255,255,.06);border:1px solid var(--gb);border-radius:10px;padding:.75rem 1rem;color:var(--white);font-size:.9rem;outline:none;font-family:inherit}
+body.light .ss-inp,body.light .ss-sel{background:rgba(255,255,255,.85);color:#1e293b}
+.ss-inp:focus,.ss-sel:focus{border-color:var(--blue)}
+.ss-ta{min-height:88px;resize:vertical}
+.ss-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin:1.2rem 0}
+.ss-stat{background:var(--glass);border:1px solid var(--gb);border-radius:12px;padding:1rem;text-align:center}
+.ss-stat b{display:block;font-size:1.45rem;font-family:'Playfair Display',serif;color:var(--blue2);line-height:1.1}
+.ss-weeks{display:grid;gap:1rem}
+.ss-week{background:var(--glass);border:1px solid var(--gb);border-radius:14px;padding:1.15rem 1.35rem;border-left:4px solid var(--blue);transition:transform .2s,border-color .2s}
+.ss-week:hover{transform:translateY(-2px);border-left-color:var(--purple)}
+.ss-week h4{margin:0 0 .45rem;font-size:1rem;color:var(--white);display:flex;align-items:center;flex-wrap:wrap;gap:.35rem}
+body.light .ss-week h4{color:#1e293b}
+.ss-tag{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.8px;background:rgba(139,92,246,.18);color:var(--purple);padding:.2rem .55rem;border-radius:50px}
+.ss-risks{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.22);border-radius:14px;padding:1.1rem 1.25rem;margin-top:1.5rem}
+.ss-motivation{font-size:1.05rem;font-style:italic;color:var(--gold);text-align:center;margin-top:2rem;padding:1.2rem 1.4rem;border-radius:14px;background:rgba(245,158,11,.09);border:1px solid rgba(245,158,11,.2);line-height:1.5}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
@@ -520,6 +545,9 @@ body.light .cd-num{color:#1e293b}
     </div>
     <div class="sidebar-item" onclick="closeSidebar();go('countdown')">
       <span class="sidebar-item-icon">⏳</span> Exam Countdown
+    </div>
+    <div class="sidebar-item" onclick="closeSidebar();go('study-strategist')">
+      <span class="sidebar-item-icon">🎯</span> AI Study Strategist
     </div>
     <div class="sidebar-item" onclick="closeSidebar();go('wishlist')">
       <span class="sidebar-item-icon">❤️</span> Wishlist
@@ -629,6 +657,9 @@ body.light .cd-num{color:#1e293b}
       <button class="sidebar-item" onclick="go('calc');closeSidebar()">
         <span class="sidebar-icon">🧮</span><span class="sidebar-label">Calculator</span>
       </button>
+      <button class="sidebar-item" onclick="go('study-strategist');closeSidebar()">
+        <span class="sidebar-icon">🎯</span><span class="sidebar-label">AI Study Strategist</span>
+      </button>
       <button class="sidebar-item" onclick="localStorage.removeItem('guideShown');startGuide();closeSidebar()">
         <span class="sidebar-icon">🎓</span><span class="sidebar-label">Take Tour</span>
       </button>
@@ -683,6 +714,7 @@ body.light .cd-num{color:#1e293b}
 <p class="hero-sub">Access premium study materials for 100+ competitive exams. Rent by the day, save thousands.</p>
 <div class="hero-btns">
 <button class="btn btn-grad" onclick="go(&#39;browse&#39;)">Browse Materials</button>
+<button class="btn btn-ghost" onclick="go(&#39;study-strategist&#39;)">🎯 AI Study Strategist</button>
 </div>
 </div>
 
@@ -1072,6 +1104,10 @@ body.light .cd-num{color:#1e293b}
     <button class="calc-btn cb-fn" onclick="calcInput('Ans')">Ans</button>
   </div>
 
+  <div class="calc-grid" style="grid-template-columns:1fr;margin-bottom:.5rem">
+    <button type="button" class="calc-btn cb-fn" onclick="calcAIExplain()" style="background:linear-gradient(135deg,rgba(59,130,246,.22),rgba(139,92,246,.16));border-color:rgba(59,130,246,.4);font-weight:700">🧠 Explain with AI (step-by-step)</button>
+  </div>
+
   <!-- Row 1: functions -->
   <div class="calc-grid" style="grid-template-columns:repeat(6,1fr);margin-bottom:.5rem">
     <button class="calc-btn cb-fn" onclick="calcInput('sin(')">sin</button>
@@ -1146,6 +1182,14 @@ body.light .cd-num{color:#1e293b}
 
     <button class="calc-btn cb-num" style="grid-column:span 2" onclick="calcInput('0')">0</button>
     <button class="calc-btn cb-num" onclick="calcInput('.')">.</button>
+  </div>
+
+  <div id="calcAiPanel" style="display:none;margin-top:1rem;background:var(--glass);border:1px solid var(--gb);border-radius:12px;padding:1rem;max-height:260px;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;flex-wrap:wrap;gap:.5rem">
+      <span style="font-size:.78rem;font-weight:800;color:var(--purple)">🧠 AI explanation (backend)</span>
+      <button type="button" onclick="calcAiClear()" style="background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:.75rem">Clear chat</button>
+    </div>
+    <pre id="calcAiText" style="margin:0;font-size:.82rem;line-height:1.5;color:var(--muted);white-space:pre-wrap;font-family:'Plus Jakarta Sans',sans-serif;word-break:break-word"></pre>
   </div>
 </div>
 
@@ -1405,6 +1449,85 @@ if(page==='profile')loadProfile();
 if(page==='home')renderCategories();
 if(page==='wishlist') renderWishlistPage();
 if(page==='countdown') setTimeout(initCountdown,50);
+if(page==='study-strategist'){if(!isLoggedIn()){toast('Login to use AI Study Strategist','error');go('login');return;}initStudyStrategistPage();}
+}
+
+function ssEscapeHtml(s){
+if(s==null||s==='')return '';
+return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function initStudyStrategistPage(){
+const out=document.getElementById('ssResult');
+const saved=localStorage.getItem('ss_strategist_plan');
+if(saved){
+try{
+const o=JSON.parse(saved);
+if(o.plan)renderStudyStrategistResult(o.plan,o.meta||{});
+}catch(e){}
+}else if(out)out.innerHTML='<p style="color:var(--muted);text-align:center;padding:2rem">Your roadmap will appear here. Fill the form and generate.</p>';
+}
+
+async function generateStudyStrategistPlan(){
+const exam=document.getElementById('ssExam')?.value?.trim();
+const target=document.getElementById('ssTargetDate')?.value;
+const hrs=parseInt(document.getElementById('ssHours')?.value||'14',10);
+const weak=document.getElementById('ssWeak')?.value||'';
+const prep=document.getElementById('ssPrep')?.value||'intermediate';
+const goal=document.getElementById('ssGoal')?.value?.trim()||'';
+if(!exam){toast('Enter your target exam','error');return;}
+if(!target){toast('Pick your exam date','error');return;}
+const examDay=new Date(target+'T12:00:00');
+const daysUntil=Math.ceil((examDay-Date.now())/86400000);
+if(daysUntil<7){toast('Exam should be at least 7 days away','error');return;}
+const btn=document.getElementById('ssGenerateBtn');
+const out=document.getElementById('ssResult');
+if(btn){btn.disabled=true;btn.textContent='⏳ Generating…';}
+if(out)out.innerHTML='<div style="text-align:center;padding:2.5rem;color:var(--muted)">🧠 Building your personalized roadmap…</div>';
+try{
+const res=await fetch(`${API_URL}/api/study-strategist/plan`,{
+method:'POST',
+headers:{'Content-Type':'application/json','Authorization':`Bearer ${getToken()}`},
+body:JSON.stringify({examName:exam,daysUntilExam:daysUntil,hoursPerWeek:hrs,weakAreas:weak,prepLevel:prep,goalBrief:goal})
+});
+const data=await res.json();
+if(!data.success)throw new Error(data.message||'Failed to generate plan');
+localStorage.setItem('ss_strategist_plan',JSON.stringify({plan:data.plan,meta:data.meta}));
+renderStudyStrategistResult(data.plan,data.meta);
+toast('Your AI study roadmap is ready!','success');
+}catch(e){
+if(out)out.innerHTML=`<div style="color:var(--red);padding:1.5rem;text-align:center">${ssEscapeHtml(e.message)}</div>`;
+toast(e.message,'error');
+}finally{
+if(btn){btn.disabled=false;btn.textContent='✨ Generate my roadmap';}
+}
+}
+
+function renderStudyStrategistResult(plan,meta){
+const out=document.getElementById('ssResult');
+if(!out||!plan)return;
+const stats=plan.stats||{};
+const weeks=plan.weeklyPhases||[];
+let risksHtml='';
+(plan.riskAlerts||[]).forEach(r=>{
+risksHtml+=`<div style="margin-bottom:.65rem"><strong style="color:var(--red)">${ssEscapeHtml(r.risk)}</strong><div style="font-size:.85rem;color:var(--muted);margin-top:.25rem">${ssEscapeHtml(r.mitigation)}</div></div>`;
+});
+const weeksHtml=weeks.map(w=>{
+const fa=(w.focusAreas||[]).map(x=>`<span style="display:inline-block;background:rgba(59,130,246,.12);padding:.22rem .55rem;border-radius:6px;margin:.15rem .15rem 0 0;font-size:.78rem">${ssEscapeHtml(x)}</span>`).join('');
+const ms=(w.milestones||[]).map(m=>`<li style="margin:.28rem 0">${ssEscapeHtml(m)}</li>`).join('');
+return `<div class="ss-week"><h4>Week ${ssEscapeHtml(w.week)} · ${ssEscapeHtml(w.theme||'Focus')}<span class="ss-tag">~${ssEscapeHtml(w.hoursSuggested!=null?w.hoursSuggested:'—')} h</span></h4><div style="margin:.45rem 0">${fa}</div><ul style="margin:.45rem 0;padding-left:1.2rem;font-size:.88rem;color:var(--muted)">${ms}</ul><div style="font-size:.82rem;color:var(--green);margin-top:.65rem;border-top:1px solid var(--gb);padding-top:.65rem">📚 <strong>ScholarStock:</strong> ${ssEscapeHtml(w.scholarStockTip||'Browse topic materials and mock tests for this phase.')}</div></div>`;
+}).join('');
+const habits=(plan.dailyHabits||[]).map(h=>`<li style="margin:.38rem 0">${ssEscapeHtml(h)}</li>`).join('');
+const finalW=(plan.finalWeekPlan||[]).map(h=>`<li style="margin:.38rem 0">${ssEscapeHtml(h)}</li>`).join('');
+const examLabel=meta&&meta.examName?ssEscapeHtml(meta.examName):'';
+out.innerHTML=`<div class="ss-hero"><div class="eyebrow">AI-generated roadmap${examLabel?' · '+examLabel:''}</div><h2 style="font-family:'Playfair Display',serif;font-size:1.65rem;margin:.5rem 0;line-height:1.2">${ssEscapeHtml(plan.title||'Your study roadmap')}</h2><p style="color:var(--muted);line-height:1.55">${ssEscapeHtml(plan.executiveSummary||'')}</p><div style="margin-top:.85rem;font-size:.85rem;color:var(--blue2)">Stage: <strong>${ssEscapeHtml(plan.prepStageLabel||'')}</strong></div></div><div class="ss-stats"><div class="ss-stat"><b>${stats.estimatedTotalHours!=null?ssEscapeHtml(String(stats.estimatedTotalHours)):'—'}</b><span style="font-size:.75rem;color:var(--muted)">Est. total hours</span></div><div class="ss-stat"><b>${ssEscapeHtml(stats.weeklyIntensity||'—')}</b><span style="font-size:.75rem;color:var(--muted)">Intensity</span></div><div class="ss-stat" style="grid-column:span 2"><span style="font-size:.8rem;color:var(--muted);line-height:1.4">${ssEscapeHtml(stats.readinessProjection||'')}</span></div></div><h3 class="sec-title" style="font-size:1.35rem;margin:1.6rem 0 1rem">Weekly phases</h3><div class="ss-weeks">${weeksHtml}</div><h3 class="sec-title" style="font-size:1.15rem;margin:1.5rem 0 .75rem">Daily habits</h3><ul style="color:var(--muted);font-size:.9rem;padding-left:1.2rem">${habits}</ul><h3 class="sec-title" style="font-size:1.15rem;margin:1.5rem 0 .75rem">Exam week</h3><ul style="color:var(--muted);font-size:.9rem;padding-left:1.2rem">${finalW}</ul>${risksHtml?`<div class="ss-risks"><strong style="font-size:.85rem;display:block;margin-bottom:.6rem">⚠️ Risk radar</strong>${risksHtml}</div>`:''}<div class="ss-motivation">${ssEscapeHtml(plan.motivationLine||'')}</div>`;
+}
+
+function clearStudyStrategistPlan(){
+localStorage.removeItem('ss_strategist_plan');
+const out=document.getElementById('ssResult');
+if(out)out.innerHTML='<p style="color:var(--muted);text-align:center;padding:2rem">Saved plan cleared. Generate a new roadmap below.</p>';
+toast('Saved plan cleared');
 }
 
 function updateNav(){
@@ -3345,6 +3468,7 @@ let calcMemory = 0;
 let calcAns = 0;
 let calcDeg = true;
 let calcHistoryArr = [];
+let calcAIHistory = [];
 let eqType = 'quadratic';
 
 function goCalc(){
@@ -3474,6 +3598,45 @@ function calcRestoreFromHistory(val){
 function clearCalcHistory(){
   calcHistoryArr=[];
   renderCalcHistory();
+}
+
+async function calcAIExplain(){
+if(!isLoggedIn()){toast('Please login to use AI calculator help','error');go('login');return;}
+let problem=calcExpr.trim();
+if(!problem&&calcHistoryArr.length>0){
+problem=`Explain step-by-step how to evaluate this expression and verify the answer ${calcHistoryArr[0].result}:\n${calcHistoryArr[0].expr}`;
+}
+if(!problem){
+toast('Type an expression, press = once, or use your last result from history — then tap Explain with AI','error');
+return;}
+const panel=document.getElementById('calcAiPanel');
+const pre=document.getElementById('calcAiText');
+if(panel)panel.style.display='block';
+if(pre)pre.textContent='⏳ Asking ScholarStock AI…';
+try{
+const res=await fetch(`${API_URL}/api/calculator/solve`,{
+method:'POST',
+headers:{'Content-Type':'application/json','Authorization':`Bearer ${getToken()}`},
+body:JSON.stringify({problem,history:calcAIHistory})
+});
+const data=await res.json().catch(()=>({}));
+if(res.status===401){clearAuth();go('login');throw new Error(data.message||'Session expired — please login again');}
+if(!data.success)throw new Error(data.error||data.message||'AI request failed');
+calcAIHistory=Array.isArray(data.history)?data.history:[];
+if(pre)pre.textContent=data.result||'(empty response)';
+toast('AI explanation ready','success');
+}catch(e){
+if(pre)pre.textContent=e.message;
+toast(e.message,'error');
+}
+}
+
+function calcAiClear(){
+calcAIHistory=[];
+const pre=document.getElementById('calcAiText');
+const panel=document.getElementById('calcAiPanel');
+if(pre)pre.textContent='';
+if(panel)panel.style.display='none';
 }
 
 // Keyboard support for scientific calc
@@ -3736,6 +3899,62 @@ function doBitwise(op){
   <div class="eyebrow">Saved Materials</div>
   <h2 class="sec-title">❤️ My Wishlist</h2>
   <div class="doc-grid" id="wishlistGrid"></div>
+</div>
+</div>
+
+<!-- AI STUDY STRATEGIST -->
+<div id="pg-study-strategist" class="page">
+<div class="sec" style="margin-top:2rem">
+  <div class="eyebrow">Adaptive intelligence</div>
+  <h2 class="sec-title">🎯 AI Study Strategist</h2>
+  <p style="color:var(--muted);max-width:640px;margin-bottom:1.5rem;line-height:1.55">A personalized multi-week roadmap built for <strong>your</strong> exam date, hours per week, and weak areas — including ScholarStock-specific study moves. Powered by the same AI stack as our doubt solver.</p>
+  <div class="ss-wrap">
+    <div id="ssResult" class="ss-result"><p style="color:var(--muted);text-align:center;padding:2rem">Your roadmap will appear here. Fill the form and generate — or restore your last plan from this device.</p></div>
+    <div class="ss-form">
+      <div class="ss-form-grid">
+        <div>
+          <label class="ss-label" for="ssExam">Target exam</label>
+          <input class="ss-inp" id="ssExam" placeholder="e.g. JEE Main 2026, NEET UG, UPSC CSE Prelims" autocomplete="off">
+        </div>
+        <div>
+          <label class="ss-label" for="ssTargetDate">Exam date</label>
+          <input class="ss-inp" id="ssTargetDate" type="date">
+        </div>
+        <div>
+          <label class="ss-label" for="ssHours">Hours per week</label>
+          <select class="ss-sel" id="ssHours">
+            <option value="7">7 hrs / week</option>
+            <option value="10">10 hrs / week</option>
+            <option value="14" selected>14 hrs / week</option>
+            <option value="21">21 hrs / week</option>
+            <option value="28">28 hrs / week</option>
+            <option value="40">40+ hrs / week</option>
+          </select>
+        </div>
+        <div>
+          <label class="ss-label" for="ssPrep">Prep level</label>
+          <select class="ss-sel" id="ssPrep">
+            <option value="beginner">Beginner — starting fresh</option>
+            <option value="intermediate" selected>Intermediate — some syllabus done</option>
+            <option value="advanced">Advanced — mostly done, need polish</option>
+            <option value="revision">Revision mode — exam soon</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:1rem">
+        <label class="ss-label" for="ssWeak">Weak topics / concerns</label>
+        <textarea class="ss-inp ss-ta" id="ssWeak" placeholder="e.g. Rotational mechanics, organic reaction mechanisms, time management in mocks…"></textarea>
+      </div>
+      <div style="margin-top:1rem">
+        <label class="ss-label" for="ssGoal">Goal (optional)</label>
+        <input class="ss-inp" id="ssGoal" placeholder="e.g. 99 percentile, clear prelims first attempt, board 95+">
+      </div>
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.25rem">
+        <button type="button" class="btn btn-grad" id="ssGenerateBtn" onclick="generateStudyStrategistPlan()">✨ Generate my roadmap</button>
+        <button type="button" class="btn btn-ghost" onclick="clearStudyStrategistPlan()">Clear saved plan</button>
+      </div>
+    </div>
+  </div>
 </div>
 </div>
 
