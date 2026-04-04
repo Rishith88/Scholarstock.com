@@ -961,7 +961,7 @@ body.light .cd-num{color:#1e293b}
 <span id="pdfPageInfo" style="font-size:.85rem;color:var(--muted)"></span>
 <button onclick="pdfPrevPage()">◀ Prev</button>
 <button onclick="pdfNextPage()">Next ▶</button>
-<button onclick="if(typeof toggleDoubtPanel==='function')toggleDoubtPanel();" id="aiDoubtBtn" style="background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;border-color:transparent">🧠 Ask AI</button>
+<button type="button" onclick="toggleDoubtPanel()" id="aiDoubtBtn" style="background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;border-color:transparent">🧠 Ask AI</button>
 <button onclick="closePDF()">✕ Close</button>
 </div>
 </div>
@@ -4572,9 +4572,11 @@ function closeDoubtPanel(){
 
 function toggleDoubtPanel(){
   const panel = document.getElementById('doubtPanel');
+  if(!panel) return;
   if(panel.classList.contains('open')) closeDoubtPanel();
   else openDoubtPanel();
 }
+window.toggleDoubtPanel = toggleDoubtPanel;
 
 function updateDoubtContextBar(){
   const bar = document.getElementById('doubtContextBar');
@@ -4676,21 +4678,22 @@ function renderDoubtAnswer(answer){
     const parsed = typeof answer === 'string' ? JSON.parse(answer) : answer;
 
     if(parsed.explanation){
-      html += \`<h4>💡 Explanation</h4><div style="margin-bottom:.8rem">\${parsed.explanation}</div>\`;
+      html += `<h4>💡 Explanation</h4><div style="margin-bottom:.8rem">${parsed.explanation}</div>`;
     }
     if(parsed.steps && parsed.steps.length){
       html += '<h4>📋 Step-by-step</h4>';
       parsed.steps.forEach((s, i) => {
-        html += \`<div class="step"><strong>Step \${i+1}:</strong> \${s}</div>\`;
+        html += `<div class="step"><strong>Step ${i+1}:</strong> ${s}</div>`;
       });
     }
     if(parsed.tip){
-      html += \`<div style="margin-top:.8rem;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);border-radius:6px;padding:.5rem .8rem;font-size:.8rem;color:var(--gold)">💡 <strong>Exam Tip:</strong> \${parsed.tip}</div>\`;
+      html += `<div style="margin-top:.8rem;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);border-radius:6px;padding:.5rem .8rem;font-size:.8rem;color:var(--gold)">💡 <strong>Exam Tip:</strong> ${parsed.tip}</div>`;
     }
     if(parsed.relatedTopics && parsed.relatedTopics.length){
       html += '<div style="margin-top:.8rem"><strong style="font-size:.78rem;color:var(--muted)">📚 Study next:</strong><div style="margin-top:.3rem">';
       parsed.relatedTopics.forEach(t => {
-        html += \`<span class="material-chip" onclick="askRelatedTopic('\${t}')">\${t}</span>\`;
+        const tEsc = String(t).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+        html += `<span class="material-chip" onclick="askRelatedTopic('${tEsc}')">${t}</span>`;
       });
       html += '</div></div>';
     }
