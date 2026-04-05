@@ -80,7 +80,7 @@ function AppLayout() {
 
 export default function App() {
   return (
-    <Router basename="/Scholarstock.com">
+    <Router>
       <ThemeProvider>
         <AuthProvider>
           <CartProvider>
