@@ -13,6 +13,8 @@ export default function BrowsePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [materials, setMaterials] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const subcats = selectedCat && categories[selectedCat] ? categories[selectedCat] : [];
 
