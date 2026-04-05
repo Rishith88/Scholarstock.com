@@ -7,7 +7,7 @@ export default function HomePage() {
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
 
-  const keys = Object.keys(categories);
+  const keys = categories ? Object.keys(categories) : [];
   const filtered = search ? keys.filter(k => k.toLowerCase().includes(search.toLowerCase())) : keys;
 
   return (

@@ -117,7 +117,7 @@ export default function StudyStrategistPage() {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
         {/* Result section */}
-        <div style={{ background: 'var(--glass)', border: '1px solid var(--gb)', borderRadius: '14px', padding: '1.5rem', minHeight: '300px', whiteSpace: 'pre-wrap', fontSize: '.88rem', lineHeight: 1.7, color: 'var(--muted)', overflow: 'auto', maxHeight: '600px' }}>
+        <div style={{ background: 'var(--glass)', border: '1px solid var(--gb)', borderRadius: '14px', padding: '1.5rem', minHeight: '300px', fontSize: '.88rem', lineHeight: 1.7, color: 'var(--muted)', overflow: 'auto', maxHeight: '600px' }}>
           {loading ? (
             <div style={{ textAlign: 'center', padding: '3rem' }}>
               <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🤖</div>
