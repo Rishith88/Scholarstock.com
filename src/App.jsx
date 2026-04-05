@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { ToastProvider } from './context/ToastContext';
@@ -80,7 +80,7 @@ function AppLayout() {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <ThemeProvider>
         <AuthProvider>
           <CartProvider>
@@ -92,6 +92,6 @@ export default function App() {
           </CartProvider>
         </AuthProvider>
       </ThemeProvider>
-    </BrowserRouter>
+    </Router>
   );
 }
