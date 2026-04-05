@@ -191,18 +191,76 @@ function renderPlanObjectToHtml(plan, meta) {
   
   let risksHtml = '';
   (plan.riskAlerts || []).forEach(r => {
-    risksHtml += `<div style="margin-bottom:.65rem"><strong style="color:var(--red)">${escapeHtml(r.risk)}</strong><div style="font-size:.85rem;color:var(--muted);margin-top:.25rem">${escapeHtml(r.mitigation)}</div></div>`;
+    risksHtml += `<div style="margin-bottom:.8rem; background:rgba(239,68,68,0.05); padding:1rem; border-radius:10px; border:1px solid rgba(239,68,68,0.2)">
+      <strong style="color:var(--red); display:block; margin-bottom:0.25rem">⚠️ ${escapeHtml(r.risk)}</strong>
+      <div style="font-size:.85rem; color:var(--muted); line-height:1.4">${escapeHtml(r.mitigation)}</div>
+    </div>`;
   });
   
   const weeksHtml = weeks.map(w => {
-    const fa = (w.focusAreas || []).map(x => `<span style="display:inline-block;background:rgba(59,130,246,.12);padding:.22rem .55rem;border-radius:6px;margin:.15rem .15rem 0 0;font-size:.78rem">${escapeHtml(x)}</span>`).join('');
-    const ms = (w.milestones || []).map(m => `<li style="margin:.28rem 0">${escapeHtml(m)}</li>`).join('');
-    return `<div class="ss-week"><h4>Week ${escapeHtml(w.week)} · ${escapeHtml(w.theme || 'Focus')}<span class="ss-tag">~${escapeHtml(w.hoursSuggested != null ? w.hoursSuggested : '—')} h</span></h4><div style="margin:.45rem 0">${fa}</div><ul style="margin:.45rem 0;padding-left:1.2rem;font-size:.88rem;color:var(--muted)">${ms}</ul><div style="font-size:.82rem;color:var(--green);margin-top:.65rem;border-top:1px solid var(--gb);padding-top:.65rem">📚 <strong>ScholarStock:</strong> ${escapeHtml(w.scholarStockTip || 'Browse topic materials and mock tests for this phase.')}</div></div>`;
+    const fa = (w.focusAreas || []).map(x => `<span style="display:inline-block; background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.2); padding:0.2rem 0.6rem; border-radius:6px; margin:0.2rem 0.4rem 0.2rem 0; font-size:0.75rem; color:var(--blue2); font-weight:600">${escapeHtml(x)}</span>`).join('');
+    const ms = (w.milestones || []).map(m => `<li style="margin:0.4rem 0">${escapeHtml(m)}</li>`).join('');
+    return `
+      <div class="ss-week" style="margin-bottom:1.5rem; border-left:4px solid var(--blue); background:var(--glass); padding:1.5rem; border-radius:0 14px 14px 0">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem">
+          <h4 style="margin:0; font-size:1.1rem; color:var(--white)">Week ${escapeHtml(w.week)}: ${escapeHtml(w.theme || 'Focus')}</h4>
+          <span class="ss-tag" style="background:var(--blue); color:white; padding:0.2rem 0.6rem; border-radius:50px; font-size:0.7rem; font-weight:800">${escapeHtml(w.hoursSuggested != null ? w.hoursSuggested : '—')} HRS</span>
+        </div>
+        <div style="margin-bottom:1rem">${fa}</div>
+        <ul style="margin:0; padding-left:1.2rem; font-size:0.9rem; color:var(--muted); line-height:1.6">${ms}</ul>
+        <div style="margin-top:1rem; padding-top:1rem; border-top:1px solid var(--gb); font-size:0.85rem; color:var(--green)">
+          <strong>🚀 ScholarStock Strategy:</strong> ${escapeHtml(w.scholarStockTip || 'Utilize our target materials for this phase.')}
+        </div>
+      </div>`;
   }).join('');
   
-  const habits = (plan.dailyHabits || []).map(h => `<li style="margin:.38rem 0">${escapeHtml(h)}</li>`).join('');
-  const finalW = (plan.finalWeekPlan || []).map(h => `<li style="margin:.38rem 0">${escapeHtml(h)}</li>`).join('');
+  const habits = (plan.dailyHabits || []).map(h => `<li style="margin:0.5rem 0; display:flex; align-items:flex-start; gap:0.5rem"><span style="color:var(--blue2)">•</span><span>${escapeHtml(h)}</span></li>`).join('');
+  const finalW = (plan.finalWeekPlan || []).map(h => `<li style="margin:0.5rem 0; display:flex; align-items:flex-start; gap:0.5rem"><span style="color:var(--gold)">⚡</span><span>${escapeHtml(h)}</span></li>`).join('');
   const examLabel = meta && meta.examName ? escapeHtml(meta.examName) : '';
   
-  return `<div class="ss-hero"><div class="eyebrow">AI-generated roadmap${examLabel ? ' · ' + examLabel : ''}</div><h2 style="font-family:'Playfair Display',serif;font-size:1.65rem;margin:.5rem 0;line-height:1.2">${escapeHtml(plan.title || 'Your study roadmap')}</h2><p style="color:var(--muted);line-height:1.55">${escapeHtml(plan.executiveSummary || '')}</p><div style="margin-top:.85rem;font-size:.85rem;color:var(--blue2)">Stage: <strong>${escapeHtml(plan.prepStageLabel || '')}</strong></div></div><div class="ss-stats"><div class="ss-stat"><b>${stats.estimatedTotalHours != null ? escapeHtml(String(stats.estimatedTotalHours)) : '—'}</b><span style="font-size:.75rem;color:var(--muted)">Est. total hours</span></div><div class="ss-stat"><b>${escapeHtml(stats.weeklyIntensity || '—')}</b><span style="font-size:.75rem;color:var(--muted)">Intensity</span></div><div class="ss-stat" style="grid-column:span 2"><span style="font-size:.8rem;color:var(--muted);line-height:1.4">${escapeHtml(stats.readinessProjection || '')}</span></div></div><h3 class="sec-title" style="font-size:1.35rem;margin:1.6rem 0 1rem">Weekly phases</h3><div class="ss-weeks">${weeksHtml}</div><h3 class="sec-title" style="font-size:1.15rem;margin:1.5rem 0 .75rem">Daily habits</h3><ul style="color:var(--muted);font-size:.9rem;padding-left:1.2rem">${habits}</ul><h3 class="sec-title" style="font-size:1.15rem;margin:1.5rem 0 .75rem">Exam week</h3><ul style="color:var(--muted);font-size:.9rem;padding-left:1.2rem">${finalW}</ul>${risksHtml ? `<div class="ss-risks"><strong style="font-size:.85rem;display:block;margin-bottom:.6rem">⚠️ Risk radar</strong>${risksHtml}</div>` : ''}<div class="ss-motivation">${escapeHtml(plan.motivationLine || '')}</div>`;
+  return `
+    <div style="padding:1rem">
+      <div class="ss-hero" style="text-align:center; margin-bottom:2rem; padding:2rem; background:linear-gradient(135deg, rgba(59,130,246,0.1), rgba(139,92,246,0.1)); border-radius:20px; border:1px solid var(--gb)">
+        <div class="eyebrow" style="color:var(--blue2); font-weight:800; text-transform:uppercase; letter-spacing:2px; font-size:0.7rem; margin-bottom:0.5rem">Expert Strategy Roadmap${examLabel ? ' for ' + examLabel : ''}</div>
+        <h2 style="font-family:'Playfair Display',serif; font-size:2rem; margin:0.5rem 0; color:var(--white)">${escapeHtml(plan.title || 'Your Personalized Study Plan')}</h2>
+        <p style="color:var(--muted); font-size:1rem; max-width:700px; margin:1rem auto; line-height:1.6">${escapeHtml(plan.executiveSummary || '')}</p>
+        <div style="display:inline-block; background:rgba(59,130,246,0.1); padding:0.4rem 1.2rem; border-radius:50px; color:var(--blue2); font-weight:700; font-size:0.85rem; margin-top:1rem; border:1px solid rgba(59,130,246,0.3)">Current Track: ${escapeHtml(plan.prepStageLabel || '')}</div>
+      </div>
+
+      <div class="ss-stats" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:1rem; margin-bottom:2.5rem">
+        <div class="ss-stat" style="background:var(--glass); padding:1.2rem; border-radius:14px; border:1px solid var(--gb); text-align:center">
+          <div style="font-size:0.75rem; color:var(--muted); margin-bottom:0.4rem; text-transform:uppercase; font-weight:700">Total Study Hours</div>
+          <div style="font-size:1.8rem; font-weight:900; color:var(--blue2)">${stats.estimatedTotalHours != null ? escapeHtml(String(stats.estimatedTotalHours)) : '—'}</div>
+        </div>
+        <div class="ss-stat" style="background:var(--glass); padding:1.2rem; border-radius:14px; border:1px solid var(--gb); text-align:center">
+          <div style="font-size:0.75rem; color:var(--muted); margin-bottom:0.4rem; text-transform:uppercase; font-weight:700">Intensity Level</div>
+          <div style="font-size:1.8rem; font-weight:900; color:var(--purple)">${escapeHtml(stats.weeklyIntensity || '—')}</div>
+        </div>
+        <div class="ss-stat" style="background:var(--glass); padding:1.2rem; border-radius:14px; border:1px solid var(--gb); text-align:center; grid-column: span 2">
+          <div style="font-size:0.75rem; color:var(--muted); margin-bottom:0.4rem; text-transform:uppercase; font-weight:700">Readiness Projection</div>
+          <div style="font-size:0.95rem; font-weight:600; color:var(--white); line-height:1.4">${escapeHtml(stats.readinessProjection || '')}</div>
+        </div>
+      </div>
+
+      <h3 style="font-family:'Playfair Display',serif; font-size:1.5rem; margin-bottom:1.5rem; border-bottom:1px solid var(--gb); padding-bottom:0.5rem">📅 Weekly Curriculum</h3>
+      <div class="ss-weeks">${weeksHtml}</div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:2rem; margin-top:2rem">
+        <div>
+          <h3 style="font-family:'Playfair Display',serif; font-size:1.3rem; margin-bottom:1rem">🏠 Daily Rituals</h3>
+          <ul style="list-style:none; padding:0; margin:0; color:var(--muted); font-size:0.95rem">${habits}</ul>
+        </div>
+        <div>
+          <h3 style="font-family:'Playfair Display',serif; font-size:1.3rem; margin-bottom:1rem">🏁 The Final Sprint</h3>
+          <ul style="list-style:none; padding:0; margin:0; color:var(--muted); font-size:0.95rem">${finalW}</ul>
+        </div>
+      </div>
+
+      ${risksHtml ? `<div class="ss-risks" style="margin-top:2.5rem"><h3 style="font-family:'Playfair Display',serif; font-size:1.3rem; margin-bottom:1rem; color:var(--red)">🚨 Risk Radar</h3>${risksHtml}</div>` : ''}
+
+      <div class="ss-motivation" style="margin-top:3rem; padding:2rem; background:rgba(245,158,11,0.05); border-radius:20px; border:1px dashed var(--gold); text-align:center">
+        <div style="font-size:1.5rem; margin-bottom:0.5rem">🌟</div>
+        <div style="font-family:'Playfair Display',serif; font-size:1.15rem; color:var(--gold); font-style:italic; line-height:1.6">${escapeHtml(plan.motivationLine || '')}</div>
+      </div>
+    </div>`;
 }
