@@ -10,27 +10,38 @@ export default function BrowsePage() {
   const [selectedSubcat, setSelectedSubcat] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   const [sortFilter, setSortFilter] = useState('popular');
-  const [materials, setMaterials] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
 
   const subcats = selectedCat && categories[selectedCat] ? categories[selectedCat] : [];
 
   useEffect(() => {
+    setPage(1); // Reset to page 1 on filter change
+  }, [selectedCat, selectedSubcat, typeFilter, sortFilter, searchTerm]);
+
+  useEffect(() => {
     loadMaterials();
-  }, [selectedCat, selectedSubcat, typeFilter, sortFilter]);
+  }, [selectedCat, selectedSubcat, typeFilter, sortFilter, page, searchTerm]);
 
   async function loadMaterials() {
     setLoading(true);
     try {
-      let url = `${API_URL}/api/materials?`;
+      let url = `${API_URL}/api/materials?page=${page}&limit=12&`;
       if (selectedCat) url += `category=${encodeURIComponent(selectedCat)}&`;
       if (selectedSubcat) url += `subcategory=${encodeURIComponent(selectedSubcat)}&`;
+      if (searchTerm) url += `search=${encodeURIComponent(searchTerm)}&`;
       if (typeFilter) url += `type=${typeFilter}&`;
       url += `sort=${sortFilter}`;
       const res = await fetch(url);
       const data = await res.json();
-      if (data.success) setMaterials(data.materials);
-      else setMaterials([]);
+      if (data.success) {
+        setMaterials(data.materials);
+        setTotalPages(data.pagination.pages || 1);
+      } else {
+        setMaterials([]);
+      }
     } catch (err) {
       setMaterials([]);
     } finally {
@@ -43,6 +54,23 @@ export default function BrowsePage() {
       <h2 className="sec-title">Browse Study Materials</h2>
 
       <div className="filter-bar">
+        <div className="search-wrap" style={{ flex: 1, minWidth: '250px' }}>
+          <input 
+            type="text" 
+            placeholder="Search by title, subject or tags..." 
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            style={{ 
+              width: '100%', 
+              padding: '.75rem 1rem', 
+              borderRadius: '10px', 
+              border: '1px solid var(--gb)', 
+              background: 'var(--glass)',
+              color: 'var(--white)'
+            }}
+          />
+        </div>
+
         <select value={selectedCat} onChange={e => { setSelectedCat(e.target.value); setSelectedSubcat(''); }}>
           <option value="">All Categories</option>
           {Object.keys(categories).map(name => (
@@ -101,8 +129,48 @@ export default function BrowsePage() {
               </div>
             );
           }) : (
-            <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '3rem', color: 'var(--muted)' }}>No materials found</div>
+            <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '5rem 2rem' }}>
+              <div style={{ fontSize: '4rem', marginBottom: '1.5rem', opacity: 0.5 }}>📚</div>
+              <h3 style={{ color: 'var(--white)', marginBottom: '.5rem' }}>No materials found</h3>
+              <p style={{ color: 'var(--muted)' }}>Try adjusting your search or filters to find what you're looking for.</p>
+              {(searchTerm || selectedCat || typeFilter) && (
+                <button 
+                  className="btn btn-ghost" 
+                  style={{ marginTop: '1.5rem' }}
+                  onClick={() => {
+                    setSearchTerm('');
+                    setSelectedCat('');
+                    setSelectedSubcat('');
+                    setTypeFilter('');
+                  }}
+                >
+                  Clear All Filters
+                </button>
+              )}
+            </div>
           )}
+        </div>
+      )}
+
+      {totalPages > 1 && (
+        <div className="pagination" style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '3rem', alignItems: 'center' }}>
+          <button 
+            className="btn btn-ghost" 
+            disabled={page === 1} 
+            onClick={() => setPage(p => p - 1)}
+          >
+            ← Previous
+          </button>
+          <span style={{ color: 'var(--muted)', fontSize: '.9rem' }}>
+            Page <strong>{page}</strong> of {totalPages}
+          </span>
+          <button 
+            className="btn btn-ghost" 
+            disabled={page === totalPages} 
+            onClick={() => setPage(p => p + 1)}
+          >
+            Next →
+          </button>
         </div>
       )}
     </div>

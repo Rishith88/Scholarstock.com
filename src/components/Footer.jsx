@@ -21,9 +21,9 @@ export default function Footer() {
         <div className="footer-col">
           <h3>Support</h3>
           <a>Help Center</a>
-          <a>Contact Us</a>
-          <a>Terms of Service</a>
-          <a>Privacy Policy</a>
+          <a onClick={() => navigate('/contact')}>Contact Us</a>
+          <a onClick={() => navigate('/terms')}>Terms of Service</a>
+          <a onClick={() => navigate('/privacy')}>Privacy Policy</a>
         </div>
         <div className="footer-col">
           <h3>Connect</h3>

@@ -41,8 +41,17 @@ export default function LoginPage() {
           <div className="form-group">
             <label>Password</label>
             <input type="password" value={password} onChange={e => setPassword(e.target.value)} required />
+            <div style={{ textAlign: 'right', marginTop: '.4rem' }}>
+              <button 
+                type="button" 
+                onClick={() => navigate('/forgot-password')} 
+                style={{ fontSize: '.75rem', color: 'var(--blue2)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+              >
+                Forgot Password?
+              </button>
+            </div>
           </div>
-          <button type="submit" className="btn btn-grad" style={{ width: '100%' }}>Login</button>
+          <button type="submit" className="btn btn-grad" style={{ width: '100%', marginTop: '.5rem' }}>Login</button>
         </form>
         <div className="auth-link">
           Don't have an account? <button onClick={() => navigate('/signup')}>Sign up</button>

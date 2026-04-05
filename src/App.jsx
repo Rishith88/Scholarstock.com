@@ -28,6 +28,12 @@ import CalculatorPage from './pages/CalculatorPage';
 import CountdownPage from './pages/CountdownPage';
 import StudyStrategistPage from './pages/StudyStrategistPage';
 import PricingPlansPage from './pages/PricingPlansPage';
+import TermsPage from './pages/TermsPage';
+import PrivacyPage from './pages/PrivacyPage';
+import ContactPage from './pages/ContactPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
+import VerifyEmailPage from './pages/VerifyEmailPage';
 
 function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -61,11 +67,21 @@ function AppLayout() {
           <Route path="/countdown" element={<CountdownPage />} />
           <Route path="/study-strategist" element={<StudyStrategistPage />} />
           <Route path="/pricing-plans" element={<PricingPlansPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route path="*" element={
-            <div className="sec" style={{ marginTop: '2rem', textAlign: 'center', padding: '3rem' }}>
-              <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🔍</div>
-              <h2 style={{ marginBottom: '.5rem' }}>Page Not Found</h2>
-              <p style={{ color: 'var(--muted)' }}>The page you're looking for doesn't exist.</p>
+            <div className="sec" style={{ marginTop: '4rem', textAlign: 'center', padding: '5rem 2rem' }}>
+              <div style={{ fontSize: '5rem', marginBottom: '1.5rem' }}>🧭</div>
+              <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '3rem', marginBottom: '1rem' }}>404</h1>
+              <h2 style={{ marginBottom: '1rem' }}>Lost in Space?</h2>
+              <p style={{ color: 'var(--muted)', maxWidth: '500px', margin: '0 auto 2rem' }}>
+                The page you're looking for doesn't exist or has been moved to a new universe.
+              </p>
+              <button className="btn btn-grad" onClick={() => navigate('/')}>Take Me Home</button>
             </div>
           } />
         </Routes>
