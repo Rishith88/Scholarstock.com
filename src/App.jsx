@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { ToastProvider } from './context/ToastContext';
@@ -34,9 +34,9 @@ import ContactPage from './pages/ContactPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
-
 function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <>
