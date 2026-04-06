@@ -439,3 +439,13 @@ body.light .ss-week h4{color:#1e293b}
 .ss-risks{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.22);border-radius:14px;padding:1.1rem 1.25rem;margin-top:1.5rem}
 .ss-motivation{font-size:1.05rem;font-style:italic;color:var(--gold);text-align:center;margin-top:2rem;padding:1.2rem 1.4rem;border-radius:14px;background:rgba(245,158,11,.09);border:1px solid rgba(245,158,11,.2);line-height:1.5}
 
+
+
+/* ── PDF VIEWER MODAL ── */
+.pdf-viewer{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:9999;display:none;align-items:center;justify-content:center;backdrop-filter:blur(10px)}
+.pdf-viewer.on{display:flex}
+.pdf-container{background:var(--bg);border:1px solid var(--gb);border-radius:16px;width:95vw;height:95vh;max-width:1400px;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.8)}
+.pdf-header{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 1.8rem;border-bottom:1px solid var(--gb);flex-shrink:0;background:var(--glass)}
+.pdf-header button{background:transparent;border:1px solid var(--gb);padding:.6rem 1.2rem;border-radius:8px;color:var(--white);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+.pdf-header button:hover{border-color:var(--blue2);color:var(--blue2)}
+.pdf-header button:last-child{padding:.4rem .6rem;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
