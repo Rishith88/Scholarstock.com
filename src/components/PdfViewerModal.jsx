@@ -105,6 +105,26 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
               title="PDF Viewer"
               onContextMenu={(e) => e.preventDefault()}
             />
+            <button 
+              onClick={() => setDoubtPanelOpen(o => !o)}
+              style={{ 
+                position: 'absolute', 
+                top: '20px', 
+                right: '60px', 
+                background: '#3b82f6', 
+                color: '#fff', 
+                border: 'none', 
+                borderRadius: '8px', 
+                padding: '10px 20px', 
+                fontWeight: 700, 
+                cursor: 'pointer',
+                fontSize: '14px',
+                boxShadow: '0 4px 12px rgba(0,0,0,.3)',
+                zIndex: 100
+              }}
+            >
+              🧠 Ask Doubt
+            </button>
           </div>
         </div>
       </div>
@@ -155,3 +175,4 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
     </>
   );
 }
+
