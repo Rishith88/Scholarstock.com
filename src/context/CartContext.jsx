@@ -2,22 +2,37 @@ import { createContext, useContext, useState } from 'react';
 
 const CartContext = createContext(null);
 
+function loadCart() {
+  try { return JSON.parse(localStorage.getItem('cart') || '[]'); } catch { return []; }
+}
+
+function saveCart(items) {
+  localStorage.setItem('cart', JSON.stringify(items));
+}
+
 export function CartProvider({ children }) {
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState(loadCart);
 
   function addToCart(examCategory, subcategory, price, planId, planName, duration) {
     setCartItems(prev => {
-      if (prev.find(i => i.examCategory === examCategory && i.subcategory === subcategory)) return prev;
-      return [...prev, { examCategory, subcategory, price, planId, planName, duration }];
+      if (prev.find(i => i.planId === planId && i.subcategory === subcategory)) return prev;
+      const next = [...prev, { examCategory, subcategory, price, planId, planName, duration }];
+      saveCart(next);
+      return next;
     });
   }
 
   function removeFromCart(index) {
-    setCartItems(prev => prev.filter((_, i) => i !== index));
+    setCartItems(prev => {
+      const next = prev.filter((_, i) => i !== index);
+      saveCart(next);
+      return next;
+    });
   }
 
   function clearCart() {
     setCartItems([]);
+    localStorage.removeItem('cart');
   }
 
   return (
