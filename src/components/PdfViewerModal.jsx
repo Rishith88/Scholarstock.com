@@ -105,6 +105,7 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
               src={`${API_URL}/api/materials/${materialId}/stream?token=${token}`}
               style={{ width: '100%', height: '100%', border: 'none' }}
               title="PDF Viewer"
+              sandbox="allow-same-origin allow-scripts"
             />
           </div>
         </div>
@@ -156,3 +157,4 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
     </>
   );
 }
+
