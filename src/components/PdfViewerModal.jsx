@@ -106,7 +106,6 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
               style={{ width: '100%', height: '100%', border: 'none' }}
               title="PDF Viewer"
               onContextMenu={(e) => e.preventDefault()}
-            />sandbox="allow-same-origin allow-scripts"
             />
           </div>
         </div>
@@ -158,4 +157,3 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
     </>
   );
 }
-
