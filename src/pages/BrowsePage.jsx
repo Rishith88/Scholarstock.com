@@ -24,10 +24,12 @@ export default function BrowsePage() {
   const [pdfMaterial, setPdfMaterial] = useState(null);
 
   function handleOpenPdf(m) {
+    console.log('Opening PDF:', m.title, m._id);
     const isFree = m.pricePerDay === 0 || m.isFreeResource;
     if (!isLoggedIn && !isFree) { toast('Please login first', 'error'); navigate('/login'); return; }
     setPdfMaterial(m);
     setPdfModalOpen(true);
+    console.log('Modal should be open now');
   }
 
   function handleRent(m) {
