@@ -61,15 +61,18 @@ export default function PricingPlansPage() {
 
   function handleCheckout(plan) {
     if (!isLoggedIn) { toast('Please login first', 'error'); navigate('/login'); return; }
-    addToCart(
-      cat || materialTitle || 'Material',
-      sub || materialTitle || 'Material',
-      plan.price,
-      plan.id,
-      plan.name,
-      plan.duration
-    );
-    navigate('/checkout');
+    const params = new URLSearchParams({
+      planId: plan.id,
+      planName: plan.name,
+      price: plan.price,
+      duration: plan.duration,
+      type: tab,
+      ...(materialId ? { material: materialId } : {}),
+      ...(materialTitle ? { title: materialTitle } : {}),
+      ...(cat ? { cat } : {}),
+      ...(sub ? { sub } : {}),
+    });
+    navigate(`/checkout?${params.toString()}`);
   }
 
   const plans = tab === 'individual' ? individualPlans : bundlePlans;
