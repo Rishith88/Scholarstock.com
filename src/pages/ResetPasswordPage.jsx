@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
 import API_URL from '../config';
@@ -9,13 +9,14 @@ export default function ResetPasswordPage() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const { showToast } = useToast();
+  const toast = useToast();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      return showToast('Passwords do not match', 'error');
+      toast('Passwords do not match', 'error');
+      return;
     }
     setLoading(true);
     try {
@@ -26,13 +27,13 @@ export default function ResetPasswordPage() {
       });
       const data = await res.json();
       if (data.success) {
-        showToast('Password reset successful!', 'success');
+        toast('Password reset successful!', 'success');
         navigate('/login');
       } else {
-        showToast(data.message || 'Reset failed', 'error');
+        toast(data.message || 'Reset failed', 'error');
       }
-    } catch (err) {
-      showToast('Network error', 'error');
+    } catch {
+      toast('Network error', 'error');
     } finally {
       setLoading(false);
     }

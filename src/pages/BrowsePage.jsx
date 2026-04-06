@@ -44,32 +44,31 @@ export default function BrowsePage() {
   }, [selectedCat, selectedSubcat, typeFilter, sortFilter, searchTerm]);
 
   useEffect(() => {
+    async function loadMaterials() {
+      setLoading(true);
+      try {
+        let url = `${API_URL}/api/materials?page=${page}&limit=12&`;
+        if (selectedCat) url += `category=${encodeURIComponent(selectedCat)}&`;
+        if (selectedSubcat) url += `subcategory=${encodeURIComponent(selectedSubcat)}&`;
+        if (searchTerm) url += `search=${encodeURIComponent(searchTerm)}&`;
+        if (typeFilter) url += `type=${typeFilter}&`;
+        url += `sort=${sortFilter}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.success) {
+          setMaterials(data.materials || []);
+          setTotalPages(data.pagination?.pages || 1);
+        } else {
+          setMaterials([]);
+        }
+      } catch {
+        setMaterials([]);
+      } finally {
+        setLoading(false);
+      }
+    }
     loadMaterials();
   }, [selectedCat, selectedSubcat, typeFilter, sortFilter, page, searchTerm]);
-
-  async function loadMaterials() {
-    setLoading(true);
-    try {
-      let url = `${API_URL}/api/materials?page=${page}&limit=12&`;
-      if (selectedCat) url += `category=${encodeURIComponent(selectedCat)}&`;
-      if (selectedSubcat) url += `subcategory=${encodeURIComponent(selectedSubcat)}&`;
-      if (searchTerm) url += `search=${encodeURIComponent(searchTerm)}&`;
-      if (typeFilter) url += `type=${typeFilter}&`;
-      url += `sort=${sortFilter}`;
-      const res = await fetch(url);
-      const data = await res.json();
-      if (data.success) {
-        setMaterials(data.materials || []);
-        setTotalPages(data.pagination?.pages || 1);
-      } else {
-        setMaterials([]);
-      }
-    } catch (err) {
-      setMaterials([]);
-    } finally {
-      setLoading(false);
-    }
-  }
 
   return (
     <div className="sec" style={{ marginTop: '2rem' }}>

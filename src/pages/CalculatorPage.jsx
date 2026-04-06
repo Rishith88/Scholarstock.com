@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import API_URL from '../config';
@@ -44,7 +44,6 @@ export default function CalculatorPage() {
   const [convFrom, setConvFrom] = useState('m');
   const [convTo, setConvTo] = useState('km');
   const [convVal, setConvVal] = useState('1');
-  const [convResult, setConvResult] = useState('');
 
   // Stats
   const [statsInput, setStatsInput] = useState('');
@@ -111,8 +110,8 @@ export default function CalculatorPage() {
     return parseFloat(n.toPrecision(12)).toString();
   }
 
-  // Unit converter
-  useEffect(() => {
+  // Unit converter - compute result directly during render
+  const convResultComputed = (() => {
     const cat = convCat;
     const val = parseFloat(convVal) || 0;
     if (cat === 'temperature') {
@@ -126,19 +125,28 @@ export default function CalculatorPage() {
       else if (convTo === '°F') r = celsius * 9 / 5 + 32;
       else if (convTo === 'K') r = celsius + 273.15;
       else r = (celsius + 273.15) * 9 / 5;
-      setConvResult(`${formatNum(r)} ${convTo}`);
+      return `${formatNum(r)} ${convTo}`;
     } else {
       const tbl = CONV_UNITS[cat];
       if (tbl && tbl[convFrom] && tbl[convTo]) {
-        setConvResult(`${formatNum(val * tbl[convFrom] / tbl[convTo])} ${convTo}`);
+        return `${formatNum(val * tbl[convFrom] / tbl[convTo])} ${convTo}`;
       }
+      return '';
     }
-  }, [convCat, convFrom, convTo, convVal]);
+  })();
 
+  // Update units when category changes - use layout effect to avoid cascading renders
   useEffect(() => {
     const units = convCat === 'temperature' ? TEMP_UNITS : Object.keys(CONV_UNITS[convCat] || {});
-    if (units.length) { setConvFrom(units[0]); setConvTo(units[1] || units[0]); }
-  }, [convCat]);
+    if (units.length && (!units.includes(convFrom) || !units.includes(convTo))) {
+      // Schedule state updates for next tick to avoid synchronous setState
+      const timeoutId = setTimeout(() => {
+        setConvFrom(units[0]);
+        setConvTo(units[1] || units[0]);
+      }, 0);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [convCat, convFrom, convTo]);
 
   // Statistics
   function calcStats() {
@@ -301,7 +309,7 @@ export default function CalculatorPage() {
             </div>
             <button onClick={() => { const t = convFrom; setConvFrom(convTo); setConvTo(t); }} style={{ background: 'var(--glass)', border: '1px solid var(--gb)', borderRadius: '50%', width: '40px', height: '40px', cursor: 'pointer', fontSize: '1.2rem', color: 'var(--blue2)' }}>⇄</button>
             <div>
-              <div style={{ ...is, padding: '.8rem 1rem', background: 'rgba(59,130,246,.1)', borderColor: 'rgba(59,130,246,.3)', fontWeight: 700, color: 'var(--blue2)' }}>{convResult}</div>
+              <div style={{ ...is, padding: '.8rem 1rem', background: 'rgba(59,130,246,.1)', borderColor: 'rgba(59,130,246,.3)', fontWeight: 700, color: 'var(--blue2)' }}>{convResultComputed}</div>
               <select style={{ ...is, marginTop: '.5rem' }} value={convTo} onChange={e => setConvTo(e.target.value)}>
                 {convUnits.map(u => <option key={u} value={u}>{u}</option>)}
               </select>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import API_URL from '../config';
@@ -19,7 +19,6 @@ export default function MockTestModal({ isOpen, onClose, category = 'General Kno
   const [submitted, setSubmitted] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
   const [totalTime, setTotalTime] = useState(0);
-  const [startTime, setStartTime] = useState(0);
 
   // Timer logic
   useEffect(() => {
@@ -51,27 +50,6 @@ export default function MockTestModal({ isOpen, onClose, category = 'General Kno
   async function generateTest() {
     setScreen('loading');
     try {
-      const prompt = `You are an expert exam question generator for ${category} — ${subcategory}.
-Generate exactly ${qCount} ${difficulty} difficulty ${qType === 'mcq' ? 'multiple choice' : qType === 'truefalse' ? 'true/false' : 'mixed (MCQ and true/false)'} questions.
-Rules:
-- Questions must be specific to ${subcategory} in ${category}
-- Each MCQ must have exactly 4 options (A, B, C, D)
-- True/False questions must have exactly 2 options: "True" and "False"
-- Include a brief explanation for each correct answer
-- Vary question difficulty as ${difficulty}
-
-Respond ONLY with a valid JSON array, no markdown, no extra text:
-[
-  {
-    "question": "Question text here?",
-    "type": "mcq",
-    "options": ["Option A", "Option B", "Option C", "Option D"],
-    "correct": 0,
-    "explanation": "Brief explanation why this is correct"
-  }
-]
-For true/false use type "tf" and options ["True","False"] with correct being 0 or 1.`;
-
       const response = await fetch(`${API_URL}/api/mocktest/generate`, {
         method: 'POST',
         headers: {
@@ -92,7 +70,6 @@ For true/false use type "tf" and options ["True","False"] with correct being 0 o
       const tt = timePerQ > 0 ? qCount * timePerQ : 0;
       setTotalTime(tt);
       setTimeLeft(tt);
-      setStartTime(Date.now());
       setAnswers({});
       setCurrentQ(0);
       setSubmitted(false);

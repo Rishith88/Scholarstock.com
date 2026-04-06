@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useToast } from '../context/ToastContext';
 
 export default function ContactPage() {
-  const { showToast } = useToast();
+  const toast = useToast();
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
   const [loading, setLoading] = useState(false);
 
@@ -11,7 +11,7 @@ export default function ContactPage() {
     setLoading(true);
     // Simulate API call
     setTimeout(() => {
-      showToast('Message sent! We\'ll get back to you soon.', 'success');
+      toast('Message sent! We\'ll get back to you soon.', 'success');
       setFormData({ name: '', email: '', subject: '', message: '' });
       setLoading(false);
     }, 1000);

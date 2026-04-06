@@ -1,23 +1,13 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import API_URL from '../config';
 
 export default function WishlistPage() {
-  const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
   const toast = useToast();
-  const [wishlist, setWishlist] = useState([]);
-
-  useEffect(() => {
-    loadWishlist();
-  }, []);
-
-  function loadWishlist() {
-    const w = JSON.parse(localStorage.getItem('ss_wishlist') || '[]');
-    setWishlist(w);
-  }
+  const [wishlist, setWishlist] = useState(() => {
+    return JSON.parse(localStorage.getItem('ss_wishlist') || '[]');
+  });
 
   function removeItem(id) {
     const w = wishlist.filter(x => x._id !== id);

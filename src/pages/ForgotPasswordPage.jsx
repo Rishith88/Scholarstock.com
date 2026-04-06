@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
 import API_URL from '../config';
@@ -7,7 +7,7 @@ export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
-  const { showToast } = useToast();
+  const toast = useToast();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -22,12 +22,12 @@ export default function ForgotPasswordPage() {
       const data = await res.json();
       if (data.success) {
         setSent(true);
-        showToast('Reset link sent to your email!', 'success');
+        toast('Reset link sent to your email!', 'success');
       } else {
-        showToast(data.message || 'Error occurred', 'error');
+        toast(data.message || 'Error occurred', 'error');
       }
-    } catch (err) {
-      showToast('Network error', 'error');
+    } catch {
+      toast('Network error', 'error');
     } finally {
       setLoading(false);
     }

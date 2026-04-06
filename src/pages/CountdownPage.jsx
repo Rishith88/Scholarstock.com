@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 
 const EXAM_DATES = [
   {name:'JEE Mains Session 1',date:'2026-01-22',cat:'Engineering'},

@@ -1,18 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import API_URL from '../config';
 
 export default function VerifyEmailPage() {
   const [params] = useSearchParams();
   const token = params.get('token');
-  const [status, setStatus] = useState('verifying'); // 'verifying', 'success', 'error'
+  const [status, setStatus] = useState(token ? 'verifying' : 'error');
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!token) {
-      setStatus('error');
-      return;
-    }
+    if (!token) return;
 
     const verify = async () => {
       try {
@@ -24,7 +21,7 @@ export default function VerifyEmailPage() {
         const data = await res.json();
         if (data.success) setStatus('success');
         else setStatus('error');
-      } catch (err) {
+      } catch {
         setStatus('error');
       }
     };

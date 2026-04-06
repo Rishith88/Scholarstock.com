@@ -11,17 +11,16 @@ export default function RentalsPage() {
 
   useEffect(() => {
     if (!isLoggedIn) { navigate('/login'); return; }
+    async function loadRentals() {
+      try {
+        const res = await fetch(`${API_URL}/api/rentals`, { headers: { Authorization: `Bearer ${token}` } });
+        const data = await res.json();
+        if (data.success) setRentals(data.rentals);
+      } catch (e) { console.warn(e); }
+      finally { setLoading(false); }
+    }
     loadRentals();
-  }, [isLoggedIn]);
-
-  async function loadRentals() {
-    try {
-      const res = await fetch(`${API_URL}/api/rentals`, { headers: { Authorization: `Bearer ${token}` } });
-      const data = await res.json();
-      if (data.success) setRentals(data.rentals);
-    } catch (e) { console.warn(e); }
-    finally { setLoading(false); }
-  }
+  }, [isLoggedIn, navigate, token]);
 
   if (loading) return <div className="sec" style={{ marginTop: '2rem', textAlign: 'center', padding: '3rem', color: 'var(--muted)' }}>⏳ Loading rentals...</div>;
 

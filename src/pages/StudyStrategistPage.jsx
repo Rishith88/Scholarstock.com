@@ -48,7 +48,7 @@ export default function StudyStrategistPage() {
         setLoading(false);
         return;
       }
-    } catch (e) {
+    } catch {
       console.warn('Backend endpoint unavailable or returned unrendered object, using React renderer...');
     }
     

@@ -7,7 +7,7 @@ import API_URL from '../config';
 
 export default function CheckoutPage() {
   const { isLoggedIn, token } = useAuth();
-  const { cartItems, clearCart } = useCart();
+  const { cartItems } = useCart();
   const toast = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -37,7 +37,7 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (!isLoggedIn) { navigate('/login'); }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, navigate]);
 
   async function processCheckout() {
     if (processing) return;
@@ -59,7 +59,7 @@ export default function CheckoutPage() {
       } else {
         toast(data.message || 'Checkout failed', 'error');
       }
-    } catch (e) { toast('Checkout failed', 'error'); }
+    } catch { toast('Checkout failed', 'error'); }
     finally { setProcessing(false); }
   }
 

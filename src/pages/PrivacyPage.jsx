@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function PrivacyPage() {
   return (
     <div className="sec" style={{ marginTop: '4rem', maxWidth: '800px' }}>

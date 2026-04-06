@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -10,7 +10,7 @@ import ReviewsModal from '../components/ReviewsModal';
 
 export default function SubcategoryPage() {
   const { categoryName, subcategoryName } = useParams();
-  const { isLoggedIn, token } = useAuth();
+  const { isLoggedIn } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
   const cat = decodeURIComponent(categoryName);
@@ -29,18 +29,19 @@ export default function SubcategoryPage() {
   const [reviewsModalOpen, setReviewsModalOpen] = useState(false);
   const [reviewMaterial, setReviewMaterial] = useState(null);
 
-  useEffect(() => { loadMaterials(); }, [cat, sub]);
-
-  async function loadMaterials() {
-    setLoading(true);
-    try {
-      let url = `${API_URL}/api/materials?category=${encodeURIComponent(cat)}&subcategory=${encodeURIComponent(sub)}`;
-      const res = await fetch(url);
-      const data = await res.json();
-      if (data.success) setMaterials(data.materials);
-    } catch (e) { console.warn(e); }
-    finally { setLoading(false); }
-  }
+  useEffect(() => { 
+    async function loadMaterials() {
+      setLoading(true);
+      try {
+        let url = `${API_URL}/api/materials?category=${encodeURIComponent(cat)}&subcategory=${encodeURIComponent(sub)}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.success) setMaterials(data.materials);
+      } catch (e) { console.warn(e); }
+      finally { setLoading(false); }
+    }
+    loadMaterials(); 
+  }, [cat, sub]);
 
   function handleRent(materialId, title) {
     if (!isLoggedIn) { toast('Please login first', 'error'); navigate('/login'); return; }

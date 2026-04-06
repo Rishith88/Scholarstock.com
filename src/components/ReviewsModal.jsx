@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
@@ -6,18 +6,12 @@ export default function ReviewsModal({ isOpen, onClose, materialId, title, avgSt
   const { isLoggedIn, user } = useAuth();
   const toast = useToast();
 
-  const [reviews, setReviews] = useState([]);
+  const [reviews, setReviews] = useState(() => {
+    if (!materialId) return [];
+    return JSON.parse(localStorage.getItem(`ss_reviews_${materialId}`) || '[]');
+  });
   const [selectedStars, setSelectedStars] = useState(0);
   const [reviewText, setReviewText] = useState('');
-
-  useEffect(() => {
-    if (isOpen && materialId) {
-      const stored = JSON.parse(localStorage.getItem(`ss_reviews_${materialId}`) || '[]');
-      setReviews(stored);
-      setSelectedStars(0);
-      setReviewText('');
-    }
-  }, [isOpen, materialId]);
 
   const avg = reviews.length ? (reviews.reduce((s, r) => s + r.stars, 0) / reviews.length).toFixed(1) : avgStars || 4.5;
 

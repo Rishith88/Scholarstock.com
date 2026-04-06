@@ -1,11 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useToast } from '../context/ToastContext';
 import API_URL from '../config';
 
 export default function PdfViewerModal({ isOpen, onClose, materialId, title, subcategory, examCategory }) {
   const { token } = useAuth();
-  const toast = useToast();
   
   const [doubtPanelOpen, setDoubtPanelOpen] = useState(false);
   const [doubtMessages, setDoubtMessages] = useState([

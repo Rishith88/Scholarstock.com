@@ -1,8 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API_URL from '../config';
-import { useState } from 'react';
 
 export default function ProfilePage() {
   const { isLoggedIn, user, token } = useAuth();
@@ -11,18 +10,21 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (!isLoggedIn) { navigate('/login'); return; }
+    async function loadReferralData() {
+      try {
+        const res = await fetch(`${API_URL}/api/referral/my`, { headers: { Authorization: `Bearer ${token}` } });
+        const data = await res.json();
+        if (data.success) setRefData(data);
+      } catch (e) { console.warn(e); }
+    }
     loadReferralData();
-  }, [isLoggedIn]);
-
-  async function loadReferralData() {
-    try {
-      const res = await fetch(`${API_URL}/api/referral/my`, { headers: { Authorization: `Bearer ${token}` } });
-      const data = await res.json();
-      if (data.success) setRefData(data);
-    } catch (e) { console.warn(e); }
-  }
+  }, [isLoggedIn, navigate, token]);
 
   if (!user) return null;
+
+  const memberSince = user.createdAt 
+    ? new Date(user.createdAt).toLocaleDateString() 
+    : new Date().toLocaleDateString();
 
   return (
     <div className="sec" style={{ marginTop: '2rem' }}>
@@ -36,7 +38,7 @@ export default function ProfilePage() {
           <p style={{ color: 'var(--muted)', fontSize: '.9rem', marginBottom: '1rem' }}>{user.email}</p>
           <div style={{ background: 'rgba(59,130,246,.1)', padding: '1rem', borderRadius: '8px' }}>
             <div style={{ fontSize: '.7rem', color: 'var(--blue2)', marginBottom: '.3rem' }}>MEMBER SINCE</div>
-            <div style={{ fontWeight: 600 }}>{new Date(user.createdAt || Date.now()).toLocaleDateString()}</div>
+            <div style={{ fontWeight: 600 }}>{memberSince}</div>
           </div>
         </div>
 

@@ -12,26 +12,25 @@ export default function LibraryPage() {
   const [loading, setLoading] = useState(true);
 
   const [pdfModalOpen, setPdfModalOpen] = useState(false);
-  const [pdfMaterial, setPdfMaterial] = useState(null);
+  const [pdfMaterial] = useState(null);
 
   useEffect(() => {
     if (!isLoggedIn) { navigate('/login'); return; }
-    loadLibrary();
-  }, [isLoggedIn]);
-
-  async function loadLibrary() {
-    try {
-      const res = await fetch(`${API_URL}/api/rentals/library`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      if (data.success) setLibrary(data.library);
-    } catch (e) {
-      console.warn('Library load failed:', e);
-    } finally {
-      setLoading(false);
+    async function loadLibrary() {
+      try {
+        const res = await fetch(`${API_URL}/api/rentals/library`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (data.success) setLibrary(data.library);
+      } catch (e) {
+        console.warn('Library load failed:', e);
+      } finally {
+        setLoading(false);
+      }
     }
-  }
+    loadLibrary();
+  }, [isLoggedIn, navigate, token]);
 
   if (loading) return <div className="sec" style={{ marginTop: '2rem', textAlign: 'center', padding: '3rem', color: 'var(--muted)' }}>⏳ Loading library...</div>;
 

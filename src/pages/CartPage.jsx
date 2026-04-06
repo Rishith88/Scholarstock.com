@@ -1,12 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { useToast } from '../context/ToastContext';
 
 export default function CartPage() {
   const { isLoggedIn } = useAuth();
-  const { cartItems, removeFromCart, clearCart } = useCart();
-  const toast = useToast();
+  const { cartItems, removeFromCart } = useCart();
   const navigate = useNavigate();
 
   if (!isLoggedIn) {
