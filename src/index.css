@@ -448,6 +448,8 @@ body.light .ss-week h4{color:#1e293b}
 .pdf-header{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 1.8rem;border-bottom:1px solid var(--gb);flex-shrink:0;background:var(--glass)}
 .pdf-header button{background:transparent;border:1px solid var(--gb);padding:.6rem 1.2rem;border-radius:8px;color:var(--white);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
 .pdf-header button:hover{border-color:var(--blue2);color:var(--blue2)}
+.pdf-header .pdf-doubt-btn{background:var(--blue)!important;color:#fff!important;border:none!important;padding:.5rem 1rem!important;font-size:.85rem!important;font-weight:700!important;border-radius:8px!important;display:flex!important;align-items:center;gap:.4rem}
+.pdf-header .pdf-doubt-btn:hover{background:var(--blue2)!important;color:#fff!important}
 .pdf-header button:last-child{padding:.4rem .6rem;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
 
 .doubt-overlay{position:fixed;inset:0;z-index:10000;background:transparent;display:none}
