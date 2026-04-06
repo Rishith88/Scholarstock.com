@@ -91,7 +91,7 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
           <div className="pdf-header">
             <div style={{ fontWeight: 700, fontSize: '.9rem' }}>📄 {title}</div>
             <div style={{ display: 'flex', gap: '.5rem' }}>
-              <button style={{ color: 'var(--blue2)', borderColor: 'rgba(59,130,246,.3)', background: 'rgba(59,130,246,.1)' }} onClick={() => setDoubtPanelOpen(o => !o)}>
+              <button className="pdf-doubt-btn" style={{ color: '#fff', background: 'var(--blue)', border: 'none', borderRadius: '6px', padding: '.4rem .8rem', fontWeight: 700, cursor: 'pointer', fontSize: '.85rem' }} onClick={() => setDoubtPanelOpen(o => !o)}>
                 🧠 Ask Doubt
               </button>
               <button onClick={onClose}>✕</button>
@@ -100,9 +100,10 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
           
           <div style={{ flex: 1, position: 'relative', background: '#f8fafc' }}>
             <iframe 
-              src={`${API_URL}/api/materials/${materialId}/stream?token=${token}`}
+              src={`${API_URL}/api/materials/${materialId}/stream?token=${token}#toolbar=0&navpanes=0&scrollbar=1`}
               style={{ width: '100%', height: '100%', border: 'none' }}
               title="PDF Viewer"
+              sandbox="allow-same-origin allow-scripts"
               onContextMenu={(e) => e.preventDefault()}
             />
           </div>
