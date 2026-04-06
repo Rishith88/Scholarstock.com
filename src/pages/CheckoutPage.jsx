@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import API_URL from '../config';
@@ -8,33 +8,43 @@ export default function CheckoutPage() {
   const { isLoggedIn, token } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
-  const [cart, setCart] = useState({ items: [], total: 0 });
-  const [loading, setLoading] = useState(true);
+  const [searchParams] = useSearchParams();
   const [processing, setProcessing] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('upi');
 
-  useEffect(() => {
-    if (!isLoggedIn) { navigate('/login'); return; }
-    loadCart();
-  }, [isLoggedIn]);
+  // Direct checkout from pricing page via URL params
+  const planId = searchParams.get('planId');
+  const planName = searchParams.get('planName');
+  const price = searchParams.get('price');
+  const duration = searchParams.get('duration');
+  const type = searchParams.get('type');
+  const materialId = searchParams.get('material');
+  const materialTitle = searchParams.get('title');
+  const cat = searchParams.get('cat');
+  const sub = searchParams.get('sub');
 
-  async function loadCart() {
-    try {
-      const res = await fetch(`${API_URL}/api/cart`, { headers: { Authorization: `Bearer ${token}` } });
-      const data = await res.json();
-      if (data.success) setCart(data.cart);
-    } catch (e) { console.warn(e); }
-    finally { setLoading(false); }
-  }
+  const directItem = planId ? {
+    planId, planName, price: Number(price), duration: Number(duration),
+    type, materialId, title: materialTitle ? decodeURIComponent(materialTitle) : null,
+    category: cat, subcategory: sub
+  } : null;
+
+  useEffect(() => {
+    if (!isLoggedIn) { navigate('/login'); }
+  }, [isLoggedIn]);
 
   async function processCheckout() {
     if (processing) return;
     setProcessing(true);
     try {
-      const res = await fetch(`${API_URL}/api/cart/checkout`, {
+      const body = directItem
+        ? { planId: directItem.planId, materialId: directItem.materialId, type: directItem.type, paymentMethod }
+        : { useBalance: false, paymentMethod };
+
+      const res = await fetch(`${API_URL}/api/rentals/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ useBalance: false, paymentMethod }),
+        body: JSON.stringify(body),
       });
       const data = await res.json();
       if (data.success) {
@@ -47,26 +57,30 @@ export default function CheckoutPage() {
     finally { setProcessing(false); }
   }
 
-  if (loading) return <div className="sec" style={{ marginTop: '2rem', textAlign: 'center', padding: '3rem', color: 'var(--muted)' }}>⏳ Loading checkout...</div>;
+  if (!isLoggedIn) return null;
 
   return (
     <div className="sec" style={{ marginTop: '2rem' }}>
-      <button className="back-btn" onClick={() => navigate('/cart')}>← Back to Cart</button>
+      <button className="back-btn" onClick={() => navigate(-1)}>← Back</button>
       <h2 className="sec-title">🏦 Checkout</h2>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '2rem', alignItems: 'start' }}>
         {/* Order Summary */}
         <div>
           <h3 style={{ marginBottom: '1rem', fontSize: '1.1rem' }}>Order Summary</h3>
-          {cart.items?.length > 0 ? cart.items.map((item, i) => (
-            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--glass)', border: '1px solid var(--gb)', borderRadius: '10px', padding: '1rem', marginBottom: '.5rem' }}>
-              <div>
-                <div style={{ fontWeight: 700 }}>{item.planName}</div>
-                <div style={{ fontSize: '.8rem', color: 'var(--muted)' }}>{item.duration} days</div>
+          {directItem ? (
+            <div style={{ background: 'var(--glass)', border: '1px solid var(--gb)', borderRadius: '10px', padding: '1.2rem', marginBottom: '.5rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <div style={{ fontWeight: 700 }}>{directItem.planName} {directItem.type === 'bundle' ? 'Bundle' : 'Plan'}</div>
+                  {directItem.title && <div style={{ fontSize: '.85rem', color: 'var(--blue2)', marginTop: '.2rem' }}>📄 {directItem.title}</div>}
+                  {directItem.subcategory && <div style={{ fontSize: '.85rem', color: 'var(--blue2)', marginTop: '.2rem' }}>📦 {directItem.subcategory}</div>}
+                  <div style={{ fontSize: '.8rem', color: 'var(--muted)', marginTop: '.3rem' }}>{directItem.duration} day{directItem.duration !== 1 ? 's' : ''} access</div>
+                </div>
+                <div style={{ fontWeight: 800, color: 'var(--blue2)', fontSize: '1.3rem' }}>₹{directItem.price}</div>
               </div>
-              <div style={{ fontWeight: 800, color: 'var(--blue2)' }}>₹{item.price}</div>
             </div>
-          )) : (
+          ) : (
             <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--muted)' }}>No items to checkout</div>
           )}
         </div>
@@ -84,9 +98,9 @@ export default function CheckoutPage() {
           <div style={{ borderTop: '1px solid var(--gb)', paddingTop: '1rem', marginTop: '1rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.3rem', fontWeight: 800, marginBottom: '1rem' }}>
               <span>Total</span>
-              <span style={{ color: 'var(--blue2)' }}>₹{cart.total || 0}</span>
+              <span style={{ color: 'var(--blue2)' }}>₹{directItem ? directItem.price : 0}</span>
             </div>
-            <button className="btn btn-grad" style={{ width: '100%' }} onClick={processCheckout} disabled={processing || !cart.items?.length}>
+            <button className="btn btn-grad" style={{ width: '100%' }} onClick={processCheckout} disabled={processing || !directItem}>
               {processing ? '⏳ Processing...' : '🎉 Complete Purchase'}
             </button>
           </div>
