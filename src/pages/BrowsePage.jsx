@@ -1,10 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { useData } from '../context/DataContext';
+import PdfViewerModal from '../components/PdfViewerModal';
 import API_URL from '../config';
 
 export default function BrowsePage() {
   const { categories } = useData();
+  const { isLoggedIn } = useAuth();
+  const toast = useToast();
   const navigate = useNavigate();
   const [selectedCat, setSelectedCat] = useState('');
   const [selectedSubcat, setSelectedSubcat] = useState('');
@@ -15,6 +20,20 @@ export default function BrowsePage() {
   const [totalPages, setTotalPages] = useState(1);
   const [materials, setMaterials] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [pdfModalOpen, setPdfModalOpen] = useState(false);
+  const [pdfMaterial, setPdfMaterial] = useState(null);
+
+  function handleOpenPdf(m) {
+    const isFree = m.pricePerDay === 0 || m.isFreeResource;
+    if (!isLoggedIn && !isFree) { toast('Please login first', 'error'); navigate('/login'); return; }
+    setPdfMaterial(m);
+    setPdfModalOpen(true);
+  }
+
+  function handleRent(m) {
+    if (!isLoggedIn) { toast('Please login first', 'error'); navigate('/login'); return; }
+    navigate(`/pricing-plans?material=${m._id}&title=${encodeURIComponent(m.title)}`);
+  }
 
   const subcats = selectedCat && categories[selectedCat] ? categories[selectedCat] : [];
 
@@ -38,8 +57,8 @@ export default function BrowsePage() {
       const res = await fetch(url);
       const data = await res.json();
       if (data.success) {
-        setMaterials(data.materials);
-        setTotalPages(data.pagination.pages || 1);
+        setMaterials(data.materials || []);
+        setTotalPages(data.pagination?.pages || 1);
       } else {
         setMaterials([]);
       }
@@ -74,7 +93,7 @@ export default function BrowsePage() {
 
         <select value={selectedCat} onChange={e => { setSelectedCat(e.target.value); setSelectedSubcat(''); }}>
           <option value="">All Categories</option>
-          {Object.keys(categories).map(name => (
+          {categories && typeof categories === 'object' && Object.keys(categories).map(name => (
             <option key={name} value={name}>{name}</option>
           ))}
         </select>
@@ -107,7 +126,7 @@ export default function BrowsePage() {
           {materials.length > 0 ? materials.map(m => {
             const isFree = m.pricePerDay === 0 || m.isFreeResource;
             return (
-              <div key={m._id} className="doc-card" onClick={() => navigate(`/material/${m._id}`)}>
+              <div key={m._id} className="doc-card">
                 <div className="doc-top">
                   <span className="tag tbl">{m.examLabel}</span>
                   <div className="doc-rating">⭐ {m.stars || 4.5}</div>
@@ -124,8 +143,9 @@ export default function BrowsePage() {
                     : <>₹{m.pricePerDay}<span style={{ fontSize: '.8rem', color: 'var(--muted)' }}>/day</span></>
                   }
                 </div>
-                <button className="btn btn-grad" style={{ width: '100%', padding: '.7rem' }}>
-                  {isFree ? 'View Free' : 'Rent Now'}
+                <button className="btn btn-grad" style={{ width: '100%', padding: '.7rem' }}
+                  onClick={() => isFree || m.isRented ? handleOpenPdf(m) : handleRent(m)}>
+                  {isFree ? 'View Free' : m.isRented ? '📖 Read Now' : 'Rent Now'}
                 </button>
               </div>
             );
@@ -174,6 +194,14 @@ export default function BrowsePage() {
           </button>
         </div>
       )}
+      <PdfViewerModal
+        isOpen={pdfModalOpen}
+        onClose={() => setPdfModalOpen(false)}
+        materialId={pdfMaterial?._id}
+        title={pdfMaterial?.title}
+        subcategory={pdfMaterial?.subcategory}
+        examCategory={pdfMaterial?.examCategory || pdfMaterial?.category}
+      />
     </div>
   );
 }
