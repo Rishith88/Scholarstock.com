@@ -1,158 +1,207 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import { useData } from '../context/DataContext';
+import PdfViewerModal from '../components/PdfViewerModal';
 import API_URL from '../config';
 
-export default function PdfViewerModal({ isOpen, onClose, materialId, title, subcategory, examCategory }) {
-  const { token } = useAuth();
+export default function BrowsePage() {
+  const { categories } = useData();
+  const { isLoggedIn } = useAuth();
   const toast = useToast();
-  
-  const [doubtPanelOpen, setDoubtPanelOpen] = useState(false);
-  const [doubtMessages, setDoubtMessages] = useState([
-    { role: 'ai', text: `👋 Hi! I'm your AI Doubt Solver. Ask me anything about ${title || 'this material'}, and I'll give you step-by-step explanations!` }
-  ]);
-  const [doubtInput, setDoubtInput] = useState('');
-  const [isDoubtLoading, setIsDoubtLoading] = useState(false);
-  const messagesEndRef = useRef(null);
+  const navigate = useNavigate();
+  const [selectedCat, setSelectedCat] = useState('');
+  const [selectedSubcat, setSelectedSubcat] = useState('');
+  const [typeFilter, setTypeFilter] = useState('');
+  const [sortFilter, setSortFilter] = useState('popular');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [materials, setMaterials] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [pdfModalOpen, setPdfModalOpen] = useState(false);
+  const [pdfMaterial, setPdfMaterial] = useState(null);
+
+  function handleOpenPdf(m) {
+    const isFree = m.pricePerDay === 0 || m.isFreeResource;
+    if (!isLoggedIn && !isFree) { toast('Please login first', 'error'); navigate('/login'); return; }
+    setPdfMaterial(m);
+    setPdfModalOpen(true);
+  }
+
+  function handleRent(m) {
+    if (!isLoggedIn) { toast('Please login first', 'error'); navigate('/login'); return; }
+    navigate(`/pricing-plans?material=${m._id}&title=${encodeURIComponent(m.title)}`);
+  }
+
+  const subcats = selectedCat && categories[selectedCat] ? categories[selectedCat] : [];
 
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [doubtMessages]);
+    setPage(1); // Reset to page 1 on filter change
+  }, [selectedCat, selectedSubcat, typeFilter, sortFilter, searchTerm]);
 
   useEffect(() => {
-    if (isOpen) {
-      setDoubtPanelOpen(false);
-      setDoubtInput('');
-    }
-  }, [isOpen]);
+    loadMaterials();
+  }, [selectedCat, selectedSubcat, typeFilter, sortFilter, page, searchTerm]);
 
-  async function sendDoubt() {
-    const text = doubtInput.trim();
-    if (!text || isDoubtLoading) return;
-
-    setDoubtInput('');
-    setDoubtMessages(prev => [...prev, { role: 'user', text }]);
-    setIsDoubtLoading(true);
-
+  async function loadMaterials() {
+    setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/api/doubt/solve`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-        },
-        body: JSON.stringify({ question: text, examCategory, subcategory, material: title })
-      });
-
-      if (!response.ok) throw new Error('Network response was not ok');
-      const data = await response.json();
-
-      if (data.success && data.answer) {
-        setDoubtMessages(prev => [...prev, { role: 'ai', parsed: data.answer }]);
+      let url = `${API_URL}/api/materials?page=${page}&limit=12&`;
+      if (selectedCat) url += `category=${encodeURIComponent(selectedCat)}&`;
+      if (selectedSubcat) url += `subcategory=${encodeURIComponent(selectedSubcat)}&`;
+      if (searchTerm) url += `search=${encodeURIComponent(searchTerm)}&`;
+      if (typeFilter) url += `type=${typeFilter}&`;
+      url += `sort=${sortFilter}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data.success) {
+        setMaterials(data.materials || []);
+        setTotalPages(data.pagination?.pages || 1);
       } else {
-        throw new Error(data.message || 'Failed to get answer');
+        setMaterials([]);
       }
     } catch (err) {
-      setDoubtMessages(prev => [...prev, { role: 'error', text: err.message || 'Error connecting to Doubt Solver' }]);
+      setMaterials([]);
     } finally {
-      setIsDoubtLoading(false);
+      setLoading(false);
     }
   }
-
-  function renderAiMessage(parsed) {
-    if (typeof parsed === 'string') {
-      try { parsed = JSON.parse(parsed); } catch { return parsed; }
-    }
-    
-    return (
-      <>
-        {parsed.explanation && <div><strong style={{ display: 'block', marginBottom: '.5rem' }}>💡 Explanation</strong>{parsed.explanation}</div>}
-        {parsed.steps?.length > 0 && (
-          <div style={{ marginTop: '1rem' }}>
-            <strong style={{ display: 'block', marginBottom: '.5rem' }}>📋 Step-by-step</strong>
-            {parsed.steps.map((s, i) => <div key={i} style={{ marginBottom: '.3rem', fontSize: '.85rem' }}><strong>Step {i+1}:</strong> {s}</div>)}
-          </div>
-        )}
-        {parsed.tip && (
-          <div style={{ marginTop: '1rem', background: 'rgba(245,158,11,.1)', border: '1px solid rgba(245,158,11,.2)', borderRadius: '6px', padding: '.7rem', fontSize: '.85rem', color: 'var(--gold)' }}>
-            <strong>💡 Exam Tip:</strong> {parsed.tip}
-          </div>
-        )}
-      </>
-    );
-  }
-
-  if (!isOpen) return null;
 
   return (
-    <>
-      <div className="pdf-viewer on" onClick={(e) => e.target.className.includes('pdf-viewer') && onClose()}>
-        <div className="pdf-container" onClick={e => e.stopPropagation()}>
-          <div className="pdf-header">
-            <div style={{ fontWeight: 700, fontSize: '.9rem' }}>📄 {title}</div>
-            <div style={{ display: 'flex', gap: '.5rem' }}>
-              <button style={{ color: 'var(--blue2)', borderColor: 'rgba(59,130,246,.3)', background: 'rgba(59,130,246,.1)' }} onClick={() => setDoubtPanelOpen(o => !o)}>
-                🧠 Ask Doubt
-              </button>
-              <button onClick={onClose}>✕</button>
-            </div>
-          </div>
-          
-          <div style={{ flex: 1, position: 'relative', background: '#f8fafc' }}>
-            <iframe 
-              src={`${API_URL}/api/materials/${materialId}/stream?token=${token}`}
-              style={{ width: '100%', height: '100%', border: 'none' }}
-              title="PDF Viewer"
-            />
-          </div>
+    <div className="sec" style={{ marginTop: '2rem' }}>
+      <h2 className="sec-title">Browse Study Materials</h2>
+
+      <div className="filter-bar">
+        <div className="search-wrap" style={{ flex: 1, minWidth: '250px' }}>
+          <input 
+            type="text" 
+            placeholder="Search by title, subject or tags..." 
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            style={{ 
+              width: '100%', 
+              padding: '.75rem 1rem', 
+              borderRadius: '10px', 
+              border: '1px solid var(--gb)', 
+              background: 'var(--glass)',
+              color: 'var(--white)'
+            }}
+          />
         </div>
+
+        <select value={selectedCat} onChange={e => { setSelectedCat(e.target.value); setSelectedSubcat(''); }}>
+          <option value="">All Categories</option>
+          {categories && typeof categories === 'object' && Object.keys(categories).map(name => (
+            <option key={name} value={name}>{name}</option>
+          ))}
+        </select>
+
+        <select value={selectedSubcat} onChange={e => setSelectedSubcat(e.target.value)} disabled={!selectedCat}>
+          <option value="">{selectedCat ? 'All Subcategories' : 'Select Category First'}</option>
+          {subcats.map(s => <option key={s} value={s}>{s}</option>)}
+        </select>
+
+        <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
+          <option value="">All Types</option>
+          <option value="notes">Notes</option>
+          <option value="pyq">PYQ</option>
+          <option value="book">Books</option>
+          <option value="guide">Guides</option>
+        </select>
+
+        <select value={sortFilter} onChange={e => setSortFilter(e.target.value)}>
+          <option value="popular">Most Popular</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="price-high">Price: High to Low</option>
+          <option value="newest">Newest First</option>
+        </select>
       </div>
 
-      {/* AI Doubt Solver Panel */}
-      <div className={`doubt-overlay ${doubtPanelOpen ? 'open' : ''}`} onClick={() => setDoubtPanelOpen(false)} style={{ zIndex: 10000 }} />
-      <div className={`doubt-panel ${doubtPanelOpen ? 'open' : ''}`} style={{ zIndex: 10001 }}>
-        <div className="doubt-context-bar">📚 {examCategory} • {subcategory}</div>
-        <div className="doubt-panel-header">
-          <h3>🧠 AI Doubt Solver</h3>
-          <button style={{ background: 'transparent', border: 'none', color: 'var(--muted)', fontSize: '1.2rem', cursor: 'pointer' }} onClick={() => setDoubtPanelOpen(false)}>✕</button>
-        </div>
-        
-        <div className="doubt-messages">
-          {doubtMessages.map((msg, i) => (
-            <div key={i} className={`doubt-msg ${msg.role === 'user' ? 'user' : 'ai'}`}>
-              {msg.role === 'error' ? <div style={{ color: 'var(--red)' }}>⚠️ {msg.text}</div> : msg.parsed ? renderAiMessage(msg.parsed) : msg.text}
-            </div>
-          ))}
-          {isDoubtLoading && (
-            <div className="doubt-msg ai doubt-typing">
-              <span/><span/><span/>
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--muted)' }}>⏳ Loading materials...</div>
+      ) : (
+        <div className="doc-grid">
+          {materials.length > 0 ? materials.map(m => {
+            const isFree = m.pricePerDay === 0 || m.isFreeResource;
+            return (
+              <div key={m._id} className="doc-card">
+                <div className="doc-top">
+                  <span className="tag tbl">{m.examLabel}</span>
+                  <div className="doc-rating">⭐ {m.stars || 4.5}</div>
+                </div>
+                <div className="doc-title">{m.title}</div>
+                {m.subcategory && <span className="subcat-badge">📂 {m.subcategory}</span>}
+                <div className="doc-meta">
+                  <span>📄 {m.pages} pages</span>
+                  <span>📚 {m.type}</span>
+                </div>
+                <div className="doc-price">
+                  {isFree
+                    ? <span style={{ color: '#10b981', fontWeight: 700, fontSize: '1.2rem' }}>FREE</span>
+                    : <>₹{m.pricePerDay}<span style={{ fontSize: '.8rem', color: 'var(--muted)' }}>/day</span></>
+                  }
+                </div>
+                <button className="btn btn-grad" style={{ width: '100%', padding: '.7rem' }}
+                  onClick={() => isFree || m.isRented ? handleOpenPdf(m) : handleRent(m)}>
+                  {isFree ? 'View Free' : m.isRented ? '📖 Read Now' : 'Rent Now'}
+                </button>
+              </div>
+            );
+          }) : (
+            <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '5rem 2rem' }}>
+              <div style={{ fontSize: '4rem', marginBottom: '1.5rem', opacity: 0.5 }}>📚</div>
+              <h3 style={{ color: 'var(--white)', marginBottom: '.5rem' }}>No materials found</h3>
+              <p style={{ color: 'var(--muted)' }}>Try adjusting your search or filters to find what you're looking for.</p>
+              {(searchTerm || selectedCat || typeFilter) && (
+                <button 
+                  className="btn btn-ghost" 
+                  style={{ marginTop: '1.5rem' }}
+                  onClick={() => {
+                    setSearchTerm('');
+                    setSelectedCat('');
+                    setSelectedSubcat('');
+                    setTypeFilter('');
+                  }}
+                >
+                  Clear All Filters
+                </button>
+              )}
             </div>
           )}
-          <div ref={messagesEndRef} />
         </div>
-        
-        <div className="doubt-input-area">
-          <div className="doubt-input-row" style={{ display: 'flex', gap: '.5rem' }}>
-            <input 
-              style={{ flex: 1, background: 'rgba(255,255,255,.05)', border: '1px solid var(--gb)', borderRadius: '8px', padding: '.7rem 1rem', color: '#fff', outline: 'none' }}
-              value={doubtInput}
-              onChange={e => setDoubtInput(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && sendDoubt()}
-              placeholder="Ask a doubt about this PDF..."
-              disabled={isDoubtLoading}
-            />
-            <button 
-              style={{ background: 'var(--blue)', border: 'none', color: '#fff', padding: '0 1rem', borderRadius: '8px', cursor: 'pointer', fontWeight: 700 }}
-              onClick={sendDoubt}
-              disabled={isDoubtLoading}
-            >
-              ➤
-            </button>
-          </div>
+      )}
+
+      {totalPages > 1 && (
+        <div className="pagination" style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '3rem', alignItems: 'center' }}>
+          <button 
+            className="btn btn-ghost" 
+            disabled={page === 1} 
+            onClick={() => setPage(p => p - 1)}
+          >
+            ← Previous
+          </button>
+          <span style={{ color: 'var(--muted)', fontSize: '.9rem' }}>
+            Page <strong>{page}</strong> of {totalPages}
+          </span>
+          <button 
+            className="btn btn-ghost" 
+            disabled={page === totalPages} 
+            onClick={() => setPage(p => p + 1)}
+          >
+            Next →
+          </button>
         </div>
-      </div>
-    </>
+      )}
+      <PdfViewerModal
+        isOpen={pdfModalOpen}
+        onClose={() => setPdfModalOpen(false)}
+        materialId={pdfMaterial?._id}
+        title={pdfMaterial?.title}
+        subcategory={pdfMaterial?.subcategory}
+        examCategory={pdfMaterial?.examCategory || pdfMaterial?.category}
+      />
+    </div>
   );
 }
