@@ -102,7 +102,7 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
           
           <div style={{ flex: 1, position: 'relative', background: '#f8fafc' }}>
             <iframe 
-              src={`${API_URL}/api/materials/view/${materialId}?token=${token}`}
+              src={`${API_URL}/api/materials/${materialId}/stream?token=${token}`}
               style={{ width: '100%', height: '100%', border: 'none' }}
               title="PDF Viewer"
             />
