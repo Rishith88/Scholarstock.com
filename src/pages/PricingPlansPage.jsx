@@ -1,13 +1,22 @@
 import { useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
-import API_URL from '../config';
 
 export default function PricingPlansPage() {
-  const { isLoggedIn, token } = useAuth();
+  const { isLoggedIn } = useAuth();
+  const { addToCart } = useCart();
   const toast = useToast();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
-  // Fallback plans
+  const materialId = searchParams.get('material');
+  const materialTitle = searchParams.get('title');
+  const planType = searchParams.get('type'); // 'bundle' or null
+  const cat = searchParams.get('cat');
+  const sub = searchParams.get('sub');
+
   const individualPlans = [
     { id: 'mat_1day', name: '1 Day', duration: 1, price: 5, savings: 0, badge: null },
     { id: 'mat_2day', name: '2 Days', duration: 2, price: 9, savings: 1, badge: null },
@@ -34,19 +43,45 @@ export default function PricingPlansPage() {
     { id: 'bundle_2month', name: '2 Months', duration: 60, price: 399, savings: 781, badge: null },
   ];
 
-  const [tab, setTab] = useState('individual');
+  // If coming from bundle link, default to bundle tab
+  const [tab, setTab] = useState(planType === 'bundle' ? 'bundle' : 'individual');
 
-  async function addToCart(plan, type) {
-    if (!isLoggedIn) { toast('Please login first', 'error'); return; }
-    toast(`🛒 ${plan.name} plan added (${type})!`, 'success');
+  function handleAddToCart(plan) {
+    if (!isLoggedIn) { toast('Please login first', 'error'); navigate('/login'); return; }
+    addToCart(
+      cat || materialTitle || 'Material',
+      sub || materialTitle || 'Material',
+      plan.price,
+      plan.id,
+      plan.name,
+      plan.duration
+    );
+    toast(`🛒 ${plan.name} plan added to cart!`, 'success');
+  }
+
+  function handleCheckout(plan) {
+    if (!isLoggedIn) { toast('Please login first', 'error'); navigate('/login'); return; }
+    addToCart(
+      cat || materialTitle || 'Material',
+      sub || materialTitle || 'Material',
+      plan.price,
+      plan.id,
+      plan.name,
+      plan.duration
+    );
+    navigate('/checkout');
   }
 
   const plans = tab === 'individual' ? individualPlans : bundlePlans;
 
   return (
     <div className="sec" style={{ marginTop: '2rem' }}>
+      <button className="back-btn" onClick={() => navigate(-1)}>← Back</button>
       <div className="eyebrow">Flexible Pricing</div>
       <h2 className="sec-title">💎 Choose Your Plan</h2>
+      {materialTitle && (
+        <p style={{ color: 'var(--blue2)', fontWeight: 600, marginBottom: '1rem' }}>📄 {decodeURIComponent(materialTitle)}</p>
+      )}
       <p style={{ color: 'var(--muted)', marginBottom: '1.5rem' }}>Rent individual materials or unlock entire subcategories with bundle plans.</p>
 
       <div style={{ display: 'flex', gap: '.5rem', marginBottom: '2rem' }}>
@@ -73,8 +108,8 @@ export default function PricingPlansPage() {
             <div className="plan-duration">{plan.duration} day{plan.duration !== 1 ? 's' : ''} access{tab === 'bundle' ? ' to ALL materials' : ''}</div>
             {plan.savings > 0 ? <div className="plan-savings">💰 Save ₹{plan.savings}</div> : <div style={{ height: '1.5rem' }} />}
             <div className="plan-actions">
-              <button className="btn btn-ghost" style={{ width: '100%' }} onClick={() => addToCart(plan, tab)}>🛒 Add to Cart</button>
-              <button className="btn btn-grad" style={{ width: '100%' }} onClick={() => addToCart(plan, tab)}>⚡ Proceed to Checkout</button>
+              <button className="btn btn-ghost" style={{ width: '100%' }} onClick={() => handleAddToCart(plan)}>🛒 Add to Cart</button>
+              <button className="btn btn-grad" style={{ width: '100%' }} onClick={() => handleCheckout(plan)}>⚡ Proceed to Checkout</button>
             </div>
           </div>
         ))}
