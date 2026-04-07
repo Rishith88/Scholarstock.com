@@ -23,8 +23,20 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
     if (isOpen) {
       setDoubtPanelOpen(false);
       setDoubtInput('');
+      // Add history entry so browser back button closes the modal
+      window.history.pushState({ pdfViewer: true }, '');
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      if (isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [isOpen, onClose]);
 
   async function sendDoubt() {
     const text = doubtInput.trim();
