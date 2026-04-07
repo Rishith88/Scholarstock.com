@@ -22,6 +22,7 @@ export default function Navbar({ onOpenSidebar }) {
       <div className="nav-inner">
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <button className="hamburger" onClick={onOpenSidebar} title="Menu">☰</button>
+          <button className="back-btn" onClick={() => navigate(-1)} title="Go back" style={{ background: 'transparent', border: 'none', color: 'var(--white)', fontSize: '1.2rem', cursor: 'pointer', padding: '.3rem' }}>←</button>
           <div className="logo" onClick={() => navigate('/')}>SCHOLARSTOCK</div>
         </div>
         <div className="nav-links">
