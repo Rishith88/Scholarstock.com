@@ -74,7 +74,7 @@ export default function SubcategoryPage() {
           </button>
           {!isFree && (
             <button className="btn btn-grad" onClick={() => navigate(`/pricing-plans?type=bundle&cat=${encodeURIComponent(cat)}&sub=${encodeURIComponent(sub)}`)}>
-              ⚡ Buy Access (₹199/month)
+              ⚡ Buy Bundle Access
             </button>
           )}
         </div>
