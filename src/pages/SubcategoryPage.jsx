@@ -45,11 +45,13 @@ export default function SubcategoryPage() {
 
   function handleRent(materialId, title) {
     if (!isLoggedIn) { toast('Please login first', 'error'); navigate('/login'); return; }
+    window.ssSound?.('click');
     navigate(`/pricing-plans?material=${materialId}&title=${encodeURIComponent(title)}`);
   }
 
   function handleOpenPdf(m) {
     if (!isLoggedIn && !isFree && m.pricePerDay > 0) { toast('Please login first', 'error'); navigate('/login'); return; }
+    window.ssSound?.('success');
     setPdfMaterial(m);
     setPdfModalOpen(true);
   }

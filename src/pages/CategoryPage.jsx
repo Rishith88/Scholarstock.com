@@ -12,31 +12,36 @@ export default function CategoryPage() {
 
   const ICONS = { Physics: '⚛️', Chemistry: '🧪', Mathematics: '📐', Biology: '🧬', 'Previous Year Papers': '📋', 'Mock Tests': '📊', 'Free Resources': '🆓' };
 
+  const go = (sub) => {
+    window.ssSound?.('click');
+    navigate(`/category/${encodeURIComponent(name)}/${encodeURIComponent(sub)}`);
+  };
+
   return (
-    <div className="sec" style={{ marginTop: '2rem' }}>
-      <button className="back-btn" onClick={() => navigate('/')}>← Back to All Categories</button>
+    <div className="sec page-enter" style={{ marginTop: '2rem' }}>
+      <button className="back-btn" onClick={() => { window.ssSound?.('nav'); navigate('/'); }}>← Back to All Categories</button>
       <h2 className="sec-title">{name}</h2>
       <div className="subcat-grid">
         {subcats.map(sub => {
           const isFree = sub === 'Free Resources';
           return (
-            <div key={sub} className="subcat-card" style={{ position: 'relative' }}>
-              <span className="subcat-icon" onClick={() => navigate(`/category/${encodeURIComponent(name)}/${encodeURIComponent(sub)}`)} style={{ cursor: 'pointer' }}>
+            <div key={sub} className="subcat-card reveal" style={{ position: 'relative' }} onMouseEnter={() => window.ssSound?.('hover')}>
+              <span className="subcat-icon" onClick={() => go(sub)} style={{ cursor: 'pointer' }}>
                 {ICONS[sub] || '📚'}
               </span>
-              <div className="subcat-name" onClick={() => navigate(`/category/${encodeURIComponent(name)}/${encodeURIComponent(sub)}`)} style={{ cursor: 'pointer' }}>
+              <div className="subcat-name" onClick={() => go(sub)} style={{ cursor: 'pointer' }}>
                 {sub}
               </div>
               <div className="subcat-count" style={{ marginBottom: '.8rem' }}>
                 {isFree
                   ? <span style={{ color: 'var(--green)', fontWeight: 700 }}>FREE ✅</span>
-                  : <span style={{ color: 'var(--blue2)', fontWeight: 700 }}>₹199/month</span>
+                  : <span style={{ color: 'var(--blue2)', fontWeight: 700 }}>View Plans</span>
                 }
               </div>
               <button
                 className="btn btn-grad"
                 style={{ width: '100%', padding: '.5rem', fontSize: '.8rem' }}
-                onClick={() => navigate(`/category/${encodeURIComponent(name)}/${encodeURIComponent(sub)}`)}
+                onClick={() => go(sub)}
               >
                 {isFree ? '📖 Browse Free' : '⚡ View'}
               </button>
