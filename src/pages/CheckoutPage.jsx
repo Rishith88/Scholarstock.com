@@ -7,7 +7,7 @@ import API_URL from '../config';
 
 export default function CheckoutPage() {
   const { isLoggedIn, token } = useAuth();
-  const { cartItems } = useCart();
+  const { cartItems, clearCart } = useCart();
   const toast = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();

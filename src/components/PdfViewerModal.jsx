@@ -187,4 +187,3 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
     </>
   );
 }
-
