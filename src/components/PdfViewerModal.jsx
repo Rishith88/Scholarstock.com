@@ -112,27 +112,30 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
           
           <div style={{ flex: 1, position: 'relative', background: '#f8fafc' }}>
             <iframe 
-              src={`${API_URL}/api/materials/${materialId}/stream?token=${token}#toolbar=0&navpanes=0&scrollbar=1`}
+              src={`${API_URL}/api/materials/${materialId}/stream?token=${token}#toolbar=1&navpanes=1&scrollbar=1`}
               style={{ width: '100%', height: '100%', border: 'none' }}
               title="PDF Viewer"
               onContextMenu={(e) => e.preventDefault()}
             />
+            {/* Overlay button to ask doubt */}
             <button 
-              onClick={() => setDoubtPanelOpen(o => !o)}
+              onClick={() => setDoubtPanelOpen(true)}
               style={{ 
                 position: 'absolute', 
-                top: '20px', 
-                right: '60px', 
+                bottom: '30px', 
+                right: '30px', 
                 background: '#3b82f6', 
-                color: '#fff', 
-                border: 'none', 
-                borderRadius: '8px', 
-                padding: '10px 20px', 
-                fontWeight: 700, 
+                color: '#fff',
+                border: 'none',
+                borderRadius: '50px',
+                padding: '0.8rem 1.5rem',
+                fontWeight: 700,
                 cursor: 'pointer',
-                fontSize: '14px',
-                boxShadow: '0 4px 12px rgba(0,0,0,.3)',
-                zIndex: 100
+                boxShadow: '0 4px 12px rgba(59, 130, 246, 0.4)',
+                display: doubtPanelOpen ? 'none' : 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                zIndex: 10
               }}
             >
               🧠 Ask Doubt
