@@ -456,3 +456,311 @@ body.light .ss-week h4{color:#1e293b}
 .doubt-overlay.open{display:block}
 .doubt-panel{position:fixed;top:0;right:-520px;width:500px;max-width:95vw;height:100vh;background:var(--bg);border-left:1px solid var(--gb);z-index:10001;display:flex;flex-direction:column;transition:right .35s cubic-bezier(.4,0,.2,1);box-shadow:-8px 0 40px rgba(0,0,0,.4)}
 .doubt-panel.open{right:0}
+
+
+/* ═══════════════════════════════════════════════
+   SCHOLARSTOCK — ENHANCED ANIMATIONS & 3D EFFECTS
+   ═══════════════════════════════════════════════ */
+
+/* ── ANIMATED BACKGROUND ORBS ── */
+.orb{animation:orbFloat 20s ease-in-out infinite}
+.o1{animation-duration:22s}
+.o2{animation-duration:18s;animation-delay:-9s}
+@keyframes orbFloat{
+  0%{transform:translate(0,0) scale(1)}
+  33%{transform:translate(40px,-30px) scale(1.05)}
+  66%{transform:translate(-20px,40px) scale(.97)}
+  100%{transform:translate(0,0) scale(1)}
+}
+
+/* ── HERO ENHANCEMENTS ── */
+.hero{perspective:1000px}
+.hero-title{
+  animation:heroReveal .9s cubic-bezier(.16,1,.3,1) both;
+  text-shadow:0 0 80px rgba(59,130,246,.3);
+}
+@keyframes heroReveal{
+  from{opacity:0;transform:translateY(40px) rotateX(15deg)}
+  to{opacity:1;transform:translateY(0) rotateX(0)}
+}
+.hero-pill{
+  animation:pillPop .6s cubic-bezier(.34,1.56,.64,1) .2s both;
+}
+@keyframes pillPop{
+  from{opacity:0;transform:scale(.6) translateY(20px)}
+  to{opacity:1;transform:scale(1) translateY(0)}
+}
+.hero-sub{animation:fadeUp .7s ease .4s both}
+.hero-btns{animation:fadeUp .7s ease .6s both}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(24px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ── 3D CATEGORY CARDS ── */
+.cat-card{
+  transform-style:preserve-3d;
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1), box-shadow .4s, border-color .3s;
+  will-change:transform;
+}
+.cat-card:hover{
+  transform:translateY(-10px) rotateX(6deg) rotateY(-3deg) scale(1.03);
+  box-shadow:0 25px 50px rgba(59,130,246,.25), 0 0 0 1px rgba(59,130,246,.3);
+}
+.cat-card:active{transform:translateY(-4px) scale(.98)}
+.cat-icon{
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+  display:block;
+}
+.cat-card:hover .cat-icon{transform:scale(1.3) rotate(-8deg) translateZ(20px)}
+
+/* ── STAGGERED CARD ENTRANCE ── */
+.cat-grid .cat-card{
+  animation:cardEntrance .5s cubic-bezier(.16,1,.3,1) both;
+}
+.cat-grid .cat-card:nth-child(1){animation-delay:.05s}
+.cat-grid .cat-card:nth-child(2){animation-delay:.1s}
+.cat-grid .cat-card:nth-child(3){animation-delay:.15s}
+.cat-grid .cat-card:nth-child(4){animation-delay:.2s}
+.cat-grid .cat-card:nth-child(5){animation-delay:.25s}
+.cat-grid .cat-card:nth-child(6){animation-delay:.3s}
+.cat-grid .cat-card:nth-child(7){animation-delay:.35s}
+.cat-grid .cat-card:nth-child(8){animation-delay:.4s}
+.cat-grid .cat-card:nth-child(n+9){animation-delay:.45s}
+@keyframes cardEntrance{
+  from{opacity:0;transform:translateY(30px) scale(.92)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+/* ── 3D DOC CARDS ── */
+.doc-card{
+  transform-style:preserve-3d;
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .35s, border-color .3s;
+  will-change:transform;
+}
+.doc-card:hover{
+  transform:translateY(-8px) rotateX(4deg) scale(1.02);
+  box-shadow:0 20px 45px rgba(0,0,0,.4), 0 0 0 1px rgba(59,130,246,.25);
+}
+
+/* ── SUBCATEGORY CARDS 3D ── */
+.subcat-card{
+  transform-style:preserve-3d;
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1), box-shadow .4s;
+}
+.subcat-card:hover{
+  transform:translateY(-12px) rotateX(8deg) rotateY(4deg) scale(1.04);
+  box-shadow:0 30px 60px rgba(59,130,246,.2), 0 0 0 1px rgba(59,130,246,.4);
+}
+.subcat-icon{transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+.subcat-card:hover .subcat-icon{transform:scale(1.4) rotate(10deg) translateZ(30px)}
+
+/* ── BUTTON EFFECTS ── */
+.btn-grad{
+  position:relative;
+  overflow:hidden;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s;
+}
+.btn-grad::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.15),transparent);
+  opacity:0;
+  transition:opacity .3s;
+}
+.btn-grad:hover::after{opacity:1}
+.btn-grad:hover{transform:translateY(-4px) scale(1.03);box-shadow:0 15px 40px rgba(59,130,246,.5)}
+.btn-grad:active{transform:translateY(-1px) scale(.98)}
+
+/* Ripple effect on buttons */
+.btn-grad,.nbtn-grad,.btn-ghost{position:relative;overflow:hidden}
+.ripple{
+  position:absolute;
+  border-radius:50%;
+  background:rgba(255,255,255,.3);
+  transform:scale(0);
+  animation:rippleAnim .6s linear;
+  pointer-events:none;
+}
+@keyframes rippleAnim{
+  to{transform:scale(4);opacity:0}
+}
+
+/* ── NAV SCROLL EFFECT ── */
+.nav{transition:background .3s, box-shadow .3s, backdrop-filter .3s}
+.nav.scrolled{
+  background:rgba(2,8,23,.98);
+  box-shadow:0 4px 30px rgba(0,0,0,.4), 0 1px 0 rgba(59,130,246,.1);
+}
+
+/* ── LOGO SHIMMER ── */
+.logo{
+  position:relative;
+  background-size:200% auto;
+  background-image:linear-gradient(135deg,#fff 0%,#60a5fa 40%,#a78bfa 60%,#fff 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:logoShimmer 4s linear infinite;
+}
+@keyframes logoShimmer{
+  0%{background-position:0% center}
+  100%{background-position:200% center}
+}
+
+/* ── TOAST ANIMATIONS ── */
+.toast{
+  animation:none;
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1), opacity .4s;
+}
+.toast.on{transform:translateY(0) scale(1);opacity:1}
+
+/* ── PAGE TRANSITION ── */
+.page-enter{animation:pageIn .4s cubic-bezier(.16,1,.3,1) both}
+@keyframes pageIn{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ── SEARCH INPUT GLOW ── */
+.cat-search input{
+  transition:border-color .3s, box-shadow .3s, transform .2s;
+}
+.cat-search input:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(59,130,246,.15), 0 0 20px rgba(59,130,246,.1);
+  transform:scale(1.01);
+}
+
+/* ── HERO PILL FLOAT ── */
+.hero-pill{
+  animation:pillFloat 3s ease-in-out infinite, pillPop .6s cubic-bezier(.34,1.56,.64,1) .2s both;
+}
+@keyframes pillFloat{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-6px)}
+}
+
+/* ── SECTION TITLE UNDERLINE ANIMATION ── */
+.sec-title{position:relative;display:inline-block}
+.sec-title::after{
+  content:'';
+  position:absolute;
+  bottom:-4px;left:0;
+  width:0;height:3px;
+  background:linear-gradient(90deg,var(--blue),var(--purple));
+  border-radius:2px;
+  transition:width .6s cubic-bezier(.16,1,.3,1);
+}
+.sec-title:hover::after{width:100%}
+
+/* ── BACK BUTTON SLIDE ── */
+.back-btn{transition:all .25s cubic-bezier(.34,1.56,.64,1)}
+.back-btn:hover{transform:translateX(-4px);border-color:var(--blue2)}
+
+/* ── SIDEBAR SLIDE ITEMS ── */
+.sidebar-item{transition:all .2s cubic-bezier(.34,1.56,.64,1)}
+.sidebar-item:hover{transform:translateX(4px)}
+
+/* ── PRICING CARD 3D ── */
+.pricing-plan-card{
+  transform-style:preserve-3d;
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1), box-shadow .4s, border-color .3s;
+}
+.pricing-plan-card:hover{
+  transform:translateY(-10px) rotateX(5deg) scale(1.02);
+  box-shadow:0 25px 50px rgba(59,130,246,.25);
+}
+
+/* ── COUNTDOWN BLOCKS PULSE ── */
+.cd-num{
+  animation:numPulse 1s ease-in-out infinite;
+  display:inline-block;
+}
+@keyframes numPulse{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.04)}
+}
+
+/* ── LOADING SKELETON SHIMMER ── */
+.skeleton{
+  background:linear-gradient(90deg,var(--glass) 25%,rgba(255,255,255,.08) 50%,var(--glass) 75%);
+  background-size:200% 100%;
+  animation:shimmer 1.5s infinite;
+  border-radius:8px;
+}
+@keyframes shimmer{
+  0%{background-position:200% 0}
+  100%{background-position:-200% 0}
+}
+
+/* ── SCROLL REVEAL ── */
+.reveal{
+  opacity:0;
+  transform:translateY(30px);
+  transition:opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1);
+}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ── PARTICLE CURSOR TRAIL (CSS only) ── */
+@keyframes trailFade{
+  0%{opacity:.8;transform:scale(1)}
+  100%{opacity:0;transform:scale(0)}
+}
+.cursor-trail{
+  position:fixed;
+  width:8px;height:8px;
+  border-radius:50%;
+  background:var(--blue);
+  pointer-events:none;
+  z-index:99999;
+  animation:trailFade .5s ease forwards;
+}
+
+/* ── MODAL ENTRANCE ── */
+.modal-content,.auth-box,.reviews-box,.mock-box{
+  animation:modalPop .4s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes modalPop{
+  from{opacity:0;transform:scale(.85) translateY(20px)}
+  to{opacity:1;transform:scale(1) translateY(0)}
+}
+
+/* ── GRADIENT BORDER GLOW ON FOCUS ── */
+.form-group input:focus,.autocomplete-input:focus{
+  box-shadow:0 0 0 3px rgba(59,130,246,.2);
+  transform:scale(1.01);
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+}
+
+/* ── CHATBOT BUTTON PULSE ── */
+.chatbot-btn{
+  animation:chatPulse 2.5s ease-in-out infinite;
+}
+@keyframes chatPulse{
+  0%,100%{box-shadow:0 4px 20px rgba(59,130,246,.4), 0 0 0 0 rgba(59,130,246,.4)}
+  50%{box-shadow:0 4px 20px rgba(59,130,246,.4), 0 0 0 12px rgba(59,130,246,0)}
+}
+
+/* ── FOOTER LINK HOVER ── */
+.footer-col a{
+  transition:color .2s, transform .2s;
+  display:inline-block;
+}
+.footer-col a:hover{color:var(--blue2);transform:translateX(4px)}
+
+/* ── EYEBROW ANIMATION ── */
+.eyebrow{
+  animation:eyebrowIn .5s ease both;
+}
+@keyframes eyebrowIn{
+  from{opacity:0;letter-spacing:4px}
+  to{opacity:1;letter-spacing:2px}
+}
+
+/* ── SMOOTH SCROLL ── */
+html{scroll-behavior:smooth}
+
+/* ── SELECTION COLOR ── */
+::selection{background:rgba(59,130,246,.3);color:#fff}
