@@ -4,15 +4,15 @@
 :root{--bg:#02050f;--glass:rgba(18,22,40,0.45);--gb:rgba(255,255,255,0.1);--ghov:rgba(255,255,255,0.15);--blue:#0ea5e9;--blue2:#38bdf8;--purple:#a855f7;--cyan:#22d3ee;--gold:#f59e0b;--white:#f8fafc;--muted:#94a3b8;--muted2:#64748b;--green:#10b981;--red:#ef4444}
 
 /* LIGHT MODE */
-body.light{--bg:#f8fafc;--glass:rgba(255,255,255,0.7);--gb:rgba(0,0,0,0.1);--ghov:rgba(0,0,0,0.06);--blue:#3b82f6;--blue2:#2563eb;--white:#0f172a;--muted:#475569;--muted2:#94a3b8}
-body.light .vivid-bg-grid{opacity: 0.15; filter: invert(1);}
-body.light .nav{background:rgba(240,244,255,.97)}
-body.light .autocomplete-dropdown{background:rgba(250,250,255,.99)}
-body.light .toast{background:rgba(250,250,255,.99);color:#0f172a}
-body.light .pdf-container{background:#f8fafc}
-body.light .auth-box{background:rgba(255,255,255,.9); border: 2px solid var(--gb);}
-body.light .footer{background:rgba(220,228,245,.98)}
-body.light .pricing-content,body.light .cart-content{background:#f8fafc}
+body.light{--bg:#f8f9fa;--glass:rgba(255,255,255,0.85);--gb:rgba(0,0,0,0.08);--ghov:rgba(255,255,255,1);--blue:#2563eb;--blue2:#1d4ed8;--white:#0f172a;--muted:#475569;--muted2:#64748b;--cyan:#0891b2;--purple:#7e22ce}
+body.light .vivid-bg-grid{background-image:linear-gradient(rgba(0,0,0,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.04) 1px,transparent 1px); opacity: 0.8; filter:none; transform:none; animation:none;}
+body.light .nav{background:rgba(248,249,250,.98); border-bottom-color:rgba(0,0,0,0.05);}
+body.light .autocomplete-dropdown{background:rgba(255,255,255,.99); border:1px solid rgba(0,0,0,0.1)}
+body.light .toast{background:rgba(255,255,255,.99);color:#0f172a; border:1px solid rgba(0,0,0,0.1)}
+body.light .pdf-container{background:#f8f9fa}
+body.light .auth-box{background:rgba(255,255,255,.95); border: 1px solid rgba(0,0,0,0.1); box-shadow:0 10px 30px rgba(0,0,0,0.05)}
+body.light .footer{background:rgba(241,245,249,.98)}
+body.light .pricing-content,body.light .cart-content{background:#f8f9fa}
 
 /* DARK MODE TOGGLE BTN */
 .theme-toggle{background:var(--glass);border:1px solid var(--gb);border-radius:12px;padding:.6rem .8rem;cursor:pointer;font-size:1.1rem;color:var(--muted);transition:all .3s cubic-bezier(0.4, 0, 0.2, 1);line-height:1;box-shadow:inset 0 0 10px rgba(255,255,255,0.02)}
@@ -41,19 +41,16 @@ body.light .pricing-content,body.light .cart-content{background:#f8fafc}
 
 body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;line-height:1.6;overflow-x:hidden}
 
-/* CRAZY ANIMATED BACKGROUNDS & ORBS */
-.vivid-bg-grid{position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:40px 40px;z-index:0;pointer-events:none;transform:perspective(500px) rotateX(60deg) translateY(-100px) translateZ(-200px);animation:gridMove 10s linear infinite;opacity:0.6}
-@keyframes gridMove{0%{background-position:0 0}100%{background-position:0 40px}}
+/* ACADEMIC STUDY BACKGROUND & ORBS */
+.vivid-bg-grid{position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:40px 40px;z-index:0;pointer-events:none;opacity:0.4}
 
 .orbs{position:fixed;inset:0;z-index:0;pointer-events:none}
-.orb{position:absolute;border-radius:50%;filter:blur(110px);opacity:0.4;mix-blend-mode:screen}
-.o1{width:700px;height:700px;background:radial-gradient(circle,var(--blue),transparent 60%);top:-200px;left:-200px;animation:orbCrazy1 25s ease-in-out infinite alternate}
-.o2{width:500px;height:500px;background:radial-gradient(circle,var(--purple),transparent 60%);bottom:-10%;right:-100px;animation:orbCrazy2 20s ease-in-out infinite alternate}
-.o3{width:400px;height:400px;background:radial-gradient(circle,var(--cyan),transparent 60%);top:40%;left:40%;animation:orbCrazy3 30s ease-in-out infinite alternate;opacity:0.25}
+.orb{position:absolute;border-radius:50%;filter:blur(120px);opacity:0.25;mix-blend-mode:screen}
+.o1{width:700px;height:700px;background:radial-gradient(circle,var(--blue),transparent 60%);top:-150px;left:-150px;animation:orbCalm 30s ease-in-out infinite alternate}
+.o2{width:500px;height:500px;background:radial-gradient(circle,var(--purple),transparent 60%);bottom:5%;right:-100px;animation:orbCalm 25s ease-in-out infinite alternate-reverse}
+.o3{width:400px;height:400px;background:radial-gradient(circle,var(--cyan),transparent 60%);top:40%;left:40%;animation:orbCalm 35s ease-in-out infinite alternate;opacity:0.15}
 
-@keyframes orbCrazy1{0%{transform:translate(0,0) scale(1) rotate(0deg)}50%{transform:translate(150px,100px) scale(1.2) rotate(180deg)}100%{transform:translate(-50px,200px) scale(0.9) rotate(360deg)}}
-@keyframes orbCrazy2{0%{transform:translate(0,0) scale(1)}50%{transform:translate(-150px,-150px) scale(1.3)}100%{transform:translate(100px,-50px) scale(0.8)}}
-@keyframes orbCrazy3{0%{transform:translate(0,0) scale(1)}50%{transform:translate(-200px,200px) scale(1.5)}100%{transform:translate(200px,-150px) scale(0.8)}}
+@keyframes orbCalm{0%{transform:translate(0,0) scale(1)}100%{transform:translate(80px,-80px) scale(1.1)}}
 
 /* NAV */
 .nav{position:sticky;top:0;z-index:100;background:rgba(2,5,15,.7);backdrop-filter:blur(30px);border-bottom:1px solid rgba(255,255,255,0.05);padding:1.2rem 0;transition:all .4s ease}
@@ -83,7 +80,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .hero-pill::before{content:'';display:block;width:8px;height:8px;background:var(--cyan);border-radius:50%;box-shadow:0 0 10px var(--cyan);animation:pulseDot 1.5s infinite}
 @keyframes pulseDot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:0.5}}
 
-.hero-title{font-family:'Playfair Display',serif;font-size:5rem;font-weight:900;line-height:1.1;margin-bottom:1.5rem;background:linear-gradient(to right, #fff 20%, var(--cyan) 50%, var(--purple) 80%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 10px 40px rgba(34,211,238,0.2)}
+.hero-title{font-family:'Playfair Display',serif;font-size:3.9rem;font-weight:900;line-height:1.2;margin-bottom:1.5rem;background:linear-gradient(to right, #fff 20%, var(--cyan) 50%, var(--purple) 80%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 10px 40px rgba(34,211,238,0.2)}
 .hero-sub{font-size:1.3rem;color:var(--muted);max-width:700px;margin:0 auto 3rem;line-height:1.7;font-weight:500}
 .hero-btns{display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap}
 
@@ -117,13 +114,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 
 /* DOC GRID */
 .doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:2rem;perspective:1500px}
-.doc-card{background:linear-gradient(180deg,var(--glass),rgba(2,5,15,0.8));border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:2rem;backdrop-filter:blur(20px);transform-style:preserve-3d;transition:all 0.5s cubic-bezier(0.23, 1, 0.32, 1);cursor:pointer;position:relative;overflow:hidden}
-.doc-card::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:conic-gradient(from 0deg,transparent 0deg,transparent 90deg,var(--cyan) 180deg,transparent 270deg,transparent 360deg);animation:spin 4s linear infinite;opacity:0;transition:opacity 0.5s;z-index:0;border-radius:50%}
-.doc-card::after{content:'';position:absolute;inset:2px;background:var(--bg);border-radius:18px;z-index:0}
-.doc-card > *{position:relative;z-index:2}
-@keyframes spin{100%{transform:rotate(360deg)}}
-.doc-card:hover{transform:translateY(-12px) rotateX(5deg) scale(1.03);box-shadow:0 30px 60px rgba(0,0,0,0.8), 0 20px 20px rgba(34,211,238,0.2)}
-.doc-card:hover::before{opacity:0.6}
+.doc-card{background:linear-gradient(180deg,var(--glass),rgba(2,5,15,0.5));border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:2rem;backdrop-filter:blur(20px);transform-style:preserve-3d;transition:all 0.4s cubic-bezier(0.23, 1, 0.32, 1);cursor:pointer;position:relative}
+.doc-card:hover{transform:translateY(-8px) rotateX(4deg) scale(1.02);box-shadow:0 25px 45px rgba(0,0,0,0.6), 0 10px 15px rgba(34,211,238,0.15); border-color:var(--cyan)}
 .doc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
 .tag{font-size:.65rem;font-weight:700;padding:.25rem .7rem;border-radius:50px;text-transform:uppercase}
 .tbl{background:rgba(59,130,246,.15);color:var(--blue2);border:1px solid rgba(59,130,246,.3)}
