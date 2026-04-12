@@ -17,6 +17,7 @@ export function ThemeProvider({ children }) {
     setIsLight(prev => {
       const next = !prev;
       localStorage.setItem('ss_theme', next ? 'light' : 'dark');
+      if (window.ssSound) window.ssSound('toggle');
       return next;
     });
   }

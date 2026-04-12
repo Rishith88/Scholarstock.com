@@ -3,16 +3,226 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#02050f;--glass:rgba(18,22,40,0.45);--gb:rgba(255,255,255,0.1);--ghov:rgba(255,255,255,0.15);--blue:#0ea5e9;--blue2:#38bdf8;--purple:#a855f7;--cyan:#22d3ee;--gold:#f59e0b;--white:#f8fafc;--muted:#94a3b8;--muted2:#64748b;--green:#10b981;--red:#ef4444}
 
-/* LIGHT MODE */
-body.light{--bg:#f8f9fa;--glass:rgba(255,255,255,0.85);--gb:rgba(0,0,0,0.08);--ghov:rgba(255,255,255,1);--blue:#2563eb;--blue2:#1d4ed8;--white:#0f172a;--muted:#475569;--muted2:#64748b;--cyan:#0891b2;--purple:#7e22ce}
-body.light .vivid-bg-grid{background-image:linear-gradient(rgba(0,0,0,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.04) 1px,transparent 1px); opacity: 0.8; filter:none; transform:none; animation:none;}
-body.light .nav{background:rgba(248,249,250,.98); border-bottom-color:rgba(0,0,0,0.05);}
-body.light .autocomplete-dropdown{background:rgba(255,255,255,.99); border:1px solid rgba(0,0,0,0.1)}
-body.light .toast{background:rgba(255,255,255,.99);color:#0f172a; border:1px solid rgba(0,0,0,0.1)}
-body.light .pdf-container{background:#f8f9fa}
-body.light .auth-box{background:rgba(255,255,255,.95); border: 1px solid rgba(0,0,0,0.1); box-shadow:0 10px 30px rgba(0,0,0,0.05)}
-body.light .footer{background:rgba(241,245,249,.98)}
-body.light .pricing-content,body.light .cart-content{background:#f8f9fa}
+/* LIGHT MODE — Stunning redesign */
+body.light{
+  --bg:#f0f4ff;
+  --glass:rgba(255,255,255,0.75);
+  --gb:rgba(99,102,241,0.12);
+  --ghov:rgba(255,255,255,0.95);
+  --blue:#4f46e5;
+  --blue2:#6366f1;
+  --purple:#7c3aed;
+  --cyan:#0891b2;
+  --gold:#d97706;
+  --white:#0f172a;
+  --muted:#475569;
+  --muted2:#64748b;
+  --green:#059669;
+  --red:#dc2626;
+}
+
+/* Light mode background */
+body.light{
+  background:linear-gradient(135deg,#f0f4ff 0%,#faf5ff 50%,#eff6ff 100%);
+  background-attachment:fixed;
+}
+body.light .vivid-bg-grid{
+  background-image:linear-gradient(rgba(99,102,241,.06) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(99,102,241,.06) 1px,transparent 1px);
+  opacity:1;
+  filter:none;
+  animation:none;
+}
+
+/* Light orbs — soft pastels */
+body.light .o1{background:radial-gradient(circle,rgba(99,102,241,.18),transparent 60%);opacity:0.5}
+body.light .o2{background:radial-gradient(circle,rgba(168,85,247,.15),transparent 60%);opacity:0.4}
+body.light .o3{background:radial-gradient(circle,rgba(14,165,233,.12),transparent 60%);opacity:0.3}
+
+/* Light nav */
+body.light .nav{
+  background:rgba(255,255,255,0.85);
+  border-bottom:1px solid rgba(99,102,241,0.12);
+  box-shadow:0 2px 20px rgba(99,102,241,0.08);
+}
+body.light .nav.scrolled{
+  background:rgba(255,255,255,0.97);
+  box-shadow:0 4px 30px rgba(99,102,241,0.15);
+}
+
+/* Light logo */
+body.light .logo{
+  background-image:linear-gradient(135deg,#4f46e5 0%,#7c3aed 50%,#4f46e5 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+/* Light nav links */
+body.light .nl{color:#475569}
+body.light .nl:hover{color:#0f172a}
+body.light .nl::after{background:var(--blue)}
+body.light .nbtn-ghost{background:rgba(99,102,241,.08);border-color:rgba(99,102,241,.2);color:#1e293b}
+body.light .nbtn-ghost:hover{border-color:var(--blue);box-shadow:0 0 20px rgba(99,102,241,.2)}
+
+/* Light hero */
+body.light .hero-title{
+  background:linear-gradient(135deg,#1e293b 0%,#4f46e5 50%,#7c3aed 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-shadow:none;
+}
+body.light .hero-pill{
+  background:rgba(99,102,241,.1);
+  border-color:rgba(99,102,241,.3);
+  color:#4f46e5;
+  box-shadow:0 0 20px rgba(99,102,241,.15);
+}
+body.light .hero-sub{color:#475569}
+
+/* Light buttons */
+body.light .btn-ghost{
+  background:rgba(255,255,255,0.8);
+  border-color:rgba(99,102,241,.25);
+  color:#1e293b;
+  box-shadow:0 2px 10px rgba(99,102,241,.1);
+}
+body.light .btn-ghost:hover{
+  border-color:var(--blue);
+  background:rgba(99,102,241,.08);
+  color:var(--blue);
+  box-shadow:0 8px 25px rgba(99,102,241,.2);
+}
+
+/* Light category cards */
+body.light .cat-card{
+  background:linear-gradient(145deg,rgba(255,255,255,0.9),rgba(240,244,255,0.95));
+  border-color:rgba(99,102,241,.12);
+  box-shadow:0 4px 20px rgba(99,102,241,.08);
+}
+body.light .cat-card:hover{
+  border-color:rgba(99,102,241,.4);
+  box-shadow:0 20px 50px rgba(99,102,241,.2), 0 0 0 2px rgba(99,102,241,.2);
+}
+body.light .cat-card:hover .cat-name{color:#4f46e5}
+
+/* Light doc cards */
+body.light .doc-card{
+  background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(248,250,255,0.95));
+  border-color:rgba(99,102,241,.1);
+  box-shadow:0 4px 15px rgba(99,102,241,.06);
+}
+body.light .doc-card:hover{
+  box-shadow:0 20px 40px rgba(99,102,241,.15), 0 5px 10px rgba(99,102,241,.1);
+  border-color:rgba(99,102,241,.3);
+}
+body.light .doc-title{color:#1e293b}
+body.light .doc-price{color:#4f46e5}
+
+/* Light section */
+body.light .sec-title{color:#0f172a}
+body.light .eyebrow{color:#4f46e5;text-shadow:none}
+
+/* Light auth */
+body.light .auth-box{
+  background:rgba(255,255,255,0.92);
+  border:1px solid rgba(99,102,241,.15);
+  box-shadow:0 20px 60px rgba(99,102,241,.12);
+}
+body.light .form-group input{
+  background:rgba(255,255,255,0.9);
+  border-color:rgba(99,102,241,.2);
+  color:#0f172a;
+}
+body.light .form-group input:focus{border-color:#4f46e5;box-shadow:0 0 0 3px rgba(99,102,241,.15)}
+
+/* Light footer */
+body.light .footer{
+  background:linear-gradient(180deg,rgba(240,244,255,.98),rgba(230,235,255,.99));
+  border-top-color:rgba(99,102,241,.12);
+}
+body.light .footer-col a{color:#475569}
+body.light .footer-col a:hover{color:#4f46e5}
+
+/* Light toast */
+body.light .toast{
+  background:rgba(255,255,255,.98);
+  color:#0f172a;
+  border:1px solid rgba(99,102,241,.15);
+  box-shadow:0 8px 30px rgba(99,102,241,.15);
+}
+
+/* Light sidebar */
+body.light .sidebar{background:linear-gradient(180deg,#f8faff,#f0f4ff);border-right-color:rgba(99,102,241,.12)}
+body.light .sidebar-logo{background:linear-gradient(135deg,#4f46e5,#7c3aed);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+body.light .sidebar-profile{background:rgba(255,255,255,.8);border-color:rgba(99,102,241,.15)}
+body.light .sidebar-username{color:#1e293b}
+body.light .sidebar-item:hover{background:rgba(99,102,241,.08);color:#1e293b;border-left-color:#4f46e5}
+body.light .sidebar-item.active{background:rgba(99,102,241,.12);color:#4f46e5;border-left-color:#4f46e5}
+body.light .sidebar-theme-row{background:rgba(255,255,255,.7)}
+
+/* Light autocomplete */
+body.light .autocomplete-dropdown{background:rgba(255,255,255,.99);border-color:rgba(99,102,241,.15);box-shadow:0 8px 30px rgba(99,102,241,.12)}
+body.light .autocomplete-item:hover{background:rgba(99,102,241,.06)}
+
+/* Light subcat cards */
+body.light .subcat-card{background:rgba(255,255,255,.8);border-color:rgba(99,102,241,.12)}
+body.light .subcat-card:hover{background:rgba(255,255,255,.95);border-color:rgba(99,102,241,.3);box-shadow:0 15px 40px rgba(99,102,241,.15)}
+
+/* Light filter */
+body.light .filter-bar select{background:rgba(255,255,255,.85);border-color:rgba(99,102,241,.2);color:#1e293b}
+body.light .back-btn{background:rgba(255,255,255,.8);border-color:rgba(99,102,241,.2);color:#1e293b}
+
+/* Light PDF viewer */
+body.light .pdf-container{background:#f8faff;border-color:rgba(99,102,241,.15)}
+body.light .pdf-header{background:rgba(255,255,255,.9)}
+
+/* Light pricing */
+body.light .pricing-plan-card{background:rgba(255,255,255,.85);border-color:rgba(99,102,241,.15)}
+body.light .pricing-plan-card:hover{box-shadow:0 25px 50px rgba(99,102,241,.2)}
+body.light .plan-name{color:#0f172a}
+
+/* Light cart/checkout */
+body.light .pricing-content,body.light .cart-content{background:#f0f4ff}
+
+/* Light mock test */
+body.light .mock-box{background:#f8faff}
+body.light .mock-header{background:#f8faff}
+body.light .mock-opt{background:rgba(255,255,255,.8);border-color:rgba(99,102,241,.15)}
+body.light .mock-opt:hover{background:rgba(99,102,241,.06);border-color:rgba(99,102,241,.3)}
+
+/* Light doubt panel */
+body.light .doubt-panel{background:#f8faff}
+body.light .doubt-msg.ai{background:rgba(255,255,255,.85);border-color:rgba(99,102,241,.15);color:#1e293b}
+body.light .doubt-msg.user{color:#1e293b}
+body.light .doubt-textarea{background:rgba(255,255,255,.85);color:#1e293b;border-color:rgba(99,102,241,.2)}
+
+/* Light countdown */
+body.light .cd-card{background:rgba(255,255,255,.8);border-color:rgba(99,102,241,.12)}
+body.light .cd-card:hover{border-color:rgba(99,102,241,.3);box-shadow:0 10px 30px rgba(99,102,241,.12)}
+body.light .cd-block{background:rgba(99,102,241,.06)}
+
+/* Light study strategist */
+body.light .ss-hero{background:linear-gradient(135deg,rgba(99,102,241,.1),rgba(139,92,246,.08))}
+body.light .ss-form{background:rgba(255,255,255,.8);border-color:rgba(99,102,241,.15)}
+body.light .ss-week{background:rgba(255,255,255,.8);border-color:rgba(99,102,241,.12)}
+body.light .ss-week h4{color:#1e293b}
+
+/* Light reviews */
+body.light .reviews-box{background:#f8faff;border-color:rgba(99,102,241,.2)}
+body.light .review-item{background:rgba(255,255,255,.8);border-color:rgba(99,102,241,.12)}
+
+/* Light theme toggle */
+body.light .theme-toggle{background:rgba(255,255,255,.8);border-color:rgba(99,102,241,.2);color:#475569}
+body.light .theme-toggle:hover{border-color:#4f46e5;color:#4f46e5;box-shadow:0 0 15px rgba(99,102,241,.2)}
+
+/* Light hamburger */
+body.light .hamburger{background:rgba(255,255,255,.8);border-color:rgba(99,102,241,.2);color:#475569}
+body.light .hamburger:hover{border-color:#4f46e5;color:#4f46e5}
+
+/* Light selection */
+body.light ::selection{background:rgba(99,102,241,.2);color:#1e293b}
 
 /* DARK MODE TOGGLE BTN */
 .theme-toggle{background:var(--glass);border:1px solid var(--gb);border-radius:12px;padding:.6rem .8rem;cursor:pointer;font-size:1.1rem;color:var(--muted);transition:all .3s cubic-bezier(0.4, 0, 0.2, 1);line-height:1;box-shadow:inset 0 0 10px rgba(255,255,255,0.02)}

@@ -130,7 +130,7 @@ function AppLayout() {
           osc.start(t); osc.stop(t + 0.05);
         } else if (type === 'success') {
           // Magical 3-tone arpeggio
-          const freqs = [523.25, 659.25, 1046.50]; // C5, E5, C6
+          const freqs = [523.25, 659.25, 1046.50];
           freqs.forEach((f, i) => {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
@@ -140,18 +140,71 @@ function AppLayout() {
             gain.gain.setValueAtTime(0, startTime);
             gain.gain.linearRampToValueAtTime(0.1, startTime + 0.02);
             gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.3);
-            
-            // Add soft lowpass filter
             const filter = ctx.createBiquadFilter();
             filter.type = 'lowpass';
             filter.frequency.setValueAtTime(2000, startTime);
             filter.frequency.exponentialRampToValueAtTime(400, startTime + 0.3);
-            
             osc.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
             osc.start(startTime); osc.stop(startTime + 0.3);
           });
+        } else if (type === 'error') {
+          // Low descending buzz
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, t);
+          osc.frequency.exponentialRampToValueAtTime(80, t + 0.18);
+          gain.gain.setValueAtTime(0.08, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(t); osc.stop(t + 0.2);
+        } else if (type === 'open') {
+          // Soft whoosh up
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(280, t);
+          osc.frequency.exponentialRampToValueAtTime(720, t + 0.14);
+          gain.gain.setValueAtTime(0.07, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(t); osc.stop(t + 0.15);
+        } else if (type === 'close') {
+          // Soft whoosh down
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(720, t);
+          osc.frequency.exponentialRampToValueAtTime(280, t + 0.12);
+          gain.gain.setValueAtTime(0.06, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(t); osc.stop(t + 0.13);
+        } else if (type === 'add') {
+          // Bright pop
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(1000, t);
+          osc.frequency.exponentialRampToValueAtTime(500, t + 0.1);
+          gain.gain.setValueAtTime(0.12, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(t); osc.stop(t + 0.11);
+        } else if (type === 'toggle') {
+          // Two-tone blip (light/dark switch)
+          [600, 900].forEach((f, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.value = f;
+            gain.gain.setValueAtTime(0.06, t + i * 0.06);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.06 + 0.07);
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.start(t + i * 0.06); osc.stop(t + i * 0.06 + 0.08);
+          });
         }
-      } catch (err) { console.warn('Audio err', err); }
+      } catch (err) { /* audio non-critical */ }
     };
     
     window.ssSound = playVividSound;
