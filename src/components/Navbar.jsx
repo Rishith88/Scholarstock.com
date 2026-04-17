@@ -10,7 +10,7 @@ export default function Navbar({ onOpenSidebar }) {
   const { cartCount } = useCart();
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
-
+  
   const s = (type) => window.ssSound?.(type);
 
   useEffect(() => {
