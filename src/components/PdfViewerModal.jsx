@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import API_URL from '../config';
 
@@ -7,11 +7,197 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
   
   const [doubtPanelOpen, setDoubtPanelOpen] = useState(false);
   const [doubtMessages, setDoubtMessages] = useState([
-    { role: 'ai', text: `👋 Hi! I'm your AI Doubt Solver. Ask me anything about ${title || 'this material'}, and I'll give you step-by-step explanations!` }
+    { role: 'ai', text: `👋 Hi! I'm your AI Doubt Solver. 🎯 Select any question by drawing a circle around it, and I will give you full step-by-step explanation!` }
   ]);
   const [doubtInput, setDoubtInput] = useState('');
   const [isDoubtLoading, setIsDoubtLoading] = useState(false);
   const messagesEndRef = useRef(null);
+
+  // 🎯 CIRCLE SELECTION SYSTEM
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectionStart, setSelectionStart] = useState(null);
+  const [selectionEnd, setSelectionEnd] = useState(null);
+  const [selectedRegion, setSelectedRegion] = useState(null);
+  const [isSelecting, setIsSelecting] = useState(false);
+  const [processingSelection, setProcessingSelection] = useState(false);
+  const canvasRef = useRef(null);
+  const containerRef = useRef(null);
+
+  // 🎯 CIRCLE DOUBT SOLVER - CORE LOGIC
+  const handleMouseDown = useCallback((e) => {
+    if (!selectionMode) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    setSelectionStart({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+    setIsSelecting(true);
+  }, [selectionMode]);
+
+  const handleMouseMove = useCallback((e) => {
+    if (!isSelecting) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    setSelectionEnd({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+    
+    if (canvasRef.current && selectionStart) {
+      const ctx = canvasRef.current.getContext('2d');
+      ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      
+      const radius = Math.sqrt(
+        Math.pow((e.clientX - rect.left) - selectionStart.x, 2) + 
+        Math.pow((e.clientY - rect.top) - selectionStart.y, 2)
+      );
+      
+      // Draw beautiful selection circle
+      ctx.beginPath();
+      ctx.arc(selectionStart.x, selectionStart.y, radius, 0, 2 * Math.PI);
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([8, 4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      
+      // Fill with glow effect
+      const gradient = ctx.createRadialGradient(
+        selectionStart.x, selectionStart.y, 0,
+        selectionStart.x, selectionStart.y, radius
+      );
+      gradient.addColorStop(0, 'rgba(59, 130, 246, 0.2)');
+      gradient.addColorStop(1, 'rgba(59, 130, 246, 0.05)');
+      ctx.fillStyle = gradient;
+      ctx.fill();
+    }
+  }, [isSelecting, selectionStart]);
+
+  const handleMouseUp = useCallback(async (e) => {
+    if (!isSelecting) return;
+    setIsSelecting(false);
+    
+    const rect = containerRef.current.getBoundingClientRect();
+    const endX = e.clientX - rect.left;
+    const endY = e.clientY - rect.top;
+    
+    const radius = Math.sqrt(
+      Math.pow(endX - selectionStart.x, 2) + 
+      Math.pow(endY - selectionStart.y, 2)
+    );
+    
+    if (radius < 15) {
+      setSelectionStart(null);
+      setSelectionEnd(null);
+      return;
+    }
+
+    setSelectedRegion({
+      x: selectionStart.x,
+      y: selectionStart.y,
+      radius,
+      width: rect.width,
+      height: rect.height
+    });
+    
+    setProcessingSelection(true);
+    
+    try {
+      // Capture viewport
+      const captureCanvas = document.createElement('canvas');
+      captureCanvas.width = rect.width;
+      captureCanvas.height = rect.height;
+      const captureCtx = captureCanvas.getContext('2d');
+      
+      // Capture the region
+      const iframe = document.querySelector('iframe[title="PDF Viewer"]');
+      if (iframe) {
+        const iframeWin = iframe.contentWindow || iframe.contentDocument.defaultView;
+        captureCtx.drawWindow(iframeWin, 0, 0, rect.width, rect.height, 'rgb(255,255,255)');
+      }
+      
+      // Extract selected area
+      const regionCanvas = document.createElement('canvas');
+      const regionSize = Math.ceil(radius * 2);
+      regionCanvas.width = regionSize;
+      regionCanvas.height = regionSize;
+      const regionCtx = regionCanvas.getContext('2d');
+      
+      regionCtx.drawImage(
+        captureCanvas, 
+        Math.max(0, selectionStart.x - radius), 
+        Math.max(0, selectionStart.y - radius),
+        regionSize,
+        regionSize,
+        0,
+        0,
+        regionSize,
+        regionSize
+      );
+      
+      // Send to OCR
+      const blob = await new Promise(resolve => regionCanvas.toBlob(resolve, 'image/png'));
+      const formData = new FormData();
+      formData.append('image', blob);
+      formData.append('examCategory', examCategory);
+      formData.append('subcategory', subcategory);
+      
+      const ocrResponse = await fetch(`${API_URL}/api/doubt/ocr`, {
+        method: 'POST',
+        headers: {
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
+        body: formData
+      });
+      
+      const ocrData = await ocrResponse.json();
+      
+      if (ocrData.success && ocrData.text) {
+        setDoubtPanelOpen(true);
+        setDoubtMessages(prev => [
+          ...prev,
+          { 
+            role: 'user', 
+            text: `📷 Question selected:\n\n> ${ocrData.text.substring(0, 800)}${ocrData.text.length > 800 ? '...' : ''}` 
+          }
+        ]);
+        
+        // Auto solve
+        setIsDoubtLoading(true);
+        const solveResponse = await fetch(`${API_URL}/api/doubt/solve`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+          },
+          body: JSON.stringify({
+            question: ocrData.text,
+            examCategory,
+            subcategory,
+            material: title
+          })
+        });
+        
+        const solveData = await solveResponse.json();
+        
+        if (solveData.success && solveData.answer) {
+          setDoubtMessages(prev => [...prev, { role: 'ai', parsed: solveData.answer }]);
+        } else {
+          setDoubtMessages(prev => [...prev, { 
+            role: 'error', 
+            text: 'Could not solve this question. Please try typing it.' 
+          }]);
+        }
+      }
+      
+    } catch (err) {
+      console.error('Selection error:', err);
+    } finally {
+      setProcessingSelection(false);
+      setSelectionMode(false);
+      setSelectionStart(null);
+      setSelectionEnd(null);
+      setSelectedRegion(null);
+      
+      if (canvasRef.current) {
+        const ctx = canvasRef.current.getContext('2d');
+        ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      }
+    }
+  }, [isSelecting, selectionStart, examCategory, subcategory, title, token]);
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -110,13 +296,73 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
             </div>
           </div>
           
-          <div style={{ flex: 1, position: 'relative', background: '#f8fafc', height: 'calc(100vh - 120px)' }}>
+          <div 
+            ref={containerRef}
+            style={{ 
+              flex: 1, 
+              position: 'relative', 
+              background: '#f8fafc', 
+              height: 'calc(100vh - 120px)',
+              cursor: selectionMode ? 'crosshair' : 'default'
+            }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={() => setIsSelecting(false)}
+          >
             <iframe 
               src={`${API_URL}/api/materials/${materialId}/stream?token=${token}#toolbar=1&navpanes=1&scrollbar=1`}
-              style={{ width: '100%', height: '100%', border: 'none' }}
+              style={{ width: '100%', height: '100%', border: 'none', pointerEvents: selectionMode ? 'none' : 'auto' }}
               title="PDF Viewer"
               onContextMenu={(e) => e.preventDefault()}
             />
+            
+            {/* Selection Canvas Overlay */}
+            <canvas 
+              ref={canvasRef}
+              style={{ 
+                position: 'absolute', 
+                top: 0, 
+                left: 0, 
+                width: '100%', 
+                height: '100%', 
+                pointerEvents: selectionMode ? 'auto' : 'none',
+                zIndex: 5
+              }}
+            />
+            
+            {/* 🎯 SELECTION MODE BUTTON */}
+            <button 
+              onClick={() => {
+                setSelectionMode(!selectionMode);
+                if (canvasRef.current) {
+                  canvasRef.current.width = containerRef.current?.offsetWidth || window.innerWidth;
+                  canvasRef.current.height = containerRef.current?.offsetHeight || window.innerHeight;
+                }
+              }}
+              style={{ 
+                position: 'absolute', 
+                bottom: '30px', 
+                right: selectionMode ? '210px' : '30px', 
+                background: selectionMode ? '#10b981' : '#8b5cf6', 
+                color: '#fff',
+                border: 'none',
+                borderRadius: '50px',
+                padding: '0.8rem 1.5rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                boxShadow: `0 4px 12px ${selectionMode ? 'rgba(16, 185, 129, 0.4)' : 'rgba(139, 92, 246, 0.4)'}`,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                zIndex: 10,
+                animation: selectionMode ? 'pulse 1s infinite' : 'none'
+              }}
+              disabled={processingSelection}
+            >
+              {processingSelection ? '🔍 Analyzing...' : selectionMode ? '✅ Selecting' : '🎯 Circle Question'}
+            </button>
+            
             {/* Overlay button to ask doubt */}
             <button 
               onClick={() => setDoubtPanelOpen(true)}
