@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import API_URL from '../../config';
@@ -33,37 +33,23 @@ export default function CollaborativeStudyRooms() {
   const lastPos = useRef(null);
   const pollRef = useRef(null);
 
-  const authHeaders = useCallback(() => ({
+  const getHeaders = () => ({
     'Content-Type': 'application/json',
     Authorization: `Bearer ${token}`,
-  }), [token]);
+  });
 
-  const fetchRooms = useCallback(async () => {
-    if (!token) {
-      console.warn('No token available for study rooms - user must log in first');
-      return;
-    }
+  const fetchRooms = async () => {
+    if (!token) return;
     try {
-      const headers = authHeaders();
-      console.log('Fetching rooms with token:', token.substring(0, 20) + '...');
-      
       const [pubRes, myRes] = await Promise.all([
-        fetch(`${API_URL}/api/study-rooms?search=${encodeURIComponent(search)}`, { headers }),
-        fetch(`${API_URL}/api/study-rooms/my`, { headers }),
+        fetch(`${API_URL}/api/study-rooms?search=${encodeURIComponent(search)}`, { headers: getHeaders() }),
+        fetch(`${API_URL}/api/study-rooms/my`, { headers: getHeaders() }),
       ]);
       
-      if (!pubRes.ok) {
-        console.error('Public rooms fetch failed:', pubRes.status, pubRes.statusText);
-        if (pubRes.status === 401) {
+      if (!pubRes.ok || !myRes.ok) {
+        if (pubRes.status === 401 || myRes.status === 401) {
           showToast('Session expired. Please log in again.', 'error');
-          return;
         }
-        showToast(`Failed to load rooms: ${pubRes.status}`, 'error');
-        return;
-      }
-      if (!myRes.ok) {
-        console.error('My rooms fetch failed:', myRes.status, myRes.statusText);
-        showToast(`Failed to load your rooms: ${myRes.status}`, 'error');
         return;
       }
       
@@ -73,16 +59,15 @@ export default function CollaborativeStudyRooms() {
       if (myData.success) setMyRooms(myData.rooms || []);
     } catch (err) {
       console.error('Error fetching rooms:', err);
-      showToast('Error loading rooms: ' + err.message, 'error');
     }
-  }, [token, search, authHeaders, showToast]);
+  };
 
-  useEffect(() => { fetchRooms(); }, [fetchRooms]);
+  useEffect(() => { fetchRooms(); }, [token, search]);
 
-  const pollRoom = useCallback(async () => {
+  const pollRoom = async () => {
     if (!activeRoom?._id || !token) return;
     try {
-      const res = await fetch(`${API_URL}/api/study-rooms/${activeRoom._id}`, { headers: authHeaders() });
+      const res = await fetch(`${API_URL}/api/study-rooms/${activeRoom._id}`, { headers: getHeaders() });
       const data = await res.json();
       if (data.success) {
         setMessages(data.room.messages?.slice(-50) || []);
@@ -90,19 +75,19 @@ export default function CollaborativeStudyRooms() {
         setActiveRoom(prev => ({ ...prev, members: data.room.members }));
       }
     } catch { /* silent */ }
-  }, [activeRoom?._id, token, authHeaders]);
+  };
 
   useEffect(() => {
     if (view === 'room') pollRef.current = setInterval(pollRoom, 3000);
     return () => clearInterval(pollRef.current);
-  }, [view, pollRoom]);
+  }, [view, activeRoom?._id, token]);
 
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
 
-  const enterRoom = useCallback(async (room) => {
+  const enterRoom = async (room) => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/study-rooms/${room._id}`, { headers: authHeaders() });
+      const res = await fetch(`${API_URL}/api/study-rooms/${room._id}`, { headers: getHeaders() });
       const data = await res.json();
       if (data.success) {
         setActiveRoom(data.room);
@@ -111,35 +96,21 @@ export default function CollaborativeStudyRooms() {
         setView('room');
       } else showToast(data.message || 'Cannot enter room', 'error');
     } catch (err) {
-      console.error('Error entering room:', err);
-      showToast('Connection error: ' + err.message, 'error');
+      showToast('Connection error', 'error');
     }
     finally { setLoading(false); }
-  }, [authHeaders, showToast]);
+  };
 
-  const createRoom = useCallback(async (e) => {
+  const createRoom = async (e) => {
     e.preventDefault();
     if (!createForm.name.trim()) return;
-    if (!token) {
-      showToast('You must be logged in to create a room', 'error');
-      return;
-    }
     setLoading(true);
     try {
       const res = await fetch(`${API_URL}/api/study-rooms`, { 
         method: 'POST', 
-        headers: authHeaders(), 
+        headers: getHeaders(), 
         body: JSON.stringify(createForm) 
       });
-      
-      if (!res.ok) {
-        const errorData = await res.json();
-        showToast(errorData.message || `Failed to create room (${res.status})`, 'error');
-        console.error('Create room failed:', res.status, errorData);
-        setLoading(false);
-        return;
-      }
-      
       const data = await res.json();
       if (data.success) {
         showToast('Room created!', 'success');
@@ -148,45 +119,48 @@ export default function CollaborativeStudyRooms() {
         await enterRoom(data.room);
       } else showToast(data.message || 'Failed to create room', 'error');
     } catch (err) {
-      console.error('Create room error:', err);
-      showToast('Connection error: ' + err.message, 'error');
+      showToast('Connection error', 'error');
     }
     finally { setLoading(false); }
-  }, [token, createForm, authHeaders, showToast, enterRoom]);
+  };
 
-  const joinByCode = useCallback(async (e) => {
+  const joinByCode = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/study-rooms/join`, { method: 'POST', headers: authHeaders(), body: JSON.stringify({ inviteCode: inviteCode.trim().toUpperCase() }) });
+      const res = await fetch(`${API_URL}/api/study-rooms/join`, { 
+        method: 'POST', 
+        headers: getHeaders(), 
+        body: JSON.stringify({ inviteCode: inviteCode.trim().toUpperCase() }) 
+      });
       const data = await res.json();
       if (data.success) { 
         showToast('Joined!', 'success'); 
         setShowJoin(false); 
         setInviteCode(''); 
         await enterRoom(data.room); 
-      }
-      else showToast(data.message || 'Invalid code', 'error');
+      } else showToast(data.message || 'Invalid code', 'error');
     } catch (err) {
-      console.error('Join by code error:', err);
-      showToast('Connection error: ' + err.message, 'error');
+      showToast('Connection error', 'error');
     }
     finally { setLoading(false); }
-  }, [inviteCode, authHeaders, showToast, enterRoom]);
+  };
 
-  const joinRoom = useCallback(async (room) => {
+  const joinRoom = async (room) => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/study-rooms/${room._id}/join`, { method: 'POST', headers: authHeaders() });
+      const res = await fetch(`${API_URL}/api/study-rooms/${room._id}/join`, { 
+        method: 'POST', 
+        headers: getHeaders() 
+      });
       const data = await res.json();
       if (data.success) await enterRoom(room);
       else showToast(data.message || 'Failed to join', 'error');
     } catch (err) {
-      console.error('Join room error:', err);
-      showToast('Connection error: ' + err.message, 'error');
+      showToast('Connection error', 'error');
     }
     finally { setLoading(false); }
-  }, [authHeaders, showToast, enterRoom]);
+  };
 
   const sendMessage = async (e) => {
     e?.preventDefault();
@@ -195,7 +169,11 @@ export default function CollaborativeStudyRooms() {
     setChatInput('');
     setSendingMsg(true);
     try {
-      const res = await fetch(`${API_URL}/api/study-rooms/${activeRoom._id}/message`, { method: 'POST', headers: authHeaders(), body: JSON.stringify({ text }) });
+      const res = await fetch(`${API_URL}/api/study-rooms/${activeRoom._id}/message`, { 
+        method: 'POST', 
+        headers: getHeaders(), 
+        body: JSON.stringify({ text }) 
+      });
       const data = await res.json();
       if (data.success) setMessages(prev => [...prev, data.message]);
     } catch { /* silent */ }
@@ -207,17 +185,28 @@ export default function CollaborativeStudyRooms() {
     clearTimeout(notesTimer.current);
     notesTimer.current = setTimeout(async () => {
       setNotesSaving(true);
-      try { await fetch(`${API_URL}/api/study-rooms/${activeRoom._id}/notes`, { method: 'PUT', headers: authHeaders(), body: JSON.stringify({ notes: val }) }); }
-      catch { /* silent */ }
+      try { 
+        await fetch(`${API_URL}/api/study-rooms/${activeRoom._id}/notes`, { 
+          method: 'PUT', 
+          headers: getHeaders(), 
+          body: JSON.stringify({ notes: val }) 
+        }); 
+      } catch { /* silent */ }
       finally { setNotesSaving(false); }
     }, 1200);
   };
 
   const leaveRoom = async () => {
-    try { await fetch(`${API_URL}/api/study-rooms/${activeRoom._id}/leave`, { method: 'DELETE', headers: authHeaders() }); }
-    catch { /* silent */ }
+    try { 
+      await fetch(`${API_URL}/api/study-rooms/${activeRoom._id}/leave`, { 
+        method: 'DELETE', 
+        headers: getHeaders() 
+      }); 
+    } catch { /* silent */ }
     clearInterval(pollRef.current);
-    setView('list'); setActiveRoom(null); setMessages([]);
+    setView('list'); 
+    setActiveRoom(null); 
+    setMessages([]);
     fetchRooms();
   };
 
