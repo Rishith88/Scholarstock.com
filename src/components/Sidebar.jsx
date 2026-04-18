@@ -79,6 +79,9 @@ export default function Sidebar({ open, onClose }) {
 
               <div className="sidebar-section">
                 <div className="sidebar-label">Collaborate</div>
+                <button className="sidebar-item" onClick={() => go('/dashboard')}>
+                  <span className="sidebar-item-icon">📊</span> Dashboard
+                </button>
                 <button className="sidebar-item" onClick={() => go('/study-rooms')}>
                   <span className="sidebar-item-icon">👥</span> Study Rooms
                 </button>
@@ -87,6 +90,12 @@ export default function Sidebar({ open, onClose }) {
                 </button>
                 <button className="sidebar-item" onClick={() => go('/flashcards')}>
                   <span className="sidebar-item-icon">🧠</span> Flashcards
+                </button>
+                <button className="sidebar-item" onClick={() => go('/organize')}>
+                  <span className="sidebar-item-icon">📂</span> Smart Folders
+                </button>
+                <button className="sidebar-item" onClick={() => go('/offline')}>
+                  <span className="sidebar-item-icon">📴</span> Offline Mode
                 </button>
               </div>
 

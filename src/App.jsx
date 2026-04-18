@@ -38,11 +38,16 @@ import VerifyEmailPage from './pages/VerifyEmailPage';
 import StudyRoomsPage from './pages/StudyRoomsPage';
 import UniversityPage from './pages/UniversityPage';
 import FlashcardsPage from './pages/FlashcardsPage';
+import DashboardPage from './pages/DashboardPage';
+import OfflinePage from './pages/OfflinePage';
+import OrganizePage from './pages/OrganizePage';
+import { useKeyboardShortcuts, KeyboardShortcutsHelp } from './hooks/useKeyboardShortcuts';
 
 function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showSplash, setShowSplash] = useState(!sessionStorage.getItem('ss_visited'));
   const navigate = useNavigate();
+  const { showHelp, setShowHelp } = useKeyboardShortcuts();
 
   const handleSplashDone = () => {
     sessionStorage.setItem('ss_visited', '1');
@@ -222,6 +227,7 @@ function AppLayout() {
   return (
     <>
       {showSplash && <IntroSplash onDone={handleSplashDone} />}
+      <KeyboardShortcutsHelp show={showHelp} onClose={() => setShowHelp(false)} />
 
       <div className="vivid-bg-grid"></div>
       <div className="orbs">
@@ -260,6 +266,9 @@ function AppLayout() {
           <Route path="/study-rooms" element={<StudyRoomsPage />} />
           <Route path="/university" element={<UniversityPage />} />
           <Route path="/flashcards" element={<FlashcardsPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/offline" element={<OfflinePage />} />
+          <Route path="/organize" element={<OrganizePage />} />
           <Route path="*" element={
             <div className="sec" style={{ marginTop: '4rem', textAlign: 'center', padding: '5rem 2rem' }}>
               <div style={{ fontSize: '5rem', marginBottom: '1.5rem' }}>🧭</div>
