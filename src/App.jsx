@@ -37,6 +37,7 @@ import ResetPasswordPage from './pages/ResetPasswordPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
 import StudyRoomsPage from './pages/StudyRoomsPage';
 import UniversityPage from './pages/UniversityPage';
+import FlashcardsPage from './pages/FlashcardsPage';
 
 function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -258,6 +259,7 @@ function AppLayout() {
           <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route path="/study-rooms" element={<StudyRoomsPage />} />
           <Route path="/university" element={<UniversityPage />} />
+          <Route path="/flashcards" element={<FlashcardsPage />} />
           <Route path="*" element={
             <div className="sec" style={{ marginTop: '4rem', textAlign: 'center', padding: '5rem 2rem' }}>
               <div style={{ fontSize: '5rem', marginBottom: '1.5rem' }}>🧭</div>
