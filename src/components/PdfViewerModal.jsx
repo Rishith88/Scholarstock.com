@@ -7,13 +7,13 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
   
   const [doubtPanelOpen, setDoubtPanelOpen] = useState(false);
   const [doubtMessages, setDoubtMessages] = useState([
-    { role: 'ai', text: `👋 Hi! I'm your AI Doubt Solver. 🎯 Select any question by drawing a circle around it, and I will give you full step-by-step explanation!` }
+    { role: 'ai', text: `≡ƒæï Hi! I'm your AI Doubt Solver. ≡ƒÄ» Select any question by drawing a circle around it, and I will give you full step-by-step explanation!` }
   ]);
   const [doubtInput, setDoubtInput] = useState('');
   const [isDoubtLoading, setIsDoubtLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
-  // 🎯 CIRCLE SELECTION SYSTEM
+  // ≡ƒÄ» CIRCLE SELECTION SYSTEM
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectionStart, setSelectionStart] = useState(null);
   const [selectionEnd, setSelectionEnd] = useState(null);
@@ -23,7 +23,7 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
 
-  // 🎯 CIRCLE DOUBT SOLVER - CORE LOGIC
+  // ≡ƒÄ» CIRCLE DOUBT SOLVER - CORE LOGIC
   const handleMouseDown = useCallback((e) => {
     if (!selectionMode) return;
     const rect = containerRef.current.getBoundingClientRect();
@@ -151,7 +151,7 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
           ...prev,
           { 
             role: 'user', 
-            text: `📷 Question selected:\n\n> ${ocrData.text.substring(0, 800)}${ocrData.text.length > 800 ? '...' : ''}` 
+            text: `≡ƒô╖ Question selected:\n\n> ${ocrData.text.substring(0, 800)}${ocrData.text.length > 800 ? '...' : ''}` 
           }
         ]);
         
@@ -264,16 +264,16 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
     
     return (
       <>
-        {parsed.explanation && <div><strong style={{ display: 'block', marginBottom: '.5rem' }}>💡 Explanation</strong>{parsed.explanation}</div>}
+        {parsed.explanation && <div><strong style={{ display: 'block', marginBottom: '.5rem' }}>≡ƒÆí Explanation</strong>{parsed.explanation}</div>}
         {parsed.steps?.length > 0 && (
           <div style={{ marginTop: '1rem' }}>
-            <strong style={{ display: 'block', marginBottom: '.5rem' }}>📋 Step-by-step</strong>
+            <strong style={{ display: 'block', marginBottom: '.5rem' }}>≡ƒôï Step-by-step</strong>
             {parsed.steps.map((s, i) => <div key={i} style={{ marginBottom: '.3rem', fontSize: '.85rem' }}><strong>Step {i+1}:</strong> {s}</div>)}
           </div>
         )}
         {parsed.tip && (
           <div style={{ marginTop: '1rem', background: 'rgba(245,158,11,.1)', border: '1px solid rgba(245,158,11,.2)', borderRadius: '6px', padding: '.7rem', fontSize: '.85rem', color: 'var(--gold)' }}>
-            <strong>💡 Exam Tip:</strong> {parsed.tip}
+            <strong>≡ƒÆí Exam Tip:</strong> {parsed.tip}
           </div>
         )}
       </>
@@ -287,12 +287,12 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
       <div className="pdf-viewer on" onClick={(e) => e.target.className.includes('pdf-viewer') && onClose()}>
         <div className="pdf-container" onClick={e => e.stopPropagation()}>
           <div className="pdf-header">
-            <div style={{ fontWeight: 700, fontSize: '.9rem' }}>📄 {title}</div>
+            <div style={{ fontWeight: 700, fontSize: '.9rem' }}>≡ƒôä {title}</div>
             <div style={{ display: 'flex', gap: '.5rem' }}>
               <button className="pdf-doubt-btn" style={{ color: '#fff', background: 'var(--blue)', border: 'none', borderRadius: '6px', padding: '.4rem .8rem', fontWeight: 700, cursor: 'pointer', fontSize: '.85rem' }} onClick={() => setDoubtPanelOpen(o => !o)}>
-                🧠 Ask Doubt
+                ≡ƒºá Ask Doubt
               </button>
-              <button onClick={onClose}>✕</button>
+              <button onClick={onClose}>Γ£ò</button>
             </div>
           </div>
           
@@ -316,7 +316,7 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
                title="PDF Viewer"
                onContextMenu={(e) => e.preventDefault()}
              />
-             
+            
             {/* Selection Canvas Overlay */}
             <canvas 
               ref={canvasRef}
@@ -331,7 +331,7 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
               }}
             />
             
-            {/* 🎯 SELECTION MODE BUTTON */}
+            {/* ≡ƒÄ» SELECTION MODE BUTTON */}
             <button 
               onClick={() => {
                 setSelectionMode(!selectionMode);
@@ -360,7 +360,7 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
               }}
               disabled={processingSelection}
             >
-              {processingSelection ? '🔍 Analyzing...' : selectionMode ? '✅ Selecting' : '🎯 Circle Question'}
+              {processingSelection ? '≡ƒöì Analyzing...' : selectionMode ? 'Γ£à Selecting' : '≡ƒÄ» Circle Question'}
             </button>
             
             {/* Overlay button to ask doubt */}
@@ -384,7 +384,7 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
                 zIndex: 10
               }}
             >
-              🧠 Ask Doubt
+              ≡ƒºá Ask Doubt
             </button>
           </div>
         </div>
@@ -393,10 +393,46 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
       {/* AI Doubt Solver Panel */}
       <div className={`doubt-overlay ${doubtPanelOpen ? 'open' : ''}`} onClick={() => setDoubtPanelOpen(false)} style={{ zIndex: 10000 }} />
       <div className={`doubt-panel ${doubtPanelOpen ? 'open' : ''}`} style={{ zIndex: 10001 }}>
-        <div className="doubt-context-bar">📚 {examCategory} • {subcategory}</div>
+        <div className="doubt-context-bar">≡ƒôÜ {examCategory} ΓÇó {subcategory}</div>
         <div className="doubt-panel-header">
-          <h3>🧠 AI Doubt Solver</h3>
-          <button style={{ background: 'transparent', border: 'none', color: 'var(--muted)', fontSize: '1.2rem', cursor: 'pointer' }} onClick={() => setDoubtPanelOpen(false)}>✕</button>
+          <h3>≡ƒºá AI Doubt Solver</h3>
+          <button style={{ background: 'transparent', border: 'none', color: 'var(--muted)', fontSize: '1.2rem', cursor: 'pointer' }} onClick={() => setDoubtPanelOpen(false)}>Γ£ò</button>
         </div>
         
-        <div className
+        <div className="doubt-messages">
+          {doubtMessages.map((msg, i) => (
+            <div key={i} className={`doubt-msg ${msg.role === 'user' ? 'user' : 'ai'}`}>
+              {msg.role === 'error' ? <div style={{ color: 'var(--red)' }}>ΓÜá∩╕Å {msg.text}</div> : msg.parsed ? renderAiMessage(msg.parsed) : msg.text}
+            </div>
+          ))}
+          {isDoubtLoading && (
+            <div className="doubt-msg ai doubt-typing">
+              <span/><span/><span/>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+        
+        <div className="doubt-input-area">
+          <div className="doubt-input-row" style={{ display: 'flex', gap: '.5rem' }}>
+            <input 
+              style={{ flex: 1, background: 'rgba(255,255,255,.05)', border: '1px solid var(--gb)', borderRadius: '8px', padding: '.7rem 1rem', color: '#fff', outline: 'none' }}
+              value={doubtInput}
+              onChange={e => setDoubtInput(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && sendDoubt()}
+              placeholder="Ask a doubt about this PDF..."
+              disabled={isDoubtLoading}
+            />
+            <button 
+              style={{ background: 'var(--blue)', border: 'none', color: '#fff', padding: '0 1rem', borderRadius: '8px', cursor: 'pointer', fontWeight: 700 }}
+              onClick={sendDoubt}
+              disabled={isDoubtLoading}
+            >
+              Γ₧ñ
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
