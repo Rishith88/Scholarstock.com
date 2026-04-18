@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+r̥import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import API_URL from '../config';
 
@@ -310,12 +310,12 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
             onMouseUp={handleMouseUp}
             onMouseLeave={() => setIsSelecting(false)}
           >
-            <iframe 
-              src={`${API_URL}/api/materials/${materialId}/stream?token=${token}#toolbar=1&navpanes=1&scrollbar=1`}
-              style={{ width: '100%', height: '100%', border: 'none', pointerEvents: selectionMode ? 'none' : 'auto' }}
-              title="PDF Viewer"
-              onContextMenu={(e) => e.preventDefault()}
-            />
+             <iframe 
+               src={`${API_URL}/api/materials/${materialId}/stream?token=${token}#toolbar=0&navpanes=0&scrollbar=1&disabletoolbar=1`}
+               style={{ width: '100%', height: '100%', border: 'none', pointerEvents: selectionMode ? 'none' : 'auto' }}
+               title="PDF Viewer"
+               onContextMenu={(e) => e.preventDefault()}
+             />
             
             {/* Selection Canvas Overlay */}
             <canvas 
