@@ -40,12 +40,12 @@ export default function CollaborativeStudyRooms() {
 
   const fetchRooms = useCallback(async () => {
     if (!token) {
-      console.warn('No token available for study rooms');
+      console.warn('No token available for study rooms - user must log in first');
       return;
     }
     try {
       const headers = authHeaders();
-      console.log('Fetching rooms with headers:', { Authorization: headers.Authorization ? 'Bearer [token]' : 'missing' });
+      console.log('Fetching rooms with token:', token.substring(0, 20) + '...');
       
       const [pubRes, myRes] = await Promise.all([
         fetch(`${API_URL}/api/study-rooms?search=${encodeURIComponent(search)}`, { headers }),
@@ -54,6 +54,10 @@ export default function CollaborativeStudyRooms() {
       
       if (!pubRes.ok) {
         console.error('Public rooms fetch failed:', pubRes.status, pubRes.statusText);
+        if (pubRes.status === 401) {
+          showToast('Session expired. Please log in again.', 'error');
+          return;
+        }
         showToast(`Failed to load rooms: ${pubRes.status}`, 'error');
         return;
       }
