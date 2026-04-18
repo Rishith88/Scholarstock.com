@@ -95,7 +95,7 @@ export default function CollaborativeStudyRooms() {
 
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
 
-  const enterRoom = async (room) => {
+  const enterRoom = useCallback(async (room) => {
     setLoading(true);
     try {
       const res = await fetch(`${API_URL}/api/study-rooms/${room._id}`, { headers: authHeaders() });
@@ -106,11 +106,14 @@ export default function CollaborativeStudyRooms() {
         setNotes(data.room.sharedNotes || '');
         setView('room');
       } else showToast(data.message || 'Cannot enter room', 'error');
-    } catch { showToast('Connection error', 'error'); }
+    } catch (err) {
+      console.error('Error entering room:', err);
+      showToast('Connection error: ' + err.message, 'error');
+    }
     finally { setLoading(false); }
-  };
+  }, [authHeaders, showToast]);
 
-  const createRoom = async (e) => {
+  const createRoom = useCallback(async (e) => {
     e.preventDefault();
     if (!createForm.name.trim()) return;
     if (!token) {
@@ -145,30 +148,41 @@ export default function CollaborativeStudyRooms() {
       showToast('Connection error: ' + err.message, 'error');
     }
     finally { setLoading(false); }
-  };
+  }, [token, createForm, authHeaders, showToast, enterRoom]);
 
-  const joinByCode = async (e) => {
+  const joinByCode = useCallback(async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
       const res = await fetch(`${API_URL}/api/study-rooms/join`, { method: 'POST', headers: authHeaders(), body: JSON.stringify({ inviteCode: inviteCode.trim().toUpperCase() }) });
       const data = await res.json();
-      if (data.success) { showToast('Joined!', 'success'); setShowJoin(false); setInviteCode(''); await enterRoom(data.room); }
+      if (data.success) { 
+        showToast('Joined!', 'success'); 
+        setShowJoin(false); 
+        setInviteCode(''); 
+        await enterRoom(data.room); 
+      }
       else showToast(data.message || 'Invalid code', 'error');
-    } catch { showToast('Connection error', 'error'); }
+    } catch (err) {
+      console.error('Join by code error:', err);
+      showToast('Connection error: ' + err.message, 'error');
+    }
     finally { setLoading(false); }
-  };
+  }, [inviteCode, authHeaders, showToast, enterRoom]);
 
-  const joinRoom = async (room) => {
+  const joinRoom = useCallback(async (room) => {
     setLoading(true);
     try {
       const res = await fetch(`${API_URL}/api/study-rooms/${room._id}/join`, { method: 'POST', headers: authHeaders() });
       const data = await res.json();
       if (data.success) await enterRoom(room);
       else showToast(data.message || 'Failed to join', 'error');
-    } catch { showToast('Connection error', 'error'); }
+    } catch (err) {
+      console.error('Join room error:', err);
+      showToast('Connection error: ' + err.message, 'error');
+    }
     finally { setLoading(false); }
-  };
+  }, [authHeaders, showToast, enterRoom]);
 
   const sendMessage = async (e) => {
     e?.preventDefault();
