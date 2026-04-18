@@ -1,4 +1,4 @@
-r̥import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import API_URL from '../config';
 
@@ -316,7 +316,7 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
                title="PDF Viewer"
                onContextMenu={(e) => e.preventDefault()}
              />
-            
+             
             {/* Selection Canvas Overlay */}
             <canvas 
               ref={canvasRef}
@@ -399,40 +399,4 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
           <button style={{ background: 'transparent', border: 'none', color: 'var(--muted)', fontSize: '1.2rem', cursor: 'pointer' }} onClick={() => setDoubtPanelOpen(false)}>✕</button>
         </div>
         
-        <div className="doubt-messages">
-          {doubtMessages.map((msg, i) => (
-            <div key={i} className={`doubt-msg ${msg.role === 'user' ? 'user' : 'ai'}`}>
-              {msg.role === 'error' ? <div style={{ color: 'var(--red)' }}>⚠️ {msg.text}</div> : msg.parsed ? renderAiMessage(msg.parsed) : msg.text}
-            </div>
-          ))}
-          {isDoubtLoading && (
-            <div className="doubt-msg ai doubt-typing">
-              <span/><span/><span/>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-        
-        <div className="doubt-input-area">
-          <div className="doubt-input-row" style={{ display: 'flex', gap: '.5rem' }}>
-            <input 
-              style={{ flex: 1, background: 'rgba(255,255,255,.05)', border: '1px solid var(--gb)', borderRadius: '8px', padding: '.7rem 1rem', color: '#fff', outline: 'none' }}
-              value={doubtInput}
-              onChange={e => setDoubtInput(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && sendDoubt()}
-              placeholder="Ask a doubt about this PDF..."
-              disabled={isDoubtLoading}
-            />
-            <button 
-              style={{ background: 'var(--blue)', border: 'none', color: '#fff', padding: '0 1rem', borderRadius: '8px', cursor: 'pointer', fontWeight: 700 }}
-              onClick={sendDoubt}
-              disabled={isDoubtLoading}
-            >
-              ➤
-            </button>
-          </div>
-        </div>
-      </div>
-    </>
-  );
-}
+        <div className
