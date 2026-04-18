@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Box, TextField, IconButton, Typography, Paper, Avatar, Chip, Divider, Tooltip } from '@mui/material';
 import { Send, Bot, User, Sparkles, FileText, Lightbulb, BookOpen, Copy, ThumbUp, ThumbDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAiAssistantStore } from './useAiAssistantStore';
+import { useAiAssistantStore } from '../../../../Scholarstock-backend-/studify-backend/routes/useAiAssistantStore';
 
 const AiStudyAssistant = () => {
   const [inputValue, setInputValue] = useState('');

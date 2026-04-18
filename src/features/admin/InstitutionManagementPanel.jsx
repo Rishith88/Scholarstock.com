@@ -247,8 +247,4 @@ const InstitutionManagementPanel = () => {
 
       {/* Institution Settings Modal will be implemented next */}
 
-    </Box>
-  );
-};
 
-export default InstitutionManagementPanel;
