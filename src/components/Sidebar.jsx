@@ -78,6 +78,13 @@ export default function Sidebar({ open, onClose }) {
               </div>
 
               <div className="sidebar-section">
+                <div className="sidebar-label">Collaborate</div>
+                <button className="sidebar-item" onClick={() => go('/study-rooms')}>
+                  <span className="sidebar-item-icon">👥</span> Study Rooms
+                </button>
+              </div>
+
+              <div className="sidebar-section">
                 <div className="sidebar-label">Tools</div>
                 <button className="sidebar-item" onClick={() => go('/calculator')}>
                   <span className="sidebar-item-icon">🧮</span> Calculator
