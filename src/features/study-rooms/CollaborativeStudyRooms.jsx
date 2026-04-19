@@ -41,9 +41,10 @@ export default function CollaborativeStudyRooms() {
   const fetchRooms = async () => {
     if (!token) return;
     try {
+      const headers = getHeaders();
       const [pubRes, myRes] = await Promise.all([
-        fetch(`${API_URL}/api/study-rooms?search=${encodeURIComponent(search)}`, { headers: getHeaders() }),
-        fetch(`${API_URL}/api/study-rooms/my`, { headers: getHeaders() }),
+        fetch(`${API_URL}/api/study-rooms?search=${encodeURIComponent(search)}`, { headers }),
+        fetch(`${API_URL}/api/study-rooms/my`, { headers }),
       ]);
       
       if (!pubRes.ok || !myRes.ok) {
@@ -62,7 +63,9 @@ export default function CollaborativeStudyRooms() {
     }
   };
 
-  useEffect(() => { fetchRooms(); }, [token, search]);
+  useEffect(() => { 
+    fetchRooms(); 
+  }, [token, search]);
 
   const pollRoom = async () => {
     if (!activeRoom?._id || !token) return;
