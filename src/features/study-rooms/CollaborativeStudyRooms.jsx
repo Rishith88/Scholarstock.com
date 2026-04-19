@@ -33,6 +33,16 @@ export default function CollaborativeStudyRooms() {
   const lastPos = useRef(null);
   const pollRef = useRef(null);
 
+  // Video Call State
+  const [inCall, setInCall] = useState(false);
+  const [localStream, setLocalStream] = useState(null);
+  const [remoteStreams, setRemoteStreams] = useState({});
+  const [audioEnabled, setAudioEnabled] = useState(true);
+  const [videoEnabled, setVideoEnabled] = useState(true);
+  const [callMode, setCallMode] = useState(null); // 'audio' | 'video'
+  const localVideoRef = useRef(null);
+  const peerConnections = useRef({});
+
   const getHeaders = () => ({
     'Content-Type': 'application/json',
     Authorization: `Bearer ${token}`,
@@ -140,7 +150,14 @@ export default function CollaborativeStudyRooms() {
         showToast('Room created!', 'success');
         setShowCreate(false);
         setCreateForm({ name: '', description: '', subject: '', isPrivate: false, maxMembers: 10 });
+        
+        // Immediately add new room to myRooms so creator sees it instantly
+        setMyRooms(prev => [data.room, ...prev]);
+        setRooms(prev => [data.room, ...prev]);
+        
         await enterRoom(data.room);
+        // Refresh rooms list after entering
+        fetchRooms();
       } else showToast(data.message || 'Failed to create room', 'error');
     } catch (err) {
       showToast('Connection error', 'error');
@@ -254,6 +271,88 @@ export default function CollaborativeStudyRooms() {
     fetchRooms();
   };
 
+  const deleteRoom = async () => {
+    if (!window.confirm('Are you sure you want to permanently delete this room? This action cannot be undone.')) return;
+    
+    try {
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      };
+      const res = await fetch(`${API_URL}/api/study-rooms/${activeRoom._id}`, {
+        method: 'DELETE',
+        headers
+      });
+      
+      const data = await res.json();
+      if (data.success) {
+        showToast('Room deleted successfully', 'success');
+        clearInterval(pollRef.current);
+        setView('list');
+        setActiveRoom(null);
+        setMessages([]);
+        fetchRooms();
+      } else {
+        showToast(data.message || 'Failed to delete room', 'error');
+      }
+    } catch (err) {
+      showToast('Connection error', 'error');
+    }
+  };
+
+  const isRoomOwner = () => {
+    return activeRoom && user && activeRoom.createdBy?.toString() === user._id?.toString();
+  };
+
+  // Video Call Functions
+  const startCall = async (mode) => {
+    try {
+      const constraints = {
+        audio: true,
+        video: mode === 'video' ? { width: 1280, height: 720 } : false
+      };
+      
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      setLocalStream(stream);
+      setCallMode(mode);
+      setInCall(true);
+      
+      if (localVideoRef.current) {
+        localVideoRef.current.srcObject = stream;
+      }
+
+      showToast(`${mode === 'video' ? 'Video' : 'Audio'} call started`, 'success');
+    } catch (err) {
+      showToast('Failed to access camera/microphone', 'error');
+      console.error('Media error:', err);
+    }
+  };
+
+  const toggleAudio = () => {
+    if (localStream) {
+      localStream.getAudioTracks().forEach(track => track.enabled = !track.enabled);
+      setAudioEnabled(!audioEnabled);
+    }
+  };
+
+  const toggleVideo = () => {
+    if (localStream) {
+      localStream.getVideoTracks().forEach(track => track.enabled = !track.enabled);
+      setVideoEnabled(!videoEnabled);
+    }
+  };
+
+  const endCall = () => {
+    if (localStream) {
+      localStream.getTracks().forEach(track => track.stop());
+    }
+    setLocalStream(null);
+    setRemoteStreams({});
+    setInCall(false);
+    setCallMode(null);
+    showToast('Call ended', 'info');
+  };
+
   const startDraw = (e) => {
     setIsDrawing(true);
     const rect = canvasRef.current.getBoundingClientRect();
@@ -288,12 +387,89 @@ export default function CollaborativeStudyRooms() {
             <div style={{ fontSize: '.75rem', color: 'var(--muted)' }}>{activeRoom.members?.length || 0} members{activeRoom.isPrivate && ' • 🔒 Private'}</div>
           </div>
         </div>
-        {activeRoom.inviteCode && (
-          <div className="sr-invite-badge" onClick={() => { navigator.clipboard?.writeText(activeRoom.inviteCode); showToast('Code copied!', 'success'); }}>
-            🔗 {activeRoom.inviteCode}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          {activeRoom.inviteCode && (
+            <div className="sr-invite-badge" onClick={() => { navigator.clipboard?.writeText(activeRoom.inviteCode); showToast('Code copied!', 'success'); }}>
+              🔗 {activeRoom.inviteCode}
+            </div>
+          )}
+        {isRoomOwner() && (
+            <button className="sr-btn-outline" style={{ background: '#fef2f2', borderColor: '#ef4444', color: '#dc2626' }} onClick={deleteRoom}>
+              🗑️ Delete Room
+            </button>
+          )}
+          
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            {!inCall ? (
+              <>
+                <button className="sr-btn-outline" style={{ background: '#10b98115', borderColor: '#10b981', color: '#10b981' }} onClick={() => startCall('audio')}>
+                  🎙️ Voice Call
+                </button>
+                <button className="sr-btn-outline" style={{ background: '#3b82f615', borderColor: '#3b82f6', color: '#3b82f6' }} onClick={() => startCall('video')}>
+                  📹 Video Call
+                </button>
+              </>
+            ) : (
+              <button className="sr-btn-outline" style={{ background: '#ef444415', borderColor: '#ef4444', color: '#ef4444' }} onClick={endCall}>
+                ❌ End Call
+              </button>
+            )}
           </div>
-        )}
+        </div>
       </div>
+
+      {inCall && (
+        <div style={{ 
+          background: 'var(--card-bg)', 
+          borderBottom: '1px solid var(--border)', 
+          padding: '1rem', 
+          display: 'flex', 
+          gap: '1rem', 
+          alignItems: 'center',
+          flexWrap: 'wrap'
+        }}>
+          <div style={{ position: 'relative', width: '180px', height: '120px', borderRadius: '8px', overflow: 'hidden', background: '#000' }}>
+            <video ref={localVideoRef} autoPlay muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <div style={{ position: 'absolute', bottom: '4px', left: '4px', color: 'white', fontSize: '0.7rem', background: 'rgba(0,0,0,0.5)', padding: '2px 6px', borderRadius: '4px' }}>You</div>
+          </div>
+
+          {Object.entries(remoteStreams).map(([userId, stream]) => (
+            <div key={userId} style={{ position: 'relative', width: '180px', height: '120px', borderRadius: '8px', overflow: 'hidden', background: '#000' }}>
+              <video autoPlay playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} ref={el => el && (el.srcObject = stream)} />
+            </div>
+          ))}
+
+          <div style={{ marginLeft: 'auto', display: 'flex', gap: '0.5rem' }}>
+            <button onClick={toggleAudio} style={{ 
+              padding: '0.75rem', 
+              borderRadius: '50%', 
+              border: 'none', 
+              background: audioEnabled ? '#3b82f6' : '#ef4444',
+              color: 'white',
+              cursor: 'pointer',
+              width: '44px',
+              height: '44px'
+            }}>
+              {audioEnabled ? '🎤' : '🔇'}
+            </button>
+            
+            {callMode === 'video' && (
+              <button onClick={toggleVideo} style={{ 
+                padding: '0.75rem', 
+                borderRadius: '50%', 
+                border: 'none', 
+                background: videoEnabled ? '#3b82f6' : '#ef4444',
+                color: 'white',
+                cursor: 'pointer',
+                width: '44px',
+                height: '44px'
+              }}>
+                {videoEnabled ? '📹' : '📹❌'}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="sr-panel-tabs">
         {['chat', 'notes', 'whiteboard', 'members'].map(p => (
@@ -407,7 +583,7 @@ export default function CollaborativeStudyRooms() {
             {room.description && <p className="sr-card-desc">{room.description}</p>}
             <div className="sr-card-meta">
               <span>by {room.createdByName}</span>
-              <span>{new Date(room.lastActivity).toLocaleDateString()}</span>
+              <span>{room.lastActivity ? new Date(room.lastActivity).toLocaleDateString() : 'Just now'}</span>
             </div>
             <div className="sr-card-actions">
               {isMember(room)
