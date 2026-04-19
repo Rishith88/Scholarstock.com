@@ -39,15 +39,24 @@ export default function CollaborativeStudyRooms() {
   });
 
   const fetchRooms = async () => {
-    if (!token) return;
+    if (!token) {
+      console.log('No token available');
+      return;
+    }
     try {
-      const headers = getHeaders();
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      };
+      console.log('Fetching rooms with token:', token.substring(0, 20) + '...');
+      
       const [pubRes, myRes] = await Promise.all([
         fetch(`${API_URL}/api/study-rooms?search=${encodeURIComponent(search)}`, { headers }),
         fetch(`${API_URL}/api/study-rooms/my`, { headers }),
       ]);
       
       if (!pubRes.ok || !myRes.ok) {
+        console.log('Response status:', pubRes.status, myRes.status);
         if (pubRes.status === 401 || myRes.status === 401) {
           showToast('Session expired. Please log in again.', 'error');
         }
@@ -70,7 +79,11 @@ export default function CollaborativeStudyRooms() {
   const pollRoom = async () => {
     if (!activeRoom?._id || !token) return;
     try {
-      const res = await fetch(`${API_URL}/api/study-rooms/${activeRoom._id}`, { headers: getHeaders() });
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      };
+      const res = await fetch(`${API_URL}/api/study-rooms/${activeRoom._id}`, { headers });
       const data = await res.json();
       if (data.success) {
         setMessages(data.room.messages?.slice(-50) || []);
@@ -90,7 +103,11 @@ export default function CollaborativeStudyRooms() {
   const enterRoom = async (room) => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/study-rooms/${room._id}`, { headers: getHeaders() });
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      };
+      const res = await fetch(`${API_URL}/api/study-rooms/${room._id}`, { headers });
       const data = await res.json();
       if (data.success) {
         setActiveRoom(data.room);
@@ -109,9 +126,13 @@ export default function CollaborativeStudyRooms() {
     if (!createForm.name.trim()) return;
     setLoading(true);
     try {
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      };
       const res = await fetch(`${API_URL}/api/study-rooms`, { 
         method: 'POST', 
-        headers: getHeaders(), 
+        headers, 
         body: JSON.stringify(createForm) 
       });
       const data = await res.json();
@@ -131,9 +152,13 @@ export default function CollaborativeStudyRooms() {
     e.preventDefault();
     setLoading(true);
     try {
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      };
       const res = await fetch(`${API_URL}/api/study-rooms/join`, { 
         method: 'POST', 
-        headers: getHeaders(), 
+        headers, 
         body: JSON.stringify({ inviteCode: inviteCode.trim().toUpperCase() }) 
       });
       const data = await res.json();
@@ -152,9 +177,13 @@ export default function CollaborativeStudyRooms() {
   const joinRoom = async (room) => {
     setLoading(true);
     try {
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      };
       const res = await fetch(`${API_URL}/api/study-rooms/${room._id}/join`, { 
         method: 'POST', 
-        headers: getHeaders() 
+        headers 
       });
       const data = await res.json();
       if (data.success) await enterRoom(room);
@@ -172,9 +201,13 @@ export default function CollaborativeStudyRooms() {
     setChatInput('');
     setSendingMsg(true);
     try {
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      };
       const res = await fetch(`${API_URL}/api/study-rooms/${activeRoom._id}/message`, { 
         method: 'POST', 
-        headers: getHeaders(), 
+        headers, 
         body: JSON.stringify({ text }) 
       });
       const data = await res.json();
@@ -189,9 +222,13 @@ export default function CollaborativeStudyRooms() {
     notesTimer.current = setTimeout(async () => {
       setNotesSaving(true);
       try { 
+        const headers = {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        };
         await fetch(`${API_URL}/api/study-rooms/${activeRoom._id}/notes`, { 
           method: 'PUT', 
-          headers: getHeaders(), 
+          headers, 
           body: JSON.stringify({ notes: val }) 
         }); 
       } catch { /* silent */ }
@@ -201,9 +238,13 @@ export default function CollaborativeStudyRooms() {
 
   const leaveRoom = async () => {
     try { 
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      };
       await fetch(`${API_URL}/api/study-rooms/${activeRoom._id}/leave`, { 
         method: 'DELETE', 
-        headers: getHeaders() 
+        headers 
       }); 
     } catch { /* silent */ }
     clearInterval(pollRef.current);
