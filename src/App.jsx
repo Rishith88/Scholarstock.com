@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -86,7 +86,7 @@ function AppLayout() {
     });
   };
 
-  useState(() => {
+  useEffect(() => {
     const attachRipple = () => {
       document.querySelectorAll('.btn-grad,.nbtn-grad,.btn-ghost,.btn').forEach(btn => {
         if (!btn.dataset.ripple) {
