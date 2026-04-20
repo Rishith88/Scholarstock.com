@@ -110,6 +110,54 @@ export default function Sidebar({ open, onClose }) {
                 <button className="sidebar-item" onClick={() => go('/study-strategist')}>
                   <span className="sidebar-item-icon">🎯</span> AI Study Strategist
                 </button>
+                <button className="sidebar-item" onClick={() => go('/focus')}>
+                  <span className="sidebar-item-icon">✨</span> Focus Center
+                </button>
+              </div>
+
+              <div className="sidebar-section">
+                <div className="sidebar-label">AI Power Tools</div>
+                <button className="sidebar-item" onClick={() => go('/essay-scorer')}>
+                  <span className="sidebar-item-icon">📝</span> Essay Scorer
+                </button>
+                <button className="sidebar-item" onClick={() => go('/lecture-synthesis')}>
+                  <span className="sidebar-item-icon">🎙️</span> Podcast Generator
+                </button>
+                <button className="sidebar-item" onClick={() => go('/career-matcher')}>
+                  <span className="sidebar-item-icon">🎯</span> Career Matcher
+                </button>
+                <button className="sidebar-item" onClick={() => go('/vr-labs')}>
+                  <span className="sidebar-item-icon">🥽</span> VR Labs
+                </button>
+              </div>
+
+              <div className="sidebar-section">
+                <div className="sidebar-label">Community</div>
+                <button className="sidebar-item" onClick={() => go('/peer-tutoring')}>
+                  <span className="sidebar-item-icon">🤝</span> Peer Tutoring
+                </button>
+                <button className="sidebar-item" onClick={() => go('/alumni-network')}>
+                  <span className="sidebar-item-icon">🎓</span> Alumni Network
+                </button>
+                <button className="sidebar-item" onClick={() => go('/competitions')}>
+                  <span className="sidebar-item-icon">🏆</span> Competitions
+                </button>
+                <button className="sidebar-item" onClick={() => go('/freelance-market')}>
+                  <span className="sidebar-item-icon">💼</span> Freelance Market
+                </button>
+              </div>
+
+              <div className="sidebar-section">
+                <div className="sidebar-label">Lifestyle</div>
+                <button className="sidebar-item" onClick={() => go('/wellness-tracker')}>
+                  <span className="sidebar-item-icon">🧠</span> Wellness Tracker
+                </button>
+                <button className="sidebar-item" onClick={() => go('/scholar-rewards')}>
+                  <span className="sidebar-item-icon">🪙</span> Scholar Rewards
+                </button>
+                <button className="sidebar-item" onClick={() => go('/study-store')}>
+                  <span className="sidebar-item-icon">🏪</span> Study Store
+                </button>
               </div>
             </>
           )}

@@ -42,6 +42,18 @@ import DashboardPage from './pages/DashboardPage';
 import OfflinePage from './pages/OfflinePage';
 import OrganizePage from './pages/OrganizePage';
 import SettingsPage from './pages/SettingsPage';
+import FocusPage from './pages/FocusPage';
+import EssayScorerPage from './pages/EssayScorerPage';
+import CareerMatcherPage from './pages/CareerMatcherPage';
+import VRLabsPage from './pages/VRLabsPage';
+import PeerTutoringPage from './pages/PeerTutoringPage';
+import WellnessTrackerPage from './pages/WellnessTrackerPage';
+import ScholarRewardsPage from './pages/ScholarRewardsPage';
+import CompetitionsPage from './pages/CompetitionsPage';
+import FreelanceMarketPage from './pages/FreelanceMarketPage';
+import LectureSynthesisPage from './pages/LectureSynthesisPage';
+import AlumniNetworkPage from './pages/AlumniNetworkPage';
+import StudyStorePage from './pages/StudyStorePage';
 import { useKeyboardShortcuts, KeyboardShortcutsHelp } from './hooks/useKeyboardShortcuts';
 import { LanguageProvider } from './contexts/LanguageContext';
 
@@ -272,6 +284,18 @@ function AppLayout() {
           <Route path="/offline" element={<OfflinePage />} />
           <Route path="/organize" element={<OrganizePage />} />
           <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/focus" element={<FocusPage />} />
+          <Route path="/essay-scorer" element={<EssayScorerPage />} />
+          <Route path="/career-matcher" element={<CareerMatcherPage />} />
+          <Route path="/vr-labs" element={<VRLabsPage />} />
+          <Route path="/peer-tutoring" element={<PeerTutoringPage />} />
+          <Route path="/wellness-tracker" element={<WellnessTrackerPage />} />
+          <Route path="/scholar-rewards" element={<ScholarRewardsPage />} />
+          <Route path="/competitions" element={<CompetitionsPage />} />
+          <Route path="/freelance-market" element={<FreelanceMarketPage />} />
+          <Route path="/lecture-synthesis" element={<LectureSynthesisPage />} />
+          <Route path="/alumni-network" element={<AlumniNetworkPage />} />
+          <Route path="/study-store" element={<StudyStorePage />} />
           <Route path="*" element={
             <div className="sec" style={{ marginTop: '4rem', textAlign: 'center', padding: '5rem 2rem' }}>
               <div style={{ fontSize: '5rem', marginBottom: '1.5rem' }}>🧭</div>

@@ -1721,3 +1721,28 @@ button:focus,input:focus,select:focus,textarea:focus{outline:2px solid var(--blu
 .mb-2{margin-bottom:.5rem}
 .mb-3{margin-bottom:.75rem}
 .mb-4{margin-bottom:1rem}
+
+/* ── AI ENHANCEMENTS ── */
+.ai-loading-circle {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--gb);
+  border-top: 4px solid var(--blue);
+  border-radius: 50%;
+  animation: ss-spin 1s linear infinite;
+}
+
+@keyframes ss-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.ai-summary-content {
+  animation: ss-fade-up 0.5s ease-out;
+}
+
+@keyframes ss-fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
