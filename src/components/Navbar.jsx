@@ -37,6 +37,7 @@ export default function Navbar({ onOpenSidebar }) {
               <button className="cart-btn" onClick={() => { s('click'); navigate('/cart'); }} style={{ marginLeft: '.3rem' }}>
                 🛒 <span style={{ fontSize: '.75rem', fontWeight: 700 }}>{cartCount || ''}</span>
               </button>
+              <button className="nl" onClick={() => { s('nav'); navigate('/settings'); }} title="Settings">⚙️</button>
               <button className="nbtn nbtn-ghost" onClick={() => { s('click'); onOpenSidebar(); }}>
                 👤 {user?.name?.split(' ')[0]}
               </button>
