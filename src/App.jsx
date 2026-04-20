@@ -41,7 +41,9 @@ import FlashcardsPage from './pages/FlashcardsPage';
 import DashboardPage from './pages/DashboardPage';
 import OfflinePage from './pages/OfflinePage';
 import OrganizePage from './pages/OrganizePage';
+import SettingsPage from './pages/SettingsPage';
 import { useKeyboardShortcuts, KeyboardShortcutsHelp } from './hooks/useKeyboardShortcuts';
+import { LanguageProvider } from './contexts/LanguageContext';
 
 function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -269,6 +271,7 @@ function AppLayout() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/offline" element={<OfflinePage />} />
           <Route path="/organize" element={<OrganizePage />} />
+          <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={
             <div className="sec" style={{ marginTop: '4rem', textAlign: 'center', padding: '5rem 2rem' }}>
               <div style={{ fontSize: '5rem', marginBottom: '1.5rem' }}>🧭</div>
@@ -293,17 +296,19 @@ function AppLayout() {
 export default function App() {
   return (
     <Router>
-      <ThemeProvider>
-        <AuthProvider>
-          <CartProvider>
-            <DataProvider>
-              <ToastProvider>
-                <AppLayout />
-              </ToastProvider>
-            </DataProvider>
-          </CartProvider>
-        </AuthProvider>
-      </ThemeProvider>
+      <LanguageProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <CartProvider>
+              <DataProvider>
+                <ToastProvider>
+                  <AppLayout />
+                </ToastProvider>
+              </DataProvider>
+            </CartProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </LanguageProvider>
     </Router>
   );
 }
