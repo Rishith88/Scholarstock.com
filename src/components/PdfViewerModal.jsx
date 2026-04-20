@@ -7,23 +7,40 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
   
   const [doubtPanelOpen, setDoubtPanelOpen] = useState(false);
   const [doubtMessages, setDoubtMessages] = useState([
-    { role: 'ai', text: `≡ƒæï Hi! I'm your AI Doubt Solver. ≡ƒÄ» Select any question by drawing a circle around it, and I will give you full step-by-step explanation!` }
+    { role: 'ai', text: `Hi! I'm your AI Doubt Solver. Select any question by drawing a circle around it, and I will give you full step-by-step explanation!` }
   ]);
   const [doubtInput, setDoubtInput] = useState('');
   const [isDoubtLoading, setIsDoubtLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [zoom, setZoom] = useState(100);
   const messagesEndRef = useRef(null);
 
-  // ≡ƒÄ» CIRCLE SELECTION SYSTEM
+  // Circle selection system
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectionStart, setSelectionStart] = useState(null);
-  const [selectionEnd, setSelectionEnd] = useState(null);
-  const [selectedRegion, setSelectedRegion] = useState(null);
   const [isSelecting, setIsSelecting] = useState(false);
   const [processingSelection, setProcessingSelection] = useState(false);
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
+  const iframeRef = useRef(null);
 
-  // ≡ƒÄ» CIRCLE DOUBT SOLVER - CORE LOGIC
+  // Keyboard shortcuts
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'j' || e.key === 'J') { setCurrentPage(p => Math.min(p + 1, totalPages)); }
+      if (e.key === 'k' || e.key === 'K') { setCurrentPage(p => Math.max(p - 1, 1)); }
+      if (e.key === '+' || e.key === '=') { setZoom(z => Math.min(z + 10, 200)); }
+      if (e.key === '-') { setZoom(z => Math.max(z - 10, 50)); }
+      if (e.key === 'f' || e.key === 'F') { iframeRef.current?.requestFullscreen?.(); }
+      if (e.key === 'Escape') { onClose(); }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, totalPages, onClose]);
+
+  // Circle selection with touch support
   const handleMouseDown = useCallback((e) => {
     if (!selectionMode) return;
     const rect = containerRef.current.getBoundingClientRect();
@@ -31,21 +48,25 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
     setIsSelecting(true);
   }, [selectionMode]);
 
+  const handleTouchStart = useCallback((e) => {
+    if (!selectionMode) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const touch = e.touches[0];
+    setSelectionStart({ x: touch.clientX - rect.left, y: touch.clientY - rect.top });
+    setIsSelecting(true);
+  }, [selectionMode]);
+
   const handleMouseMove = useCallback((e) => {
     if (!isSelecting) return;
     const rect = containerRef.current.getBoundingClientRect();
-    setSelectionEnd({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+    const endX = e.clientX - rect.left;
+    const endY = e.clientY - rect.top;
     
     if (canvasRef.current && selectionStart) {
       const ctx = canvasRef.current.getContext('2d');
       ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
       
-      const radius = Math.sqrt(
-        Math.pow((e.clientX - rect.left) - selectionStart.x, 2) + 
-        Math.pow((e.clientY - rect.top) - selectionStart.y, 2)
-      );
-      
-      // Draw beautiful selection circle
+      const radius = Math.sqrt(Math.pow(endX - selectionStart.x, 2) + Math.pow(endY - selectionStart.y, 2));
       ctx.beginPath();
       ctx.arc(selectionStart.x, selectionStart.y, radius, 0, 2 * Math.PI);
       ctx.strokeStyle = '#3b82f6';
@@ -54,15 +75,31 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
       ctx.stroke();
       ctx.setLineDash([]);
       
-      // Fill with glow effect
-      const gradient = ctx.createRadialGradient(
-        selectionStart.x, selectionStart.y, 0,
-        selectionStart.x, selectionStart.y, radius
-      );
+      const gradient = ctx.createRadialGradient(selectionStart.x, selectionStart.y, 0, selectionStart.x, selectionStart.y, radius);
       gradient.addColorStop(0, 'rgba(59, 130, 246, 0.2)');
       gradient.addColorStop(1, 'rgba(59, 130, 246, 0.05)');
       ctx.fillStyle = gradient;
       ctx.fill();
+    }
+  }, [isSelecting, selectionStart]);
+
+  const handleTouchMove = useCallback((e) => {
+    if (!isSelecting) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const touch = e.touches[0];
+    const endX = touch.clientX - rect.left;
+    const endY = touch.clientY - rect.top;
+    
+    if (canvasRef.current && selectionStart) {
+      const ctx = canvasRef.current.getContext('2d');
+      ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+      
+      const radius = Math.sqrt(Math.pow(endX - selectionStart.x, 2) + Math.pow(endY - selectionStart.y, 2));
+      ctx.beginPath();
+      ctx.arc(selectionStart.x, selectionStart.y, radius, 0, 2 * Math.PI);
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 3;
+      ctx.stroke();
     }
   }, [isSelecting, selectionStart]);
 
@@ -74,62 +111,17 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
     const endX = e.clientX - rect.left;
     const endY = e.clientY - rect.top;
     
-    const radius = Math.sqrt(
-      Math.pow(endX - selectionStart.x, 2) + 
-      Math.pow(endY - selectionStart.y, 2)
-    );
+    const radius = Math.sqrt(Math.pow(endX - selectionStart.x, 2) + Math.pow(endY - selectionStart.y, 2));
     
     if (radius < 15) {
       setSelectionStart(null);
-      setSelectionEnd(null);
       return;
     }
 
-    setSelectedRegion({
-      x: selectionStart.x,
-      y: selectionStart.y,
-      radius,
-      width: rect.width,
-      height: rect.height
-    });
-    
     setProcessingSelection(true);
     
     try {
-      // Capture viewport
-      const captureCanvas = document.createElement('canvas');
-      captureCanvas.width = rect.width;
-      captureCanvas.height = rect.height;
-      const captureCtx = captureCanvas.getContext('2d');
-      
-      // Capture the region
-      const iframe = document.querySelector('iframe[title="PDF Viewer"]');
-      if (iframe) {
-        const iframeWin = iframe.contentWindow || iframe.contentDocument.defaultView;
-        captureCtx.drawWindow(iframeWin, 0, 0, rect.width, rect.height, 'rgb(255,255,255)');
-      }
-      
-      // Extract selected area
-      const regionCanvas = document.createElement('canvas');
-      const regionSize = Math.ceil(radius * 2);
-      regionCanvas.width = regionSize;
-      regionCanvas.height = regionSize;
-      const regionCtx = regionCanvas.getContext('2d');
-      
-      regionCtx.drawImage(
-        captureCanvas, 
-        Math.max(0, selectionStart.x - radius), 
-        Math.max(0, selectionStart.y - radius),
-        regionSize,
-        regionSize,
-        0,
-        0,
-        regionSize,
-        regionSize
-      );
-      
-      // Send to OCR
-      const blob = await new Promise(resolve => regionCanvas.toBlob(resolve, 'image/png'));
+      const blob = await new Promise(resolve => canvasRef.current.toBlob(resolve, 'image/png'));
       const formData = new FormData();
       formData.append('image', blob);
       formData.append('examCategory', examCategory);
@@ -137,9 +129,7 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
       
       const ocrResponse = await fetch(`${API_URL}/api/doubt/ocr`, {
         method: 'POST',
-        headers: {
-          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-        },
+        headers: { ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
         body: formData
       });
       
@@ -147,51 +137,26 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
       
       if (ocrData.success && ocrData.text) {
         setDoubtPanelOpen(true);
-        setDoubtMessages(prev => [
-          ...prev,
-          { 
-            role: 'user', 
-            text: `≡ƒô╖ Question selected:\n\n> ${ocrData.text.substring(0, 800)}${ocrData.text.length > 800 ? '...' : ''}` 
-          }
-        ]);
+        setDoubtMessages(prev => [...prev, { role: 'user', text: `Question selected:\n\n> ${ocrData.text.substring(0, 800)}` }]);
         
-        // Auto solve
         setIsDoubtLoading(true);
         const solveResponse = await fetch(`${API_URL}/api/doubt/solve`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-          },
-          body: JSON.stringify({
-            question: ocrData.text,
-            examCategory,
-            subcategory,
-            material: title
-          })
+          headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+          body: JSON.stringify({ question: ocrData.text, examCategory, subcategory, material: title })
         });
         
         const solveData = await solveResponse.json();
-        
         if (solveData.success && solveData.answer) {
           setDoubtMessages(prev => [...prev, { role: 'ai', parsed: solveData.answer }]);
-        } else {
-          setDoubtMessages(prev => [...prev, { 
-            role: 'error', 
-            text: 'Could not solve this question. Please try typing it.' 
-          }]);
         }
       }
-      
     } catch (err) {
       console.error('Selection error:', err);
     } finally {
       setProcessingSelection(false);
       setSelectionMode(false);
       setSelectionStart(null);
-      setSelectionEnd(null);
-      setSelectedRegion(null);
-      
       if (canvasRef.current) {
         const ctx = canvasRef.current.getContext('2d');
         ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
@@ -287,12 +252,21 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
       <div className="pdf-viewer on" onClick={(e) => e.target.className.includes('pdf-viewer') && onClose()}>
         <div className="pdf-container" onClick={e => e.stopPropagation()}>
           <div className="pdf-header">
-            <div style={{ fontWeight: 700, fontSize: '.9rem' }}>≡ƒôä {title}</div>
-            <div style={{ display: 'flex', gap: '.5rem' }}>
-              <button className="pdf-doubt-btn" style={{ color: '#fff', background: 'var(--blue)', border: 'none', borderRadius: '6px', padding: '.4rem .8rem', fontWeight: 700, cursor: 'pointer', fontSize: '.85rem' }} onClick={() => setDoubtPanelOpen(o => !o)}>
-                ≡ƒºá Ask Doubt
-              </button>
-              <button onClick={onClose}>Γ£ò</button>
+            <div style={{ fontWeight: 700, fontSize: '.9rem' }}>📄 {title}</div>
+            <div className="pdf-controls">
+              <div className="pdf-page-nav">
+                <button className="pdf-zoom-btn" onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} title="Previous page (K)">←</button>
+                <input type="number" className="pdf-page-input" value={currentPage} onChange={(e) => setCurrentPage(Math.max(1, Math.min(parseInt(e.target.value) || 1, totalPages)))} title="Go to page" />
+                <span style={{ fontSize: '.8rem', color: 'var(--muted)' }}>/ {totalPages || '?'}</span>
+                <button className="pdf-zoom-btn" onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))} title="Next page (J)">→</button>
+              </div>
+              <div className="pdf-zoom-controls">
+                <button className="pdf-zoom-btn" onClick={() => setZoom(z => Math.max(z - 10, 50))} title="Zoom out (-)">−</button>
+                <span style={{ fontSize: '.8rem', color: 'var(--muted)', minWidth: '40px', textAlign: 'center' }}>{zoom}%</span>
+                <button className="pdf-zoom-btn" onClick={() => setZoom(z => Math.min(z + 10, 200))} title="Zoom in (+)">+</button>
+              </div>
+              <button className="pdf-zoom-btn" onClick={() => iframeRef.current?.requestFullscreen?.()} title="Fullscreen (F)">⛶</button>
+              <button onClick={onClose} title="Close (Esc)">✕</button>
             </div>
           </div>
           
@@ -303,21 +277,25 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
               position: 'relative', 
               background: '#f8fafc', 
               height: 'calc(100vh - 120px)',
-              cursor: selectionMode ? 'crosshair' : 'default'
+              cursor: selectionMode ? 'crosshair' : 'default',
+              overflow: 'auto'
             }}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={() => setIsSelecting(false)}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleMouseUp}
           >
              <iframe 
-               src={`${API_URL}/api/materials/${materialId}/stream?token=${token}#toolbar=0&navpanes=0&scrollbar=1&disabletoolbar=1`}
-               style={{ width: '100%', height: '100%', border: 'none', pointerEvents: selectionMode ? 'none' : 'auto' }}
+               ref={iframeRef}
+               src={`${API_URL}/api/materials/${materialId}/stream?token=${token}#toolbar=0&navpanes=0&scrollbar=1&disabletoolbar=1&page=${currentPage}`}
+               style={{ width: '100%', height: '100%', border: 'none', pointerEvents: selectionMode ? 'none' : 'auto', transform: `scale(${zoom/100})`, transformOrigin: 'top left' }}
                title="PDF Viewer"
                onContextMenu={(e) => e.preventDefault()}
              />
             
-            {/* Selection Canvas Overlay */}
             <canvas 
               ref={canvasRef}
               style={{ 
@@ -331,7 +309,6 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
               }}
             />
             
-            {/* ≡ƒÄ» SELECTION MODE BUTTON */}
             <button 
               onClick={() => {
                 setSelectionMode(!selectionMode);
@@ -359,11 +336,11 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
                 animation: selectionMode ? 'pulse 1s infinite' : 'none'
               }}
               disabled={processingSelection}
+              title="Circle a question to get help"
             >
-              {processingSelection ? '≡ƒöì Analyzing...' : selectionMode ? 'Γ£à Selecting' : '≡ƒÄ» Circle Question'}
+              {processingSelection ? '⏳ Analyzing...' : selectionMode ? '✓ Selecting' : '⭕ Circle Question'}
             </button>
             
-            {/* Overlay button to ask doubt */}
             <button 
               onClick={() => setDoubtPanelOpen(true)}
               style={{ 
@@ -383,8 +360,9 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
                 gap: '0.5rem',
                 zIndex: 10
               }}
+              title="Ask a doubt"
             >
-              ≡ƒºá Ask Doubt
+              ❓ Ask Doubt
             </button>
           </div>
         </div>
@@ -393,16 +371,16 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
       {/* AI Doubt Solver Panel */}
       <div className={`doubt-overlay ${doubtPanelOpen ? 'open' : ''}`} onClick={() => setDoubtPanelOpen(false)} style={{ zIndex: 10000 }} />
       <div className={`doubt-panel ${doubtPanelOpen ? 'open' : ''}`} style={{ zIndex: 10001 }}>
-        <div className="doubt-context-bar">≡ƒôÜ {examCategory} ΓÇó {subcategory}</div>
+        <div className="doubt-context-bar">📚 {examCategory} • {subcategory}</div>
         <div className="doubt-panel-header">
-          <h3>≡ƒºá AI Doubt Solver</h3>
-          <button style={{ background: 'transparent', border: 'none', color: 'var(--muted)', fontSize: '1.2rem', cursor: 'pointer' }} onClick={() => setDoubtPanelOpen(false)}>Γ£ò</button>
+          <h3>❓ AI Doubt Solver</h3>
+          <button style={{ background: 'transparent', border: 'none', color: 'var(--muted)', fontSize: '1.2rem', cursor: 'pointer' }} onClick={() => setDoubtPanelOpen(false)}>✕</button>
         </div>
         
         <div className="doubt-messages">
           {doubtMessages.map((msg, i) => (
             <div key={i} className={`doubt-msg ${msg.role === 'user' ? 'user' : 'ai'}`}>
-              {msg.role === 'error' ? <div style={{ color: 'var(--red)' }}>ΓÜá∩╕Å {msg.text}</div> : msg.parsed ? renderAiMessage(msg.parsed) : msg.text}
+              {msg.role === 'error' ? <div style={{ color: 'var(--red)' }}>⚠️ {msg.text}</div> : msg.parsed ? renderAiMessage(msg.parsed) : msg.text}
             </div>
           ))}
           {isDoubtLoading && (
@@ -414,23 +392,21 @@ export default function PdfViewerModal({ isOpen, onClose, materialId, title, sub
         </div>
         
         <div className="doubt-input-area">
-          <div className="doubt-input-row" style={{ display: 'flex', gap: '.5rem' }}>
-            <input 
-              style={{ flex: 1, background: 'rgba(255,255,255,.05)', border: '1px solid var(--gb)', borderRadius: '8px', padding: '.7rem 1rem', color: '#fff', outline: 'none' }}
-              value={doubtInput}
-              onChange={e => setDoubtInput(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && sendDoubt()}
-              placeholder="Ask a doubt about this PDF..."
-              disabled={isDoubtLoading}
-            />
-            <button 
-              style={{ background: 'var(--blue)', border: 'none', color: '#fff', padding: '0 1rem', borderRadius: '8px', cursor: 'pointer', fontWeight: 700 }}
-              onClick={sendDoubt}
-              disabled={isDoubtLoading}
-            >
-              Γ₧ñ
-            </button>
-          </div>
+          <input 
+            style={{ flex: 1, background: 'rgba(255,255,255,.05)', border: '1px solid var(--gb)', borderRadius: '8px', padding: '.7rem 1rem', color: '#fff', outline: 'none' }}
+            value={doubtInput}
+            onChange={e => setDoubtInput(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && sendDoubt()}
+            placeholder="Ask a doubt about this PDF..."
+            disabled={isDoubtLoading}
+          />
+          <button 
+            style={{ background: 'var(--blue)', border: 'none', color: '#fff', padding: '0 1rem', borderRadius: '8px', cursor: 'pointer', fontWeight: 700 }}
+            onClick={sendDoubt}
+            disabled={isDoubtLoading}
+          >
+            ➤
+          </button>
         </div>
       </div>
     </>

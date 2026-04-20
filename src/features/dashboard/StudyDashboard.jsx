@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import API_URL from '../../config';
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, LineChart, Line } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
 
 const DEFAULT_WIDGETS = [
   { id: 'stats', title: '📊 Study Stats', enabled: true },
@@ -18,6 +18,27 @@ const MOCK_WEEKLY = [
   { day: 'Thu', hours: 0.5 }, { day: 'Fri', hours: 2.1 }, { day: 'Sat', hours: 4.0 }, { day: 'Sun', hours: 1.5 },
 ];
 
+// Toast notification system
+const showToast = (message, type = 'info') => {
+  const container = document.querySelector('.toast-container') || (() => {
+    const div = document.createElement('div');
+    div.className = 'toast-container';
+    document.body.appendChild(div);
+    return div;
+  })();
+  
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<span class="toast-icon">${type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ'}</span><span>${message}</span>`;
+  container.appendChild(toast);
+  
+  setTimeout(() => toast.classList.add('on'), 10);
+  setTimeout(() => {
+    toast.classList.remove('on');
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+};
+
 export default function StudyDashboard() {
   const { user, token } = useAuth();
   const navigate = useNavigate();
@@ -25,26 +46,30 @@ export default function StudyDashboard() {
     try { return JSON.parse(localStorage.getItem('ss_dashboard_widgets')) || DEFAULT_WIDGETS; }
     catch { return DEFAULT_WIDGETS; }
   });
+  const [widgetOrder, setWidgetOrder] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('ss_dashboard_order')) || DEFAULT_WIDGETS.map(w => w.id); }
+    catch { return DEFAULT_WIDGETS.map(w => w.id); }
+  });
   const [editing, setEditing] = useState(false);
   const [stats, setStats] = useState({ totalCards: 0, dueCards: 0, totalReviews: 0, accuracy: 0 });
   const [recentMaterials, setRecentMaterials] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [streak, setStreak] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState({});
 
   const authH = useCallback(() => ({ Authorization: `Bearer ${token}` }), [token]);
 
   useEffect(() => {
     if (!token) { setLoading(false); return; }
     Promise.all([
-      fetch(`${API_URL}/api/flashcards/stats`, { headers: authH() }).then(r => r.json()).catch(() => ({})),
-      fetch(`${API_URL}/api/materials?limit=5`, { headers: authH() }).then(r => r.json()).catch(() => ({})),
-      fetch(`${API_URL}/api/tasks?limit=5`, { headers: authH() }).then(r => r.json()).catch(() => ({})),
+      fetch(`${API_URL}/api/flashcards/stats`, { headers: authH() }).then(r => r.json()).catch(e => { setErrors(prev => ({...prev, stats: e.message})); return {}; }),
+      fetch(`${API_URL}/api/materials?limit=5`, { headers: authH() }).then(r => r.json()).catch(e => { setErrors(prev => ({...prev, materials: e.message})); return {}; }),
+      fetch(`${API_URL}/api/tasks?limit=5`, { headers: authH() }).then(r => r.json()).catch(e => { setErrors(prev => ({...prev, tasks: e.message})); return {}; }),
     ]).then(([sData, mData, tData]) => {
       if (sData.success) setStats(sData.stats);
       if (mData.success) setRecentMaterials(mData.materials?.slice(0, 5) || []);
       if (tData.success) setTasks(tData.tasks?.slice(0, 5) || []);
-      // Calculate streak from localStorage
       const lastStudy = localStorage.getItem('ss_last_study');
       if (lastStudy) {
         const diff = Math.floor((Date.now() - parseInt(lastStudy)) / 86400000);
@@ -57,12 +82,42 @@ export default function StudyDashboard() {
     const updated = widgets.map(w => w.id === id ? { ...w, enabled: !w.enabled } : w);
     setWidgets(updated);
     localStorage.setItem('ss_dashboard_widgets', JSON.stringify(updated));
+    showToast(`Widget ${updated.find(w => w.id === id).enabled ? 'enabled' : 'disabled'}`, 'success');
   };
 
-  const enabledWidgets = widgets.filter(w => w.enabled);
+  const saveLayout = () => {
+    localStorage.setItem('ss_dashboard_widgets', JSON.stringify(widgets));
+    localStorage.setItem('ss_dashboard_order', JSON.stringify(widgetOrder));
+    setEditing(false);
+    showToast('Dashboard layout saved', 'success');
+  };
+
+  const enabledWidgets = widgets.filter(w => w.enabled).sort((a, b) => widgetOrder.indexOf(a.id) - widgetOrder.indexOf(b.id));
 
   if (!token) return (
-    <div className="dash-empty"><div style={{ fontSize: '3rem' }}>🔒</div><h3>Login to view your dashboard</h3></div>
+    <div className="dash-wrap">
+      <div style={{ textAlign: 'center', padding: '4rem 2rem', color: 'var(--muted)' }}>
+        <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔒</div>
+        <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '.5rem' }}>Login to view your dashboard</h3>
+        <button onClick={() => navigate('/login')} style={{ background: 'linear-gradient(135deg,var(--blue),var(--purple))', border: 'none', color: '#fff', padding: '.6rem 1.4rem', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, marginTop: '1rem' }}>
+          Login Now
+        </button>
+      </div>
+    </div>
+  );
+
+  if (loading) return (
+    <div className="dash-wrap">
+      <div className="dash-header">
+        <div>
+          <div className="skeleton skeleton-text" style={{ width: '200px' }}></div>
+          <div className="skeleton skeleton-text" style={{ width: '300px', marginTop: '.5rem' }}></div>
+        </div>
+      </div>
+      <div className="dash-grid">
+        {[1,2,3,4,5,6].map(i => <div key={i} className="skeleton skeleton-widget"></div>)}
+      </div>
+    </div>
   );
 
   return (
@@ -72,7 +127,7 @@ export default function StudyDashboard() {
           <h2 className="dash-title">📊 Study Dashboard</h2>
           <p className="dash-sub">Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 17 ? 'afternoon' : 'evening'}, {user?.name?.split(' ')[0]}! Here's your study overview.</p>
         </div>
-        <button className={`dash-edit-btn ${editing ? 'active' : ''}`} onClick={() => setEditing(e => !e)}>
+        <button className={`dash-edit-btn ${editing ? 'active' : ''}`} onClick={() => setEditing(e => !e)} title="Customize dashboard">
           {editing ? '✓ Done' : '⚙ Customize'}
         </button>
       </div>
@@ -83,11 +138,14 @@ export default function StudyDashboard() {
           <div style={{ fontSize: '.82rem', color: 'var(--muted)', marginBottom: '.8rem', fontWeight: 600 }}>Toggle widgets on/off:</div>
           <div className="dash-widget-toggles">
             {widgets.map(w => (
-              <button key={w.id} className={`dash-widget-toggle ${w.enabled ? 'on' : ''}`} onClick={() => toggleWidget(w.id)}>
+              <button key={w.id} className={`dash-widget-toggle ${w.enabled ? 'on' : ''}`} onClick={() => toggleWidget(w.id)} title={`${w.enabled ? 'Hide' : 'Show'} ${w.title}`}>
                 {w.enabled ? '✓' : '+'} {w.title}
               </button>
             ))}
           </div>
+          <button onClick={saveLayout} style={{ marginTop: '1rem', background: 'linear-gradient(135deg,var(--green),var(--cyan))', border: 'none', color: '#fff', padding: '.6rem 1.4rem', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, width: '100%' }}>
+            Save Layout
+          </button>
         </div>
       )}
 
