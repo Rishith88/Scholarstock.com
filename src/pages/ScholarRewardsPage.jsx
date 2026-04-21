@@ -1,62 +1,128 @@
-import { useState } from 'react';
-
-const REWARDS_CATALOG = [
-  { id: 1, name: 'Dark Hacker Theme', cost: 500, category: 'Themes', icon: '🎨', description: 'Unlock the exclusive matrix-inspired dark theme for your dashboard.', rarity: 'Rare' },
-  { id: 2, name: 'Neon Gradient Pack', cost: 750, category: 'Themes', icon: '🌈', description: 'A collection of 5 vibrant neon gradient backgrounds.', rarity: 'Epic' },
-  { id: 3, name: 'ScholarStock Hoodie', cost: 2000, category: 'Merch', icon: '👕', description: 'Premium quality hoodie with embroidered ScholarStock logo.', rarity: 'Legendary' },
-  { id: 4, name: 'Amazon ₹500 Gift Card', cost: 5000, category: 'Gift Cards', icon: '🎁', description: 'Redeem for an Amazon India gift card worth ₹500.', rarity: 'Legendary' },
-  { id: 5, name: 'Custom Avatar Frame', cost: 300, category: 'Customization', icon: '🖼️', description: 'Animated glowing frame around your profile picture.', rarity: 'Common' },
-  { id: 6, name: 'Study Streak Badge', cost: 150, category: 'Badges', icon: '🔥', description: 'Display a fire badge next to your name in study rooms.', rarity: 'Common' },
-  { id: 7, name: 'Top Scholar Title', cost: 1000, category: 'Badges', icon: '👑', description: 'Exclusive "Top Scholar" title visible on your profile.', rarity: 'Epic' },
-  { id: 8, name: 'Sticker Pack (Digital)', cost: 200, category: 'Customization', icon: '✨', description: '25 animated stickers for study room chat.', rarity: 'Common' },
-  { id: 9, name: 'Premium Note Templates', cost: 400, category: 'Tools', icon: '📝', description: 'Unlock 10 beautifully designed note-taking templates.', rarity: 'Rare' },
-  { id: 10, name: 'Spotify ₹300 Gift Card', cost: 3000, category: 'Gift Cards', icon: '🎵', description: 'Spotify Premium gift card for uninterrupted study music.', rarity: 'Epic' },
-];
-
-const EARN_METHODS = [
-  { action: 'Upload study notes', coins: '+50', icon: '📤', frequency: 'Per upload' },
-  { action: 'Complete a quiz', coins: '+25', icon: '📝', frequency: 'Per quiz' },
-  { action: 'Daily login streak', coins: '+10', icon: '🔥', frequency: 'Daily' },
-  { action: 'Help a peer (tutoring)', coins: '+75', icon: '🤝', frequency: 'Per session' },
-  { action: 'Complete a VR Lab', coins: '+40', icon: '🧪', frequency: 'Per lab' },
-  { action: 'Write a review', coins: '+15', icon: '⭐', frequency: 'Per review' },
-  { action: 'Refer a friend', coins: '+200', icon: '👥', frequency: 'Per referral' },
-  { action: '7-day study streak', coins: '+100', icon: '🏆', frequency: 'Weekly bonus' },
-];
-
-const LEADERBOARD = [
-  { rank: 1, name: 'Ananya K.', coins: 12400, avatar: '👩‍🎓', badge: '👑' },
-  { rank: 2, name: 'Rohan M.', coins: 11200, avatar: '👨‍💻', badge: '🥈' },
-  { rank: 3, name: 'Sneha P.', coins: 10800, avatar: '👩‍🔬', badge: '🥉' },
-  { rank: 4, name: 'Arjun S.', coins: 9600, avatar: '👨‍🎓', badge: '' },
-  { rank: 5, name: 'Kavya R.', coins: 8900, avatar: '👩‍💼', badge: '' },
-  { rank: 6, name: 'You', coins: 2450, avatar: '😎', badge: '⭐' },
-];
-
-const RECENT_ACTIVITY = [
-  { action: 'Uploaded Calculus Notes', coins: '+50', time: '2 hrs ago', icon: '📤' },
-  { action: 'Completed Physics Quiz', coins: '+25', time: '5 hrs ago', icon: '📝' },
-  { action: 'Daily Login Bonus', coins: '+10', time: 'Today', icon: '🔥' },
-  { action: 'Helped peer in Study Room', coins: '+75', time: 'Yesterday', icon: '🤝' },
-  { action: '7-day Streak Bonus!', coins: '+100', time: '2 days ago', icon: '🏆' },
-];
+import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import API_URL from '../config';
 
 export default function ScholarRewardsPage() {
+  const { token } = useAuth();
   const [tab, setTab] = useState('shop');
   const [filterCat, setFilterCat] = useState('All');
-  const [userCoins, setUserCoins] = useState(2450);
+  const [userCoins, setUserCoins] = useState(0);
+  const [stats, setStats] = useState({ totalEarned: 0, totalSpent: 0, streakDays: 0, weeklyEarned: 0 });
+  const [history, setHistory] = useState([]);
+  const [leaderboard, setLeaderboard] = useState([]);
   const [purchased, setPurchased] = useState([]);
   const [showConfirm, setShowConfirm] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [rewards, setRewards] = useState([]);
+  const [earnMethods, setEarnMethods] = useState([]);
 
   const categories = ['All', 'Themes', 'Merch', 'Gift Cards', 'Customization', 'Badges', 'Tools'];
-  const filtered = filterCat === 'All' ? REWARDS_CATALOG : REWARDS_CATALOG.filter(r => r.category === filterCat);
+  const filtered = filterCat === 'All' ? rewards : rewards.filter(r => r.category === filterCat);
 
-  const handlePurchase = (item) => {
-    if (userCoins >= item.cost && !purchased.includes(item.id)) {
-      setUserCoins(c => c - item.cost);
-      setPurchased(p => [...p, item.id]);
-      setShowConfirm(null);
-      if(window.ssSound) window.ssSound('success');
+  useEffect(() => {
+    if (token) {
+      fetchData();
+      fetchRewards();
+      fetchEarnMethods();
+      claimDaily();
+    }
+  }, [token]);
+
+  const fetchRewards = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/scholar-coins/rewards`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setRewards(data.rewards || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch rewards:', err);
+      setRewards([]);
+    }
+  };
+
+  const fetchEarnMethods = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/scholar-coins/earn-methods`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setEarnMethods(data.methods || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch earn methods:', err);
+      setEarnMethods([]);
+    }
+  };
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const [balRes, actRes, leadRes] = await Promise.all([
+        fetch(`${API_URL}/api/scholar-coins/balance`, { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch(`${API_URL}/api/scholar-coins/activity`, { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch(`${API_URL}/api/scholar-coins/leaderboard`, { headers: { 'Authorization': `Bearer ${token}` } })
+      ]);
+
+      const balData = await balRes.json();
+      const actData = await actRes.json();
+      const leadData = await leadRes.json();
+
+      if (balData.success) {
+        setUserCoins(balData.balance);
+        setStats({
+          totalEarned: balData.totalEarned,
+          totalSpent: balData.totalSpent,
+          streakDays: balData.streakDays,
+          weeklyEarned: balData.weeklyEarned
+        });
+        setPurchased(balData.purchasedItems || []);
+      }
+      if (actData.success) setHistory(actData.transactions);
+      if (leadData.success) setLeaderboard(leadData.leaderboard);
+    } catch (err) {
+      console.error('Failed to fetch rewards data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const claimDaily = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/scholar-coins/daily-login`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success && data.bonus > 0) {
+        if(window.ssSound) window.ssSound('success');
+        fetchData();
+      }
+    } catch (err) { /* ignore */ }
+  };
+
+  const handlePurchase = async (item) => {
+    if (userCoins < item.cost) return;
+    try {
+      const res = await fetch(`${API_URL}/api/scholar-coins/spend`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ itemId: item.id, itemName: item.name, cost: item.cost })
+      });
+      const data = await res.json();
+      if (data.success) {
+        if(window.ssSound) window.ssSound('success');
+        fetchData();
+        setShowConfirm(null);
+      }
+    } catch (err) {
+      console.error('Redemption failed:', err);
     }
   };
 
@@ -78,19 +144,19 @@ export default function ScholarRewardsPage() {
         </div>
         <div style={{ display: 'flex', gap: '1rem' }}>
           <div style={{ textAlign: 'center', padding: '1rem 1.5rem', background: 'rgba(255,255,255,.05)', borderRadius: '14px' }}>
-            <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--green)' }}>+260</div>
+            <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--green)' }}>+{stats.weeklyEarned}</div>
             <div style={{ fontSize: '.68rem', color: 'var(--muted)' }}>This Week</div>
           </div>
           <div style={{ textAlign: 'center', padding: '1rem 1.5rem', background: 'rgba(255,255,255,.05)', borderRadius: '14px' }}>
-            <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--blue2)' }}>#42</div>
-            <div style={{ fontSize: '.68rem', color: 'var(--muted)' }}>Rank</div>
+            <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--blue2)' }}>{stats.streakDays}d</div>
+            <div style={{ fontSize: '.68rem', color: 'var(--muted)' }}>Streak</div>
           </div>
         </div>
       </div>
 
       {/* Tabs */}
       <div style={{ display: 'flex', gap: '.5rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
-        {[{ id: 'shop', icon: '🛍️', label: 'Rewards Shop' }, { id: 'earn', icon: '💰', label: 'Earn Coins' }, { id: 'leaderboard', icon: '🏆', label: 'Leaderboard' }, { id: 'activity', icon: '📜', label: 'Activity' }].map(t => (
+        {[{ id: 'shop', icon: '🛍️', label: 'Rewards Shop' }, { id: 'earn', icon: '💰', label: 'Earn Coins' }, { id: 'leaderboard', icon: '🏆', label: 'Leaderboard' }, { id: 'history', icon: '📜', label: 'Activity' }].map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
             style={{ padding: '.6rem 1.2rem', borderRadius: '8px', border: 'none', fontWeight: 700, fontFamily: 'inherit', cursor: 'pointer', background: tab === t.id ? 'linear-gradient(135deg,var(--gold),var(--purple))' : 'var(--glass)', color: tab === t.id ? '#fff' : 'var(--muted)', fontSize: '.85rem', transition: 'all .3s' }}>
             {t.icon} {t.label}
@@ -153,10 +219,10 @@ export default function ScholarRewardsPage() {
       {/* Leaderboard */}
       {tab === 'leaderboard' && (
         <div className="glass" style={{ padding: '1.5rem', borderRadius: '16px', maxWidth: '600px' }}>
-          {LEADERBOARD.map((u, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', borderRadius: '10px', background: u.name === 'You' ? 'rgba(59,130,246,.1)' : 'transparent', border: u.name === 'You' ? '1px solid rgba(59,130,246,.3)' : '1px solid transparent', marginBottom: '.5rem' }}>
-              <div style={{ fontSize: '1.1rem', fontWeight: 900, color: u.rank <= 3 ? 'var(--gold)' : 'var(--muted)', width: '30px', textAlign: 'center' }}>{u.badge || `#${u.rank}`}</div>
-              <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--blue), var(--purple))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>{u.avatar}</div>
+          {leaderboard.map((u, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', borderRadius: '10px', background: u.isYou ? 'rgba(59,130,246,.1)' : 'transparent', border: u.isYou ? '1px solid rgba(59,130,246,.3)' : '1px solid transparent', marginBottom: '.5rem' }}>
+              <div style={{ fontSize: '1.1rem', fontWeight: 900, color: u.rank <= 3 ? 'var(--gold)' : 'var(--muted)', width: '30px', textAlign: 'center' }}>{u.rank <= 3 ? ['🥇', '🥈', '🥉'][u.rank-1] : `#${u.rank}`}</div>
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--blue), var(--purple))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', color: '#fff' }}>👤</div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontWeight: 700, fontSize: '.9rem' }}>{u.name}</div>
               </div>
@@ -166,17 +232,19 @@ export default function ScholarRewardsPage() {
         </div>
       )}
 
-      {/* Activity */}
-      {tab === 'activity' && (
+      {/* History */}
+      {tab === 'history' && (
         <div style={{ maxWidth: '600px' }}>
-          {RECENT_ACTIVITY.map((a, i) => (
+          {history.map((a, i) => (
             <div key={i} className="glass" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem 1.2rem', borderRadius: '10px', marginBottom: '.5rem' }}>
               <div style={{ fontSize: '1.5rem' }}>{a.icon}</div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontWeight: 600, fontSize: '.88rem' }}>{a.action}</div>
-                <div style={{ fontSize: '.72rem', color: 'var(--muted)' }}>{a.time}</div>
+                <div style={{ fontSize: '.72rem', color: 'var(--muted)' }}>{new Date(a.createdAt).toLocaleDateString()}</div>
               </div>
-              <div style={{ fontWeight: 800, color: 'var(--green)', fontSize: '.95rem' }}>{a.coins}</div>
+              <div style={{ fontWeight: 800, color: a.type === 'earn' ? 'var(--green)' : 'var(--red)', fontSize: '.95rem' }}>
+                {a.type === 'earn' ? '+' : '-'}{a.amount}
+              </div>
             </div>
           ))}
         </div>

@@ -1,24 +1,50 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import API_URL from '../../config';
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
 
-const UNIVERSITIES = [
-  { id: 1, name: 'IIT Bombay', code: 'IITB', domain: 'iitb.ac.in', students: 1420, materials: 892, revenue: '₹1,24,500', verified: true, rating: 4.9 },
-  { id: 2, name: 'IIT Delhi', code: 'IITD', domain: 'iitd.ac.in', students: 1105, materials: 756, revenue: '₹98,200', verified: true, rating: 4.8 },
-  { id: 3, name: 'BITS Pilani', code: 'BITS', domain: 'bits-pilani.ac.in', students: 890, materials: 621, revenue: '₹76,500', verified: true, rating: 4.7 },
-  { id: 4, name: 'NIT Trichy', code: 'NITT', domain: 'nitt.edu', students: 712, materials: 543, revenue: '₹62,100', verified: false, rating: 4.6 },
-  { id: 5, name: 'Delhi University', code: 'DU', domain: 'du.ac.in', students: 645, materials: 489, revenue: '₹58,900', verified: true, rating: 4.8 },
-];
-
-const CHART_DATA = UNIVERSITIES.map(u => ({ name: u.code, value: parseInt(u.revenue.replace(/[₹,]/g, '')) }));
-
 export default function UniversityMarketplace() {
+  const { token } = useAuth();
   const [activeTab, setActiveTab] = useState('universities');
   const [search, setSearch] = useState('');
+  const [universities, setUniversities] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const filtered = UNIVERSITIES.filter(u =>
+  useEffect(() => {
+    if (token) {
+      fetchUniversities();
+    }
+  }, [token]);
+
+  const fetchUniversities = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_URL}/api/universities`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setUniversities(data.universities || []);
+      } else {
+        setUniversities([]);
+      }
+    } catch (err) {
+      console.error('Failed to fetch universities:', err);
+      setUniversities([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filtered = universities.filter(u =>
     u.name.toLowerCase().includes(search.toLowerCase()) ||
     u.code.toLowerCase().includes(search.toLowerCase())
   );
+
+  const CHART_DATA = universities.map(u => ({ 
+    name: u.code, 
+    value: typeof u.revenue === 'string' ? parseInt(u.revenue.replace(/[₹,]/g, '')) : u.revenue 
+  }));
 
   return (
     <div className="ump-wrap">
@@ -34,10 +60,10 @@ export default function UniversityMarketplace() {
       {/* Stats */}
       <div className="ump-stats-grid">
         {[
-          { label: 'Universities', value: '127', icon: '🏛️', color: 'var(--blue)' },
-          { label: 'Active Students', value: '18,420', icon: '👥', color: 'var(--green)' },
-          { label: 'Total Materials', value: '24,981', icon: '📄', color: 'var(--gold)' },
-          { label: 'Total Payouts', value: '₹15.6L', icon: '💰', color: 'var(--purple)' },
+          { label: 'Universities', value: universities.length.toString(), icon: '🏛️', color: 'var(--blue)' },
+          { label: 'Active Students', value: universities.reduce((sum, u) => sum + (u.students || 0), 0).toLocaleString(), icon: '👥', color: 'var(--green)' },
+          { label: 'Total Materials', value: universities.reduce((sum, u) => sum + (u.materials || 0), 0).toLocaleString(), icon: '📄', color: 'var(--gold)' },
+          { label: 'Total Payouts', value: universities.reduce((sum, u) => sum + (typeof u.revenue === 'string' ? parseInt(u.revenue.replace(/[₹,]/g, '')) : u.revenue || 0), 0).toLocaleString('en-IN', { style: 'currency', currency: 'INR' }), icon: '💰', color: 'var(--purple)' },
         ].map((s, i) => (
           <div key={i} className="ump-stat-card">
             <div className="ump-stat-icon" style={{ color: s.color }}>{s.icon}</div>
@@ -59,43 +85,55 @@ export default function UniversityMarketplace() {
 
       {activeTab === 'universities' && (
         <div className="ump-list">
-          {filtered.map(uni => (
-            <div key={uni.id} className="ump-uni-card">
-              <div className="ump-uni-avatar">{uni.code}</div>
-              <div className="ump-uni-info">
-                <div className="ump-uni-name">
-                  {uni.name}
-                  {uni.verified && <span className="ump-verified-badge">✓ Verified</span>}
-                  <span className="ump-rating">⭐ {uni.rating}</span>
-                </div>
-                <div className="ump-uni-domain">@{uni.domain}</div>
-                <div className="ump-uni-meta">
-                  <span>👥 {uni.students.toLocaleString()} students</span>
-                  <span>📄 {uni.materials.toLocaleString()} materials</span>
-                  <span>💰 {uni.revenue} revenue</span>
-                </div>
-              </div>
-              <button className="ump-view-btn">View →</button>
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--muted)' }}>Loading universities...</div>
+          ) : filtered.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--muted)' }}>
+              {universities.length === 0 ? 'No universities added yet. Be the first to add your university!' : 'No universities match your search.'}
             </div>
-          ))}
+          ) : (
+            filtered.map(uni => (
+              <div key={uni.id} className="ump-uni-card">
+                <div className="ump-uni-avatar">{uni.code}</div>
+                <div className="ump-uni-info">
+                  <div className="ump-uni-name">
+                    {uni.name}
+                    {uni.verified && <span className="ump-verified-badge">✓ Verified</span>}
+                    <span className="ump-rating">⭐ {uni.rating}</span>
+                  </div>
+                  <div className="ump-uni-domain">@{uni.domain}</div>
+                  <div className="ump-uni-meta">
+                    <span>👥 {(uni.students || 0).toLocaleString()} students</span>
+                    <span>📄 {(uni.materials || 0).toLocaleString()} materials</span>
+                    <span>💰 {typeof uni.revenue === 'string' ? uni.revenue : `₹${uni.revenue || 0}`} revenue</span>
+                  </div>
+                </div>
+                <button className="ump-view-btn">View →</button>
+              </div>
+            ))
+          )}
         </div>
       )}
 
       {activeTab === 'analytics' && (
         <div className="ump-analytics">
-          <div className="ump-chart-card">
-            <h3 className="ump-chart-title">Top Earning Universities</h3>
-            <div style={{ height: 300 }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={CHART_DATA} layout="vertical">
-                  <XAxis type="number" stroke="rgba(255,255,255,0.3)" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} />
-                  <YAxis type="category" dataKey="name" stroke="rgba(255,255,255,0.3)" tick={{ fill: 'rgba(255,255,255,0.6)', fontSize: 12 }} width={60} />
-                  <Tooltip contentStyle={{ background: '#1e293b', border: 'none', borderRadius: 8, color: '#fff' }} cursor={{ fill: 'rgba(139,92,246,0.1)' }} />
-                  <Bar dataKey="value" fill="#8b5cf6" radius={[0, 4, 4, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
+          {universities.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--muted)' }}>No data to display. Add universities to see analytics.</div>
+          ) : (
+            <div className="ump-chart-card">
+              <h3 className="ump-chart-title">Top Earning Universities</h3>
+              <div style={{ height: 300 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={CHART_DATA} layout="vertical">
+                    <XAxis type="number" stroke="rgba(255,255,255,0.3)" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }} />
+                    <YAxis type="category" dataKey="name" stroke="rgba(255,255,255,0.3)" tick={{ fill: 'rgba(255,255,255,0.6)', fontSize: 12 }} width={60} />
+                    <Tooltip contentStyle={{ background: '#1e293b', border: 'none', borderRadius: 8, color: '#fff' }} cursor={{ fill: 'rgba(139,92,246,0.1)' }} />
+                    <Bar dataKey="value" fill="#8b5cf6" radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       )}
     </div>

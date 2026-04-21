@@ -1,19 +1,6 @@
-import { useState } from 'react';
-
-const UNIVERSITIES = [
-  {
-    id: 1, name: 'IIT Bombay', domain: 'iitb.ac.in', verified: true,
-    settings: { domainAutoAccess: true, freeAccessForStudents: true, guestAccessAllowed: true, guestPremiumPricing: 9.99, revenueSplitUniversity: 70, revenueSplitUploader: 20, revenueSplitPlatform: 10 }
-  },
-  {
-    id: 2, name: 'IIT Delhi', domain: 'iitd.ac.in', verified: true,
-    settings: { domainAutoAccess: true, freeAccessForStudents: true, guestAccessAllowed: true, guestPremiumPricing: 12.99, revenueSplitUniversity: 70, revenueSplitUploader: 20, revenueSplitPlatform: 10 }
-  },
-  {
-    id: 3, name: 'BITS Pilani', domain: 'bits-pilani.ac.in', verified: false,
-    settings: { domainAutoAccess: false, freeAccessForStudents: false, guestAccessAllowed: true, guestPremiumPricing: 7.99, revenueSplitUniversity: 60, revenueSplitUploader: 25, revenueSplitPlatform: 15 }
-  },
-];
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import API_URL from '../../config';
 
 const ACCESS_LEVELS = [
   {
@@ -37,7 +24,35 @@ const ACCESS_LEVELS = [
 ];
 
 export default function UniversityAccessSystem() {
-  const [universities] = useState(UNIVERSITIES);
+  const { token } = useAuth();
+  const [universities, setUniversities] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (token) {
+      fetchUniversities();
+    }
+  }, [token]);
+
+  const fetchUniversities = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_URL}/api/universities`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setUniversities(data.universities || []);
+      } else {
+        setUniversities([]);
+      }
+    } catch (err) {
+      console.error('Failed to fetch universities:', err);
+      setUniversities([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="uas-wrap">
@@ -63,55 +78,61 @@ export default function UniversityAccessSystem() {
       {/* Configuration Table */}
       <h3 className="uas-section-title">University Access Configuration</h3>
       <div className="uas-table-wrap">
-        <table className="uas-table">
-          <thead>
-            <tr>
-              <th>University</th>
-              <th>Domain</th>
-              <th>Auto Access</th>
-              <th>Student Access</th>
-              <th>Guest Access</th>
-              <th>Revenue Split</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {universities.map(uni => (
-              <tr key={uni.id}>
-                <td>
-                  <div className="uas-uni-cell">
-                    <div className="uas-uni-avatar">{uni.name.match(/\b(\w)/g).slice(0, 2).join('')}</div>
-                    <span>{uni.name}</span>
-                  </div>
-                </td>
-                <td className="uas-domain">@{uni.domain}</td>
-                <td>
-                  <div className={`uas-toggle ${uni.settings.domainAutoAccess ? 'on' : ''}`}>
-                    <div className="uas-toggle-knob" />
-                  </div>
-                </td>
-                <td>
-                  <span className={`uas-badge ${uni.settings.freeAccessForStudents ? 'green' : 'gold'}`}>
-                    {uni.settings.freeAccessForStudents ? 'FREE' : 'PAID'}
-                  </span>
-                </td>
-                <td>
-                  <span className={`uas-badge ${uni.settings.guestAccessAllowed ? 'blue' : 'red'}`}>
-                    {uni.settings.guestAccessAllowed ? 'ALLOWED' : 'BLOCKED'}
-                  </span>
-                </td>
-                <td className="uas-split">
-                  {uni.settings.revenueSplitUniversity}% / {uni.settings.revenueSplitUploader}% / {uni.settings.revenueSplitPlatform}%
-                </td>
-                <td>
-                  {uni.verified
-                    ? <span className="uas-status verified">✓ Verified</span>
-                    : <span className="uas-status pending">⏳ Pending</span>}
-                </td>
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--muted)' }}>Loading universities...</div>
+        ) : universities.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--muted)' }}>No universities configured yet. Add your university to get started!</div>
+        ) : (
+          <table className="uas-table">
+            <thead>
+              <tr>
+                <th>University</th>
+                <th>Domain</th>
+                <th>Auto Access</th>
+                <th>Student Access</th>
+                <th>Guest Access</th>
+                <th>Revenue Split</th>
+                <th>Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {universities.map(uni => (
+                <tr key={uni.id}>
+                  <td>
+                    <div className="uas-uni-cell">
+                      <div className="uas-uni-avatar">{uni.name.match(/\b(\w)/g).slice(0, 2).join('')}</div>
+                      <span>{uni.name}</span>
+                    </div>
+                  </td>
+                  <td className="uas-domain">@{uni.domain}</td>
+                  <td>
+                    <div className={`uas-toggle ${uni.settings?.domainAutoAccess ? 'on' : ''}`}>
+                      <div className="uas-toggle-knob" />
+                    </div>
+                  </td>
+                  <td>
+                    <span className={`uas-badge ${uni.settings?.freeAccessForStudents ? 'green' : 'gold'}`}>
+                      {uni.settings?.freeAccessForStudents ? 'FREE' : 'PAID'}
+                    </span>
+                  </td>
+                  <td>
+                    <span className={`uas-badge ${uni.settings?.guestAccessAllowed ? 'blue' : 'red'}`}>
+                      {uni.settings?.guestAccessAllowed ? 'ALLOWED' : 'BLOCKED'}
+                    </span>
+                  </td>
+                  <td className="uas-split">
+                    {uni.settings?.revenueSplitUniversity || 0}% / {uni.settings?.revenueSplitUploader || 0}% / {uni.settings?.revenueSplitPlatform || 0}%
+                  </td>
+                  <td>
+                    {uni.verified
+                      ? <span className="uas-status verified">✓ Verified</span>
+                      : <span className="uas-status pending">⏳ Pending</span>}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       {/* Access Level Matrix */}

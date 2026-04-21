@@ -1,27 +1,13 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import API_URL from '../config';
 
 const MOODS = ['😊 Great', '🙂 Good', '😐 Okay', '😔 Low', '😢 Stressed', '😤 Overwhelmed'];
-const MEDITATIONS = [
-  { id: 1, name: 'Study Break Calm', duration: '5 min', icon: '🧘', type: 'meditation', description: 'Quick breathing exercise to reset between study sessions.' },
-  { id: 2, name: 'Deep Focus Prep', duration: '10 min', icon: '🎯', type: 'meditation', description: 'Guided visualization to prepare your mind for deep work.' },
-  { id: 3, name: 'Exam Anxiety Relief', duration: '8 min', icon: '😮‍💨', type: 'meditation', description: 'Body scan technique specifically designed for pre-exam stress.' },
-  { id: 4, name: 'Forest Rain', duration: '30 min', icon: '🌧️', type: 'soundscape', description: 'Gentle rain falling on forest canopy with distant thunder.' },
-  { id: 5, name: 'Ocean Waves', duration: '45 min', icon: '🌊', type: 'soundscape', description: 'Rhythmic ocean waves for background study ambient.' },
-  { id: 6, name: 'Sleep Stories: Space', duration: '20 min', icon: '🌌', type: 'sleep', description: 'A narrated journey through the cosmos to help you drift off.' },
-  { id: 7, name: 'Morning Energy', duration: '7 min', icon: '☀️', type: 'meditation', description: 'Start your study day with intention and positive energy.' },
-  { id: 8, name: 'Gratitude Practice', duration: '5 min', icon: '🙏', type: 'meditation', description: 'End-of-day reflection to appreciate your learning journey.' },
-];
-
-const TIPS = [
-  { title: '20-20-20 Rule', desc: 'Every 20 min, look at something 20 feet away for 20 seconds.', icon: '👁️' },
-  { title: 'Hydration Check', desc: 'Drink water every hour. Dehydration reduces focus by 25%.', icon: '💧' },
-  { title: 'Movement Break', desc: 'Stand and stretch every 45 min to boost blood flow to your brain.', icon: '🏃' },
-  { title: 'Social Connect', desc: 'Spend 15 min talking to a friend or family member daily.', icon: '💬' },
-];
 
 const WEEK_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 export default function WellnessTrackerPage() {
+  const { token } = useAuth();
   const [tab, setTab] = useState('dashboard');
   const [todayMood, setTodayMood] = useState(null);
   const [journalText, setJournalText] = useState('');
@@ -30,11 +16,138 @@ export default function WellnessTrackerPage() {
   const [activeMeditation, setActiveMeditation] = useState(null);
   const [meditationTimer, setMeditationTimer] = useState(0);
   const [isMeditating, setIsMeditating] = useState(false);
-  const [weekLog, setWeekLog] = useState([
-    { mood: 3, study: 6, sleep: 7 }, { mood: 2, study: 8, sleep: 6 }, { mood: 4, study: 5, sleep: 8 },
-    { mood: 1, study: 4, sleep: 7.5 }, { mood: 2, study: 7, sleep: 6.5 }, { mood: 1, study: 3, sleep: 9 }, null
-  ]);
-  const [streakDays, setStreakDays] = useState(6);
+  const [streakDays, setStreakDays] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [meditations, setMeditations] = useState([]);
+  const [tips, setTips] = useState([]);
+  
+  // Real data from backend
+  const [weekLog, setWeekLog] = useState([null, null, null, null, null, null, null]);
+  const [stats, setStats] = useState({ avgStudy: 0, avgSleep: 0, avgMood: 'N/A', totalMeditation: 0, burnoutScore: 0 });
+
+  useEffect(() => {
+    if (token) {
+      fetchWeekData();
+      fetchMeditations();
+      fetchTips();
+    }
+  }, [token]);
+
+  const fetchMeditations = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/wellness/meditations`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setMeditations(data.meditations || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch meditations:', err);
+      setMeditations([]);
+    }
+  };
+
+  const fetchTips = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/wellness/tips`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setTips(data.tips || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch tips:', err);
+      setTips([]);
+    }
+  };
+
+  const fetchWeekData = async () => {
+    if (!token) return;
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_URL}/api/wellness/week`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        // Map logs to days (Mon-Sun)
+        const logs = [null, null, null, null, null, null, null];
+        data.logs.forEach(l => {
+          const d = new Date(l.date);
+          let day = d.getDay(); // 0 is Sun, 1 is Mon...
+          day = day === 0 ? 6 : day - 1; // Map to 0-6 (Mon-Sun)
+          logs[day] = { mood: l.mood, study: l.studyHours, sleep: l.sleepHours, burnout: l.burnoutScore };
+        });
+        setWeekLog(logs);
+        setStreakDays(data.stats.streak || 0);
+        setStats({
+          avgStudy: data.stats.avgStudy,
+          avgSleep: data.stats.avgSleep,
+          avgMood: MOODS[Math.round(data.stats.avgMood)]?.split(' ')[1] || 'N/A',
+          totalMeditation: data.stats.totalMeditation,
+          burnoutScore: data.stats.burnoutScore
+        });
+      }
+    } catch (err) {
+      console.error('Failed to fetch wellness data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCheckIn = async () => {
+    if (todayMood === null) return;
+    try {
+      const res = await fetch(`${API_URL}/api/wellness/checkin`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          mood: todayMood,
+          studyHours: parseFloat(studyHours) || 0,
+          sleepHours: parseFloat(sleepHours) || 0,
+          journal: journalText
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        if(window.ssSound) window.ssSound('success');
+        fetchWeekData();
+        setTab('dashboard');
+      }
+    } catch (err) {
+      console.error('Check-in failed:', err);
+    }
+  };
+
+  const logMeditation = async (minutes) => {
+    try {
+      await fetch(`${API_URL}/api/wellness/meditation`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ minutes })
+      });
+      fetchWeekData();
+    } catch (err) {
+      console.error('Meditation log failed:', err);
+    }
+  };
+
+  const handleMeditationEnd = () => {
+    const mins = Math.ceil(meditationTimer / 60);
+    if (mins > 0) logMeditation(mins);
+    setActiveMeditation(null);
+    setIsMeditating(false);
+    setMeditationTimer(0);
+    if(window.ssSound) window.ssSound('success');
+  };
 
   useEffect(() => {
     let interval;
@@ -46,15 +159,7 @@ export default function WellnessTrackerPage() {
 
   const formatTimer = (s) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
 
-  const burnoutScore = (() => {
-    const logs = weekLog.filter(Boolean);
-    if (!logs.length) return 0;
-    const avgStudy = logs.reduce((a, l) => a + l.study, 0) / logs.length;
-    const avgSleep = logs.reduce((a, l) => a + l.sleep, 0) / logs.length;
-    const avgMood = logs.reduce((a, l) => a + l.mood, 0) / logs.length;
-    return Math.min(100, Math.max(0, Math.round((avgStudy * 8 - avgSleep * 5 + avgMood * 10))));
-  })();
-
+  const burnoutScore = stats.burnoutScore;
   const burnoutColor = burnoutScore > 70 ? 'var(--red)' : burnoutScore > 40 ? 'var(--gold)' : 'var(--green)';
   const burnoutLabel = burnoutScore > 70 ? '⚠️ High Risk' : burnoutScore > 40 ? '⚡ Moderate' : '✅ Healthy';
 
