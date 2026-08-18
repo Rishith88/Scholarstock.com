@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import API_URL from '../config';
 
 const INDUSTRIES = ['Technology', 'Healthcare', 'Finance', 'Education', 'Marketing', 'Engineering', 'Design', 'Legal', 'Science', 'Media'];
 const SKILLS = ['Python', 'JavaScript', 'Data Analysis', 'Machine Learning', 'UI/UX Design', 'Project Management', 'Writing', 'Research', 'Public Speaking', 'Leadership', 'SQL', 'Excel', 'Figma', 'React', 'Cloud Computing'];
@@ -22,6 +24,7 @@ const CAREER_PATHS = [
 ];
 
 export default function CareerMatcherPage() {
+  const { token } = useAuth();
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [selectedIndustries, setSelectedIndustries] = useState([]);
   const [major, setMajor] = useState('');
@@ -32,14 +35,73 @@ export default function CareerMatcherPage() {
   const [filterType, setFilterType] = useState('all');
   const [savedJobs, setSavedJobs] = useState([]);
 
+  useEffect(() => {
+    if (token) fetchProfile();
+  }, [token]);
+
+  const fetchProfile = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/career/profile`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success && data.profile) {
+        setMajor(data.profile.major || '');
+        setYear(data.profile.year || '3');
+        setSelectedSkills(data.profile.skills || []);
+        setSelectedIndustries(data.profile.interests || []);
+        setSavedJobs(data.profile.savedJobs?.map(j => j.jobId) || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch career profile:', err);
+    }
+  };
+
+  const syncProfile = async () => {
+    try {
+      await fetch(`${API_URL}/api/career/profile`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ major, year, skills: selectedSkills, interests: selectedIndustries })
+      });
+    } catch (err) {
+      console.error('Failed to sync profile:', err);
+    }
+  };
+
   const toggleSkill = (s) => setSelectedSkills(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s]);
   const toggleIndustry = (i) => setSelectedIndustries(prev => prev.includes(i) ? prev.filter(x => x !== i) : [...prev, i]);
-  const toggleSave = (id) => setSavedJobs(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  
+  const toggleSave = async (job) => {
+    const isSaved = savedJobs.includes(job.id);
+    setSavedJobs(prev => isSaved ? prev.filter(x => x !== job.id) : [...prev, job.id]);
+    
+    try {
+      await fetch(`${API_URL}/api/career/save-job`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(job)
+      });
+    } catch (err) {
+      console.error('Failed to save job:', err);
+    }
+  };
 
-  const handleMatch = () => {
+  const handleMatch = async () => {
     if (selectedSkills.length < 2) return;
     setLoading(true);
-    setTimeout(() => { setShowResults(true); setLoading(false); if(window.ssSound) window.ssSound('success'); }, 2200);
+    await syncProfile();
+    setTimeout(() => { 
+      setShowResults(true); 
+      setLoading(false); 
+      if(window.ssSound) window.ssSound('success'); 
+    }, 2200);
   };
 
   const filtered = filterType === 'all' ? MOCK_MATCHES : MOCK_MATCHES.filter(m => m.type.toLowerCase().includes(filterType));

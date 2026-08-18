@@ -1,32 +1,42 @@
-import { useState } from 'react';
-
-const ALUMNI = [
-  { id: 1, name: 'Dr. Meera Krishnan', avatar: '👩‍⚕️', role: 'Senior Data Scientist', company: 'Google DeepMind', uni: 'IIT Delhi', batch: '2018', expertise: ['AI/ML', 'Research', 'Career Growth'], rating: 4.9, sessions: 145, bio: 'Led multiple AI research projects published in top-tier conferences. Passionate about mentoring the next gen.', available: ['Mon 6PM', 'Wed 7PM', 'Sat 11AM'], price: 'Free', verified: true },
-  { id: 2, name: 'Rahul Agarwal', avatar: '👨‍💼', role: 'Product Manager', company: 'Microsoft', uni: 'IIT Bombay', batch: '2016', expertise: ['Product', 'Strategy', 'Interview Prep'], rating: 4.8, sessions: 98, bio: 'Shipped products used by millions. Expert in PM interview prep and career transitions.', available: ['Tue 8PM', 'Thu 7PM'], price: '₹200/session', verified: true },
-  { id: 3, name: 'Ananya Sharma', avatar: '👩‍💻', role: 'Engineering Manager', company: 'Amazon', uni: 'BITS Pilani', batch: '2015', expertise: ['System Design', 'Leadership', 'DSA'], rating: 4.9, sessions: 212, bio: 'From SDE to EM in 5 years. Helps students crack FAANG interviews and build careers.', available: ['Mon 9PM', 'Fri 6PM', 'Sun 10AM'], price: 'Free', verified: true },
-  { id: 4, name: 'Karthik Reddy', avatar: '👨‍🔬', role: 'Founder & CEO', company: 'EduTech AI (YC W23)', uni: 'IIT Madras', batch: '2017', expertise: ['Startups', 'Fundraising', 'EdTech'], rating: 4.7, sessions: 67, bio: 'Built a startup from dorm room to $5M funding. Advisor for aspiring student entrepreneurs.', available: ['Wed 8PM', 'Sat 3PM'], price: '₹500/session', verified: true },
-  { id: 5, name: 'Priya Nair', avatar: '👩‍🎓', role: 'PhD Researcher', company: 'MIT CSAIL', uni: 'IIT Kanpur', batch: '2019', expertise: ['PhD Applications', 'Research', 'NLP'], rating: 4.8, sessions: 56, bio: 'Currently pursuing PhD at MIT. Guides students through grad school applications and research.', available: ['Thu 10PM', 'Sun 2PM'], price: 'Free', verified: true },
-  { id: 6, name: 'Vikram Singh', avatar: '👨‍💻', role: 'Senior SDE', company: 'Meta', uni: 'NIT Trichy', batch: '2014', expertise: ['Coding Interviews', 'System Design', 'Career Growth'], rating: 4.6, sessions: 189, bio: '10 years in Big Tech. Conducts mock interviews and helps plan long-term tech careers.', available: ['Tue 9PM', 'Sat 5PM'], price: '₹300/session', verified: true },
-];
-
-const EVENTS = [
-  { id: 1, title: 'How I Got Into Google', speaker: 'Dr. Meera Krishnan', date: 'Apr 25, 2026', time: '7:00 PM IST', attendees: 234, type: 'Webinar' },
-  { id: 2, title: 'Mock Interview Marathon', speaker: 'Ananya Sharma', date: 'Apr 28, 2026', time: '6:00 PM IST', attendees: 156, type: 'Workshop' },
-  { id: 3, title: 'Startup 101: From Idea to MVP', speaker: 'Karthik Reddy', date: 'May 2, 2026', time: '8:00 PM IST', attendees: 189, type: 'Masterclass' },
-  { id: 4, title: 'PhD Application Bootcamp', speaker: 'Priya Nair', date: 'May 5, 2026', time: '10:00 AM IST', attendees: 98, type: 'Workshop' },
-];
+import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import API_URL from '../config';
 
 export default function AlumniNetworkPage() {
+  const { token } = useAuth();
   const [tab, setTab] = useState('mentors');
   const [selectedMentor, setSelectedMentor] = useState(null);
   const [showBooking, setShowBooking] = useState(null);
   const [filter, setFilter] = useState('All');
   const [search, setSearch] = useState('');
   const [registeredEvents, setRegisteredEvents] = useState([]);
+  const [alumni, setAlumni] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const expertiseList = ['All', ...new Set(ALUMNI.flatMap(a => a.expertise))];
-  const filteredAlumni = ALUMNI.filter(a =>
-    (filter === 'All' || a.expertise.includes(filter)) &&
+  useEffect(() => {
+    if (token) fetchAlumni();
+  }, [token]);
+
+  const fetchAlumni = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_URL}/api/alumni`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setAlumni(data.alumni);
+      }
+    } catch (err) {
+      console.error('Failed to fetch alumni:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const expertiseList = ['All', ...new Set(alumni.flatMap(a => a.expertise || []))];
+  const filteredAlumni = alumni.filter(a =>
+    (filter === 'All' || (a.expertise && a.expertise.includes(filter))) &&
     (a.name.toLowerCase().includes(search.toLowerCase()) || a.company.toLowerCase().includes(search.toLowerCase()))
   );
 

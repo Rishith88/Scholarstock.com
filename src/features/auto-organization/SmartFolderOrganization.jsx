@@ -27,6 +27,28 @@ export default function SmartFolderOrganization() {
 
   const authH = useCallback(() => ({ 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }), [token]);
 
+  // Dynamic MaterialRow component - moved inside parent
+  const MaterialRow = useCallback(({ mat }) => (
+    <div className="sfo-material-row">
+      <div className="sfo-material-icon">📄</div>
+      <div style={{ flex: 1 }}>
+        <div style={{ fontWeight: 700, fontSize: '.9rem', marginBottom: '.3rem' }}>
+          {mat.title}
+          {mat.aiSuggested && <span className="sfo-ai-badge">🤖 AI Tagged</span>}
+        </div>
+        <div style={{ fontSize: '.75rem', color: 'var(--muted)', marginBottom: '.4rem' }}>{mat.examCategory} • {mat.subcategory}</div>
+        <div style={{ display: 'flex', gap: '.4rem', flexWrap: 'wrap' }}>
+          {mat.tags?.map(tag => <span key={tag} className="sfo-tag">{tag}</span>)}
+        </div>
+      </div>
+      {mat.difficulty && (
+        <span className="sfo-difficulty-badge" style={{ color: DIFFICULTY_COLORS[mat.difficulty] || 'var(--muted)' }}>
+          {mat.difficulty}
+        </span>
+      )}
+    </div>
+  ), []);
+
   const autoOrganize = async () => {
     setOrganizing(true);
     try {
@@ -162,29 +184,6 @@ export default function SmartFolderOrganization() {
             <div className="sfo-empty"><p>No materials match your search.</p></div>
           ) : filteredMaterials.map(mat => <MaterialRow key={mat._id} mat={mat} />)}
         </div>
-      )}
-    </div>
-  );
-}
-
-function MaterialRow({ mat }) {
-  return (
-    <div className="sfo-material-row">
-      <div className="sfo-material-icon">📄</div>
-      <div style={{ flex: 1 }}>
-        <div style={{ fontWeight: 700, fontSize: '.9rem', marginBottom: '.3rem' }}>
-          {mat.title}
-          {mat.aiSuggested && <span className="sfo-ai-badge">🤖 AI Tagged</span>}
-        </div>
-        <div style={{ fontSize: '.75rem', color: 'var(--muted)', marginBottom: '.4rem' }}>{mat.examCategory} • {mat.subcategory}</div>
-        <div style={{ display: 'flex', gap: '.4rem', flexWrap: 'wrap' }}>
-          {mat.tags?.map(tag => <span key={tag} className="sfo-tag">{tag}</span>)}
-        </div>
-      </div>
-      {mat.difficulty && (
-        <span className="sfo-difficulty-badge" style={{ color: DIFFICULTY_COLORS[mat.difficulty] || 'var(--muted)' }}>
-          {mat.difficulty}
-        </span>
       )}
     </div>
   );

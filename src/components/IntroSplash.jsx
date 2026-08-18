@@ -1,72 +1,72 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 
-// ── Web Audio sound engine ──
-function createSoundEngine() {
-  let ctx = null;
-  const getCtx = () => {
-    if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
-    return ctx;
-  };
+// ── Web Audio sound engine - now created once per component instance ──
+function useAudioEngine() {
+  return useMemo(() => {
+    let ctx = null;
+    const getCtx = () => {
+      if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+      return ctx;
+    };
 
-  const play = (freq, start, dur, vol = 0.08, type = 'sine') => {
-    try {
-      const c = getCtx();
-      const o = c.createOscillator();
-      const g = c.createGain();
-      const rev = c.createConvolver ? null : null; // skip reverb for perf
-      o.type = type;
-      o.connect(g);
-      g.connect(c.destination);
-      o.frequency.setValueAtTime(freq, c.currentTime + start);
-      g.gain.setValueAtTime(0, c.currentTime + start);
-      g.gain.linearRampToValueAtTime(vol, c.currentTime + start + 0.01);
-      g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + start + dur);
-      o.start(c.currentTime + start);
-      o.stop(c.currentTime + start + dur + 0.05);
-    } catch (e) {}
-  };
-
-  return {
-    intro() {
-      // Epic intro fanfare — rising arpeggio + bass hit
-      const notes = [261, 329, 392, 523, 659, 784, 1047];
-      notes.forEach((f, i) => play(f, i * 0.07, 0.3, 0.05 + i * 0.005));
-      // Bass thud
-      play(80, 0, 0.4, 0.12, 'triangle');
-      play(60, 0.05, 0.5, 0.08, 'triangle');
-      // Shimmer
-      [2093, 2637, 3136].forEach((f, i) => play(f, 0.4 + i * 0.06, 0.2, 0.02));
-    },
-    whoosh() {
+    const play = (freq, start, dur, vol = 0.08, type = 'sine') => {
       try {
         const c = getCtx();
-        const buf = c.createBuffer(1, c.sampleRate * 0.4, c.sampleRate);
-        const data = buf.getChannelData(0);
-        for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
-        const src = c.createBufferSource();
-        const filt = c.createBiquadFilter();
+        const o = c.createOscillator();
         const g = c.createGain();
-        src.buffer = buf;
-        filt.type = 'bandpass';
-        filt.frequency.setValueAtTime(200, c.currentTime);
-        filt.frequency.exponentialRampToValueAtTime(4000, c.currentTime + 0.4);
-        filt.Q.value = 0.5;
-        src.connect(filt); filt.connect(g); g.connect(c.destination);
-        g.gain.setValueAtTime(0.15, c.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.4);
-        src.start(); src.stop(c.currentTime + 0.4);
+        const rev = c.createConvolver ? null : null; // skip reverb for perf
+        o.type = type;
+        o.connect(g);
+        g.connect(c.destination);
+        o.frequency.setValueAtTime(freq, c.currentTime + start);
+        g.gain.setValueAtTime(0, c.currentTime + start);
+        g.gain.linearRampToValueAtTime(vol, c.currentTime + start + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + start + dur);
+        o.start(c.currentTime + start);
+        o.stop(c.currentTime + start + dur + 0.05);
       } catch (e) {}
-    },
-    click() { play(600, 0, 0.08, 0.06); play(400, 0.04, 0.06, 0.04); },
-    hover() { play(900, 0, 0.04, 0.02); },
-    success() { [523, 659, 784, 1047].forEach((f, i) => play(f, i * 0.08, 0.2, 0.05)); },
-    nav() { play(440, 0, 0.06, 0.03); play(550, 0.04, 0.08, 0.03); },
-  };
+    };
+
+    return {
+      intro() {
+        // Epic intro fanfare — rising arpeggio + bass hit
+        const notes = [261, 329, 392, 523, 659, 784, 1047];
+        notes.forEach((f, i) => play(f, i * 0.07, 0.3, 0.05 + i * 0.005));
+        // Bass thud
+        play(80, 0, 0.4, 0.12, 'triangle');
+        play(60, 0.05, 0.5, 0.08, 'triangle');
+        // Shimmer
+        [2093, 2637, 3136].forEach((f, i) => play(f, 0.4 + i * 0.06, 0.2, 0.02));
+      },
+      whoosh() {
+        try {
+          const c = getCtx();
+          const buf = c.createBuffer(1, c.sampleRate * 0.4, c.sampleRate);
+          const data = buf.getChannelData(0);
+          for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
+          const src = c.createBufferSource();
+          const filt = c.createBiquadFilter();
+          const g = c.createGain();
+          src.buffer = buf;
+          filt.type = 'bandpass';
+          filt.frequency.setValueAtTime(200, c.currentTime);
+          filt.frequency.exponentialRampToValueAtTime(4000, c.currentTime + 0.4);
+          filt.Q.value = 0.5;
+          src.connect(filt); filt.connect(g); g.connect(c.destination);
+          g.gain.setValueAtTime(0.15, c.currentTime);
+          g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.4);
+          src.start(); src.stop(c.currentTime + 0.4);
+        } catch (e) {}
+      },
+      click() { play(600, 0, 0.08, 0.06); play(400, 0.04, 0.06, 0.04); },
+      hover() { play(900, 0, 0.04, 0.02); },
+      success() { [523, 659, 784, 1047].forEach((f, i) => play(f, i * 0.08, 0.2, 0.05)); },
+      nav() { play(440, 0, 0.06, 0.03); play(550, 0.04, 0.08, 0.03); },
+    };
+  }, []);
 }
 
-export const sound = createSoundEngine();
-
-// ── Particle canvas ──
+// ── Particle canvas - now a dynamic component ──
 function ParticleCanvas({ active }) {
   const canvasRef = useRef(null);
   const animRef = useRef(null);
@@ -132,6 +132,7 @@ export default function IntroSplash({ onDone }) {
   const [phase, setPhase] = useState('enter'); // enter → text → exit
   const [lettersDone, setLettersDone] = useState(false);
   const hasPlayed = useRef(false);
+  const sound = useAudioEngine(); // Create sound engine instance for this component
 
   const letters = 'ScholarStock'.split('');
 

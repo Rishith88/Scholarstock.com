@@ -1,4 +1,6 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import API_URL from '../config';
 
 const RUBRICS = [
   { id: 'academic', name: 'Academic Essay', icon: '🎓', criteria: ['Thesis Clarity', 'Evidence & Support', 'Organization', 'Grammar & Style', 'Citations'] },
@@ -8,54 +10,66 @@ const RUBRICS = [
   { id: 'business', name: 'Business Report', icon: '📊', criteria: ['Executive Summary', 'Data Presentation', 'Recommendations', 'Professionalism', 'Formatting'] },
 ];
 
-const SAMPLE_FEEDBACK = {
-  overallScore: 78,
-  grade: 'B+',
-  readability: { score: 72, level: 'College', fleschKincaid: 12.4, avgSentenceLen: 18.2, avgWordLen: 5.1 },
-  plagiarism: { score: 94, flagged: 2, sources: ['Wikipedia - Machine Learning (3%)', 'Stanford NLP Blog (1.2%)'] },
-  criteria: [
-    { name: 'Thesis Clarity', score: 85, feedback: 'Strong thesis statement. Consider making it more specific to narrow your argument.' },
-    { name: 'Evidence & Support', score: 72, feedback: 'Good use of statistics but needs more peer-reviewed sources. Add at least 2 more citations.' },
-    { name: 'Organization', score: 80, feedback: 'Logical flow between paragraphs. The transition from section 2 to 3 could be smoother.' },
-    { name: 'Grammar & Style', score: 68, feedback: '7 grammar issues detected. Passive voice used excessively (23% of sentences).' },
-    { name: 'Citations', score: 82, feedback: 'APA format mostly correct. Fix hanging indents on references 3 and 7.' },
-  ],
-  grammarIssues: [
-    { line: 3, text: '"their" should be "there"', type: 'spelling', severity: 'high' },
-    { line: 7, text: 'Run-on sentence — split after "however"', type: 'structure', severity: 'medium' },
-    { line: 12, text: 'Missing comma before "which"', type: 'punctuation', severity: 'low' },
-    { line: 18, text: 'Consider active voice: "The study was conducted" → "We conducted the study"', type: 'style', severity: 'low' },
-    { line: 24, text: '"affect" should be "effect"', type: 'spelling', severity: 'high' },
-    { line: 31, text: 'Dangling modifier in opening clause', type: 'structure', severity: 'medium' },
-    { line: 38, text: 'Redundant phrase: "future plans" → "plans"', type: 'style', severity: 'low' },
-  ],
-  suggestions: [
-    'Add a stronger hook in your introduction to grab reader attention.',
-    'Your conclusion restates the thesis but doesn\'t extend the argument—add implications.',
-    'Consider adding a counter-argument section to strengthen your position.',
-    'Use more transitional phrases between body paragraphs.',
-    'The paper would benefit from a real-world example in paragraph 3.',
-  ],
-  wordStats: { total: 2847, unique: 892, sentences: 156, paragraphs: 14, avgParaLen: 203 },
-};
-
 export default function EssayScorerPage() {
+  const { token, isLoggedIn } = useAuth();
   const [essay, setEssay] = useState('');
   const [rubric, setRubric] = useState('academic');
   const [analyzing, setAnalyzing] = useState(false);
   const [result, setResult] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
+  const [history, setHistory] = useState([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
   const fileRef = useRef(null);
 
-  const handleAnalyze = () => {
+  useEffect(() => {
+    if (token) fetchHistory();
+  }, [token]);
+
+  const fetchHistory = async () => {
+    try {
+      setLoadingHistory(true);
+      const res = await fetch(`${API_URL}/api/essay-scorer/history`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setHistory(data.analyses);
+      }
+    } catch (err) {
+      console.error('Failed to fetch history:', err);
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
+
+  const handleAnalyze = async () => {
     if (essay.trim().length < 50) return;
+    if (!isLoggedIn) {
+      alert('Please login to analyze essays.');
+      return;
+    }
     setAnalyzing(true);
-    setTimeout(() => {
-      setResult(SAMPLE_FEEDBACK);
+    try {
+      const res = await fetch(`${API_URL}/api/essay-scorer/analyze`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ essayText: essay, rubricType: rubric })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setResult(data.analysis);
+        setActiveTab('overview');
+        if (window.ssSound) window.ssSound('success');
+        fetchHistory();
+      }
+    } catch (err) {
+      console.error('Analysis failed:', err);
+    } finally {
       setAnalyzing(false);
-      setActiveTab('overview');
-      if (window.ssSound) window.ssSound('success');
-    }, 2800);
+    }
   };
 
   const handleFileUpload = (e) => {

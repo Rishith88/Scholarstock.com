@@ -1,35 +1,72 @@
-import { useState } from 'react';
-
-const COMPETITIONS = [
-  { id: 1, name: 'ScholarHack 2026', type: 'Hackathon', icon: '💻', organizer: 'ScholarStock x Google', deadline: 'May 15, 2026', prize: '$25,000', participants: 2400, maxTeam: 4, status: 'open', tags: ['AI/ML', 'Web Dev', 'Open Innovation'], description: 'Build the future of education technology. 48 hours to create an innovative EdTech solution.', difficulty: 'All Levels', mode: 'Hybrid' },
-  { id: 2, name: 'Global Case Competition', type: 'Case Study', icon: '📊', organizer: 'McKinsey x Harvard', deadline: 'Jun 1, 2026', prize: '$15,000', participants: 1800, maxTeam: 3, status: 'open', tags: ['Strategy', 'Business', 'Consulting'], description: 'Solve a real-world business challenge for a Fortune 500 company.', difficulty: 'Advanced', mode: 'Virtual' },
-  { id: 3, name: 'Neural Net Challenge', type: 'AI Competition', icon: '🧠', organizer: 'DeepMind', deadline: 'Apr 30, 2026', prize: '$50,000', participants: 5200, maxTeam: 2, status: 'closing', tags: ['Deep Learning', 'NLP', 'Computer Vision'], description: 'Push the boundaries of neural network efficiency on benchmark datasets.', difficulty: 'Expert', mode: 'Virtual' },
-  { id: 4, name: 'Startup Weekend EDU', type: 'Pitch', icon: '🚀', organizer: 'Techstars', deadline: 'May 20, 2026', prize: '$10,000 + Incubation', participants: 950, maxTeam: 5, status: 'open', tags: ['Entrepreneurship', 'EdTech', 'Pitching'], description: 'From idea to pitch in 54 hours. Win seed funding and mentorship.', difficulty: 'Beginner Friendly', mode: 'In-Person' },
-  { id: 5, name: 'Data Viz Olympics', type: 'Data Science', icon: '📈', organizer: 'Tableau x Kaggle', deadline: 'Jul 10, 2026', prize: '$8,000', participants: 3100, maxTeam: 2, status: 'open', tags: ['Data Visualization', 'Storytelling', 'Analytics'], description: 'Transform messy datasets into beautiful, insightful visual stories.', difficulty: 'Intermediate', mode: 'Virtual' },
-  { id: 6, name: 'Quantum Computing Q&A', type: 'Quiz', icon: '⚛️', organizer: 'IBM Quantum', deadline: 'May 5, 2026', prize: '$5,000', participants: 890, maxTeam: 1, status: 'open', tags: ['Quantum', 'Physics', 'CS Theory'], description: 'Test your knowledge of quantum gates, Qiskit, and quantum algorithms.', difficulty: 'Expert', mode: 'Virtual' },
-  { id: 7, name: 'Design Jam 2026', type: 'Design', icon: '🎨', organizer: 'Figma x Dribbble', deadline: 'Jun 15, 2026', prize: '$12,000', participants: 1600, maxTeam: 3, status: 'open', tags: ['UI/UX', 'Branding', 'Mobile Design'], description: 'Redesign a public service app with accessibility and delight in mind.', difficulty: 'All Levels', mode: 'Virtual' },
-  { id: 8, name: 'CTF CyberSec War', type: 'Cybersecurity', icon: '🛡️', organizer: 'HackerOne', deadline: 'Apr 28, 2026', prize: '$20,000', participants: 4100, maxTeam: 4, status: 'closing', tags: ['Security', 'Pentesting', 'Cryptography'], description: 'Capture the Flag competition with real-world vulnerability challenges.', difficulty: 'Advanced', mode: 'Virtual' },
-];
+import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import API_URL from '../config';
 
 const TYPES = ['All', 'Hackathon', 'Case Study', 'AI Competition', 'Pitch', 'Data Science', 'Quiz', 'Design', 'Cybersecurity'];
 
 export default function CompetitionsPage() {
+  const { token } = useAuth();
   const [filter, setFilter] = useState('All');
   const [search, setSearch] = useState('');
   const [selectedComp, setSelectedComp] = useState(null);
+  const [competitions, setCompetitions] = useState([]);
   const [registered, setRegistered] = useState([]);
   const [showTeamForm, setShowTeamForm] = useState(null);
   const [teamName, setTeamName] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  const filtered = COMPETITIONS.filter(c =>
+  useEffect(() => {
+    if (token) fetchData();
+  }, [token]);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const [listRes, myRes] = await Promise.all([
+        fetch(`${API_URL}/api/competitions/list`, { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch(`${API_URL}/api/competitions/my`, { headers: { 'Authorization': `Bearer ${token}` } })
+      ]);
+      const listData = await listRes.json();
+      const myData = await myRes.json();
+
+      if (listData.success) setCompetitions(listData.list);
+      if (myData.success) setRegistered(myData.registrations.map(r => r.competitionId));
+    } catch (err) {
+      console.error('Failed to fetch competitions:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filtered = competitions.filter(c =>
     (filter === 'All' || c.type === filter) &&
     c.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleRegister = (comp) => {
-    setRegistered(p => [...p, comp.id]);
-    setShowTeamForm(null);
-    if(window.ssSound) window.ssSound('success');
+  const handleRegister = async (comp) => {
+    try {
+      const res = await fetch(`${API_URL}/api/competitions/register`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          competitionId: comp._id,
+          competitionName: comp.name,
+          teamName: teamName
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        if(window.ssSound) window.ssSound('success');
+        setRegistered(p => [...p, comp._id]);
+        setShowTeamForm(null);
+        setTeamName('');
+      }
+    } catch (err) {
+      console.error('Registration failed:', err);
+    }
   };
 
   return (
@@ -40,7 +77,7 @@ export default function CompetitionsPage() {
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px,1fr))', gap: '1rem', marginBottom: '2rem' }}>
         {[
-          { icon: '🏆', value: `${COMPETITIONS.length}`, label: 'Active Competitions' },
+          { icon: '🏆', value: `${competitions.length}`, label: 'Active Competitions' },
           { icon: '💰', value: '$145K+', label: 'Total Prizes' },
           { icon: '👥', value: '19K+', label: 'Participants' },
           { icon: '📋', value: `${registered.length}`, label: 'You Registered' },
@@ -70,7 +107,7 @@ export default function CompetitionsPage() {
       {/* Competition Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: '1.5rem' }}>
         {filtered.map(comp => (
-          <div key={comp.id} className="glass" style={{ borderRadius: '18px', overflow: 'hidden', transition: 'all .3s' }}>
+          <div key={comp._id} className="glass" style={{ borderRadius: '18px', overflow: 'hidden', transition: 'all .3s' }}>
             {/* Header */}
             <div style={{ padding: '1.2rem 1.5rem', background: comp.status === 'closing' ? 'linear-gradient(135deg, rgba(239,68,68,.1), rgba(245,158,11,.08))' : 'linear-gradient(135deg, rgba(59,130,246,.08), rgba(139,92,246,.06))', borderBottom: '1px solid var(--gb)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '.8rem' }}>
@@ -99,7 +136,7 @@ export default function CompetitionsPage() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '.5rem', marginBottom: '1rem' }}>
                 {[
                   { label: 'Prize', value: comp.prize, color: 'var(--gold)' },
-                  { label: 'Deadline', value: comp.deadline.split(',')[0], color: comp.status === 'closing' ? 'var(--red)' : 'var(--muted)' },
+                  { label: 'Deadline', value: new Date(comp.deadline).toLocaleDateString(), color: comp.status === 'closing' ? 'var(--red)' : 'var(--muted)' },
                   { label: 'Team Size', value: `Up to ${comp.maxTeam}`, color: 'var(--blue2)' },
                 ].map((info, i) => (
                   <div key={i} style={{ textAlign: 'center', padding: '.5rem', background: 'rgba(255,255,255,.03)', borderRadius: '8px' }}>
@@ -115,7 +152,7 @@ export default function CompetitionsPage() {
                 <span>📊 {comp.difficulty}</span>
               </div>
 
-              {registered.includes(comp.id) ? (
+              {registered.includes(comp._id) ? (
                 <div style={{ textAlign: 'center', padding: '.8rem', background: 'rgba(16,185,129,.1)', borderRadius: '10px', color: 'var(--green)', fontWeight: 700, fontSize: '.9rem' }}>
                   ✅ You're Registered!
                 </div>
@@ -124,7 +161,7 @@ export default function CompetitionsPage() {
                   <button className="btn btn-grad" style={{ flex: 1, padding: '.7rem', fontSize: '.85rem' }} onClick={() => setShowTeamForm(comp)}>
                     🚀 Register Now
                   </button>
-                  <button className="btn btn-ghost" style={{ padding: '.7rem 1rem', fontSize: '.85rem' }} onClick={() => setSelectedComp(selectedComp?.id === comp.id ? null : comp)}>
+                  <button className="btn btn-ghost" style={{ padding: '.7rem 1rem', fontSize: '.85rem' }} onClick={() => setSelectedComp(selectedComp?._id === comp._id ? null : comp)}>
                     ℹ️
                   </button>
                 </div>

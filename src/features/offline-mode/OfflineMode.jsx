@@ -1,57 +1,75 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 
 const DB_NAME = 'scholarstock-offline';
 const DB_VERSION = 1;
 
-function openDB() {
-  return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, DB_VERSION);
-    req.onupgradeneeded = (e) => {
-      const db = e.target.result;
-      if (!db.objectStoreNames.contains('materials')) db.createObjectStore('materials', { keyPath: '_id' });
-      if (!db.objectStoreNames.contains('notes')) db.createObjectStore('notes', { keyPath: 'id' });
-      if (!db.objectStoreNames.contains('queue')) db.createObjectStore('queue', { keyPath: 'id', autoIncrement: true });
-    };
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
-  });
-}
+// Custom hook for IndexedDB operations
+function useIndexedDB() {
+  const openDB = useCallback(() => {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(DB_NAME, DB_VERSION);
+      req.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains('materials')) db.createObjectStore('materials', { keyPath: '_id' });
+        if (!db.objectStoreNames.contains('notes')) db.createObjectStore('notes', { keyPath: 'id' });
+        if (!db.objectStoreNames.contains('queue')) db.createObjectStore('queue', { keyPath: 'id', autoIncrement: true });
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }, []);
 
-async function dbGetAll(store) {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(store, 'readonly');
-    const req = tx.objectStore(store).getAll();
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
-  });
-}
+  const dbGetAll = useCallback(async (store) => {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(store, 'readonly');
+      const req = tx.objectStore(store).getAll();
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }, [openDB]);
 
-async function dbPut(store, item) {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(store, 'readwrite');
-    const req = tx.objectStore(store).put(item);
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
-  });
-}
+  const dbPut = useCallback(async (store, item) => {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(store, 'readwrite');
+      const req = tx.objectStore(store).put(item);
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }, [openDB]);
 
-async function dbDelete(store, key) {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(store, 'readwrite');
-    const req = tx.objectStore(store).delete(key);
-    req.onsuccess = () => resolve();
-    req.onerror = () => reject(req.error);
-  });
+  const dbDelete = useCallback(async (store, key) => {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(store, 'readwrite');
+      const req = tx.objectStore(store).delete(key);
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error);
+    });
+  }, [openDB]);
+
+  const dbClear = useCallback(async (stores) => {
+    const db = await openDB();
+    return Promise.all(stores.map(store => 
+      new Promise((resolve, reject) => {
+        const tx = db.transaction(store, 'readwrite');
+        const req = tx.objectStore(store).clear();
+        req.onsuccess = () => resolve();
+        req.onerror = () => reject(req.error);
+      })
+    ));
+  }, [openDB]);
+
+  return { openDB, dbGetAll, dbPut, dbDelete, dbClear };
 }
 
 export default function OfflineMode() {
   const { token } = useAuth();
   const { showToast } = useToast();
+  const { openDB, dbGetAll, dbPut, dbDelete, dbClear } = useIndexedDB();
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [savedMaterials, setSavedMaterials] = useState([]);
   const [savedNotes, setSavedNotes] = useState([]);
@@ -119,9 +137,7 @@ export default function OfflineMode() {
     try {
       // Process sync queue — in real impl would POST to backend
       await new Promise(r => setTimeout(r, 1000));
-      const db = await openDB();
-      const tx = db.transaction('queue', 'readwrite');
-      tx.objectStore('queue').clear();
+      await dbClear(['queue']);
       setSyncQueue([]);
       showToast('All changes synced!', 'success');
     } catch { showToast('Sync failed, will retry', 'error'); }
@@ -131,10 +147,7 @@ export default function OfflineMode() {
   const clearAllOffline = async () => {
     if (!confirm('Clear all offline data?')) return;
     try {
-      const db = await openDB();
-      ['materials', 'notes', 'queue'].forEach(store => {
-        db.transaction(store, 'readwrite').objectStore(store).clear();
-      });
+      await dbClear(['materials', 'notes', 'queue']);
       setSavedMaterials([]); setSavedNotes([]); setSyncQueue([]);
       showToast('Offline data cleared', 'success');
     } catch { showToast('Error clearing data', 'error'); }

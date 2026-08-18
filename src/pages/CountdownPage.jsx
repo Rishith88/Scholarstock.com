@@ -95,15 +95,16 @@ const CAT_COLORS = {
 
 const FILTERS = ['All','Engineering','Medical','Government','Banking','Management','GATE','International','Olympiad','Boards'];
 
-function fmtDate(d) {
-  return new Date(d+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
-}
-
 export default function CountdownPage() {
   const [filter, setFilter] = useState('All');
   const [search, setSearch] = useState('');
   const [pinned, setPinned] = useState(() => JSON.parse(localStorage.getItem('ss_cd_pinned') || '[]'));
   const [, forceUpdate] = useState(0);
+
+  // Dynamic date formatter - moved inside component
+  const fmtDate = (d) => {
+    return new Date(d+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+  };
 
   useEffect(() => {
     const interval = setInterval(() => forceUpdate(n => n + 1), 1000);
@@ -158,13 +159,13 @@ export default function CountdownPage() {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.2rem' }}>
         {exams.length === 0 && <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '3rem', color: 'var(--muted)' }}>No exams found</div>}
-        {exams.map(e => <CountdownCard key={e.name} exam={e} isPinned={pinned.includes(e.name)} onTogglePin={togglePin} />)}
+        {exams.map(e => <CountdownCard key={e.name} exam={e} isPinned={pinned.includes(e.name)} onTogglePin={togglePin} fmtDate={fmtDate} />)}
       </div>
     </div>
   );
 }
 
-function CountdownCard({ exam, isPinned, onTogglePin }) {
+function CountdownCard({ exam, isPinned, onTogglePin, fmtDate }) {
   const cols = (CAT_COLORS[exam.cat] || 'rgba(255,255,255,.05)|var(--muted)').split('|');
 
   if (!exam.date) {

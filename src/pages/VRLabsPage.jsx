@@ -1,44 +1,102 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import API_URL from '../config';
 
 const LABS = [
-  { id: 1, name: 'Chemistry: Titration Lab', icon: '🧪', subject: 'Chemistry', difficulty: 'Intermediate', duration: '45 min', rating: 4.8, students: 12400, description: 'Perform acid-base titrations to determine unknown concentrations. Includes pH indicators and volumetric analysis.', modules: ['Safety Briefing', 'Equipment Setup', 'Titration Process', 'Data Analysis', 'Lab Report'], color: '#10b981' },
-  { id: 2, name: 'Physics: Projectile Motion', icon: '🎯', subject: 'Physics', difficulty: 'Beginner', duration: '30 min', rating: 4.9, students: 18200, description: 'Launch projectiles at different angles and measure trajectory, range, and impact velocity in a simulated environment.', modules: ['Theory Review', 'Launch Setup', 'Data Collection', 'Graph Analysis', 'Challenge Mode'], color: '#3b82f6' },
-  { id: 3, name: 'Biology: Cell Division (Mitosis)', icon: '🔬', subject: 'Biology', difficulty: 'Intermediate', duration: '40 min', rating: 4.7, students: 9800, description: 'Observe and interact with 3D cell division animation. Identify phases and manipulate chromosomes in real-time.', modules: ['Cell Structure', 'Prophase', 'Metaphase', 'Anaphase & Telophase', 'Quiz'], color: '#8b5cf6' },
-  { id: 4, name: 'Anatomy: Heart Dissection', icon: '🫀', subject: 'Biology', difficulty: 'Advanced', duration: '60 min', rating: 4.9, students: 7600, description: 'Virtual heart dissection with layer-by-layer anatomy exploration. Trace blood flow through all four chambers.', modules: ['External Anatomy', 'Internal Chambers', 'Valves & Vessels', 'Blood Flow Sim', 'Assessment'], color: '#ef4444' },
-  { id: 5, name: 'Electronics: Circuit Builder', icon: '⚡', subject: 'Engineering', difficulty: 'Beginner', duration: '35 min', rating: 4.6, students: 11300, description: 'Build and test circuits with resistors, capacitors, LEDs, and transistors. Ohm\'s law verification included.', modules: ['Component ID', 'Series Circuits', 'Parallel Circuits', 'Measurement', 'Free Build'], color: '#f59e0b' },
-  { id: 6, name: 'Organic Chemistry: Synthesis', icon: '⚗️', subject: 'Chemistry', difficulty: 'Advanced', duration: '55 min', rating: 4.5, students: 5400, description: 'Plan and execute multi-step organic synthesis reactions. Practice retrosynthetic analysis and mechanism drawing.', modules: ['Retrosynthesis', 'Reagent Selection', 'Reaction Setup', 'Purification', 'Spectral Analysis'], color: '#06b6d4' },
-  { id: 7, name: 'Astronomy: Solar System', icon: '🪐', subject: 'Physics', difficulty: 'Beginner', duration: '25 min', rating: 4.8, students: 21500, description: 'Explore a scale model of the solar system. Compare planetary sizes, orbits, and atmospheric compositions.', modules: ['Inner Planets', 'Outer Planets', 'Moons & Asteroids', 'Orbital Mechanics', 'Quiz'], color: '#6366f1' },
-  { id: 8, name: 'Genetics: DNA Extraction', icon: '🧬', subject: 'Biology', difficulty: 'Intermediate', duration: '50 min', rating: 4.7, students: 8900, description: 'Perform virtual DNA extraction from strawberry cells. Visualize double helix structure and run gel electrophoresis.', modules: ['Cell Lysis', 'DNA Isolation', 'Precipitation', 'Gel Electrophoresis', 'Analysis'], color: '#ec4899' },
+  { id: 'chem_titration', name: 'Chemistry: Titration Lab', icon: '🧪', subject: 'Chemistry', difficulty: 'Intermediate', duration: '45 min', rating: 4.8, students: 12400, description: 'Perform acid-base titrations to determine unknown concentrations. Includes pH indicators and volumetric analysis.', modules: ['Safety Briefing', 'Equipment Setup', 'Titration Process', 'Data Analysis', 'Lab Report'], color: '#10b981' },
+  { id: 'phys_projectile', name: 'Physics: Projectile Motion', icon: '🎯', subject: 'Physics', difficulty: 'Beginner', duration: '30 min', rating: 4.9, students: 18200, description: 'Launch projectiles at different angles and measure trajectory, range, and impact velocity in a simulated environment.', modules: ['Theory Review', 'Launch Setup', 'Data Collection', 'Graph Analysis', 'Challenge Mode'], color: '#3b82f6' },
+  { id: 'bio_mitosis', name: 'Biology: Cell Division (Mitosis)', icon: '🔬', subject: 'Biology', difficulty: 'Intermediate', duration: '40 min', rating: 4.7, students: 9800, description: 'Observe and interact with 3D cell division animation. Identify phases and manipulate chromosomes in real-time.', modules: ['Cell Structure', 'Prophase', 'Metaphase', 'Anaphase & Telophase', 'Quiz'], color: '#8b5cf6' },
+  { id: 'bio_heart', name: 'Anatomy: Heart Dissection', icon: '🫀', subject: 'Biology', difficulty: 'Advanced', duration: '60 min', rating: 4.9, students: 7600, description: 'Virtual heart dissection with layer-by-layer anatomy exploration. Trace blood flow through all four chambers.', modules: ['External Anatomy', 'Internal Chambers', 'Valves & Vessels', 'Blood Flow Sim', 'Assessment'], color: '#ef4444' },
+  { id: 'eng_circuits', name: 'Electronics: Circuit Builder', icon: '⚡', subject: 'Engineering', difficulty: 'Beginner', duration: '35 min', rating: 4.6, students: 11300, description: 'Build and test circuits with resistors, capacitors, LEDs, and transistors. Ohm\'s law verification included.', modules: ['Component ID', 'Series Circuits', 'Parallel Circuits', 'Measurement', 'Free Build'], color: '#f59e0b' },
+  { id: 'chem_synth', name: 'Organic Chemistry: Synthesis', icon: '⚗️', subject: 'Chemistry', difficulty: 'Advanced', duration: '55 min', rating: 4.5, students: 5400, description: 'Plan and execute multi-step organic synthesis reactions. Practice retrosynthetic analysis and mechanism drawing.', modules: ['Retrosynthesis', 'Reagent Selection', 'Reaction Setup', 'Purification', 'Spectral Analysis'], color: '#06b6d4' },
+  { id: 'phys_solar', name: 'Astronomy: Solar System', icon: '🪐', subject: 'Physics', difficulty: 'Beginner', duration: '25 min', rating: 4.8, students: 21500, description: 'Explore a scale model of the solar system. Compare planetary sizes, orbits, and atmospheric compositions.', modules: ['Inner Planets', 'Outer Planets', 'Moons & Asteroids', 'Orbital Mechanics', 'Quiz'], color: '#6366f1' },
+  { id: 'bio_dna', name: 'Genetics: DNA Extraction', icon: '🧬', subject: 'Biology', difficulty: 'Intermediate', duration: '50 min', rating: 4.7, students: 8900, description: 'Perform virtual DNA extraction from strawberry cells. Visualize double helix structure and run gel electrophoresis.', modules: ['Cell Lysis', 'DNA Isolation', 'Precipitation', 'Gel Electrophoresis', 'Analysis'], color: '#ec4899' },
 ];
 
 const SUBJECTS = ['All', 'Chemistry', 'Physics', 'Biology', 'Engineering'];
 
 export default function VRLabsPage() {
+  const { token } = useAuth();
   const [selectedLab, setSelectedLab] = useState(null);
   const [filter, setFilter] = useState('All');
   const [activeModule, setActiveModule] = useState(0);
   const [labStarted, setLabStarted] = useState(false);
   const [progress, setProgress] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (token) fetchProgress();
+  }, [token]);
+
+  const fetchProgress = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_URL}/api/vrlabs/progress`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        const progMap = {};
+        data.progress.forEach(p => {
+          progMap[p.labId] = p.progress;
+        });
+        setProgress(progMap);
+      }
+    } catch (err) {
+      console.error('Failed to fetch VR progress:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const syncUpdate = async (lab, modIdx) => {
+    try {
+      const completed = modIdx === lab.modules.length - 1;
+      await fetch(`${API_URL}/api/vrlabs/update`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          labId: lab.id,
+          title: lab.name,
+          progress: modIdx + 1,
+          completed: completed
+        })
+      });
+    } catch (err) {
+      console.error('Failed to sync VR progress:', err);
+    }
+  };
 
   const filtered = LABS.filter(l => (filter === 'All' || l.subject === filter) && l.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
   const startLab = (lab) => {
     setSelectedLab(lab);
     setLabStarted(true);
-    setActiveModule(0);
+    // Start from wherever user left off
+    setActiveModule(Math.min(progress[lab.id] || 0, lab.modules.length - 1));
     if(window.ssSound) window.ssSound('open');
   };
 
   const completeModule = () => {
     const labId = selectedLab.id;
-    const newProgress = { ...progress, [labId]: (progress[labId] || 0) + 1 };
-    setProgress(newProgress);
+    const currentProgress = progress[labId] || 0;
+    
+    if (activeModule >= currentProgress) {
+      const newM = activeModule + 1;
+      setProgress(prev => ({ ...prev, [labId]: newM }));
+      syncUpdate(selectedLab, activeModule);
+    }
+
     if (activeModule < selectedLab.modules.length - 1) {
       setActiveModule(a => a + 1);
       if(window.ssSound) window.ssSound('success');
     } else {
       if(window.ssSound) window.ssSound('success');
+      // Already synced completion in syncUpdate if activeModule was last
     }
   };
 

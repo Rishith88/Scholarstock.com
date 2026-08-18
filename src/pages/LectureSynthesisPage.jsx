@@ -1,11 +1,6 @@
-import { useState, useRef } from 'react';
-
-const SAMPLE_PODCASTS = [
-  { id: 1, title: 'Introduction to Neural Networks', subject: 'Computer Science', duration: '12 min', icon: '🧠', speakers: 2, status: 'ready', description: 'A conversational deep-dive into how neurons, layers, and backpropagation work.' },
-  { id: 2, title: 'The French Revolution: Causes & Effects', subject: 'History', duration: '18 min', icon: '🏛️', speakers: 3, status: 'ready', description: 'A lively debate-style discussion of the revolution from multiple perspectives.' },
-  { id: 3, title: 'Organic Chemistry: Reaction Mechanisms', subject: 'Chemistry', duration: '15 min', icon: '⚗️', speakers: 2, status: 'ready', description: 'Two chemists explain SN1, SN2, E1, and E2 reactions with memorable analogies.' },
-  { id: 4, title: 'Macroeconomics: GDP & Fiscal Policy', subject: 'Economics', duration: '20 min', icon: '📈', speakers: 2, status: 'ready', description: 'An engaging conversation about how governments manage economies.' },
-];
+import { useState, useRef, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import API_URL from '../config';
 
 const VOICES = [
   { id: 'professor', name: 'Professor', icon: '👨‍🏫', desc: 'Authoritative, detailed explanations' },
@@ -23,6 +18,7 @@ const FORMATS = [
 ];
 
 export default function LectureSynthesisPage() {
+  const { token } = useAuth();
   const [tab, setTab] = useState('generate');
   const [inputText, setInputText] = useState('');
   const [selectedVoices, setSelectedVoices] = useState(['professor', 'student']);
@@ -32,7 +28,52 @@ export default function LectureSynthesisPage() {
   const [generated, setGenerated] = useState(null);
   const [playing, setPlaying] = useState(null);
   const [progress, setProgress] = useState(0);
+  const [library, setLibrary] = useState([]);
+  const [loading, setLoading] = useState(true);
   const fileRef = useRef(null);
+
+  useEffect(() => {
+    if (token) fetchLibrary();
+  }, [token]);
+
+  const fetchLibrary = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_URL}/api/lecture-synthesis/list`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setLibrary(data.list);
+      }
+    } catch (err) {
+      console.error('Failed to fetch library:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const saveSynthesis = async (synth) => {
+    try {
+      await fetch(`${API_URL}/api/lecture-synthesis/save`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          title: synth.title,
+          subject: synth.subject || 'General',
+          content: JSON.stringify(synth.segments), // Store segments as string in content for now
+          summary: synth.summary || '',
+          flashcards: synth.flashcards || []
+        })
+      });
+      fetchLibrary();
+    } catch (err) {
+      console.error('Failed to save synthesis:', err);
+    }
+  };
 
   const toggleVoice = (v) => setSelectedVoices(prev => prev.includes(v) ? prev.filter(x => x !== v) : prev.length < 3 ? [...prev, v] : prev);
 
@@ -40,20 +81,23 @@ export default function LectureSynthesisPage() {
     if (inputText.trim().length < 30) return;
     setGenerating(true);
     setTimeout(() => {
-      setGenerated({
-        title: 'Your Custom Podcast',
+      const newSynth = {
+        title: inputText.split('\n')[0].substring(0, 40) || 'Custom Synthesis',
+        subject: 'General',
         duration: `${duration} min`,
         speakers: selectedVoices.length,
         format: FORMATS.find(f => f.id === format)?.name,
         segments: [
-          { time: '0:00', speaker: 'Professor', text: 'Welcome to today\'s episode. We\'re going to explore a fascinating topic...' },
+          { time: '0:00', speaker: 'Professor', text: 'Welcome to today\'s episode. We\'re going to explore a fascinating topic based on your notes...' },
           { time: '1:30', speaker: 'Student', text: 'That\'s really interesting! Can you explain how that works in practice?' },
           { time: '3:45', speaker: 'Professor', text: 'Great question. Let me break this down with an analogy...' },
           { time: '6:20', speaker: 'Student', text: 'So if I understand correctly, this means that...' },
           { time: '8:00', speaker: 'Professor', text: 'Exactly! And the implications of this are quite profound...' },
           { time: '9:30', speaker: 'Both', text: 'Summary and key takeaways for your exam preparation.' },
         ]
-      });
+      };
+      setGenerated(newSynth);
+      saveSynthesis(newSynth);
       setGenerating(false);
       setTab('library');
       if(window.ssSound) window.ssSound('success');

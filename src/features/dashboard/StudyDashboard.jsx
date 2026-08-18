@@ -18,27 +18,6 @@ const MOCK_WEEKLY = [
   { day: 'Thu', hours: 0.5 }, { day: 'Fri', hours: 2.1 }, { day: 'Sat', hours: 4.0 }, { day: 'Sun', hours: 1.5 },
 ];
 
-// Toast notification system
-const showToast = (message, type = 'info') => {
-  const container = document.querySelector('.toast-container') || (() => {
-    const div = document.createElement('div');
-    div.className = 'toast-container';
-    document.body.appendChild(div);
-    return div;
-  })();
-  
-  const toast = document.createElement('div');
-  toast.className = `toast ${type}`;
-  toast.innerHTML = `<span class="toast-icon">${type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ'}</span><span>${message}</span>`;
-  container.appendChild(toast);
-  
-  setTimeout(() => toast.classList.add('on'), 10);
-  setTimeout(() => {
-    toast.classList.remove('on');
-    setTimeout(() => toast.remove(), 300);
-  }, 3000);
-};
-
 export default function StudyDashboard() {
   const { user, token } = useAuth();
   const navigate = useNavigate();
@@ -57,6 +36,27 @@ export default function StudyDashboard() {
   const [streak, setStreak] = useState(0);
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
+
+  // Dynamic toast function - moved inside component for access to component state
+  const showToast = useCallback((message, type = 'info') => {
+    const container = document.querySelector('.toast-container') || (() => {
+      const div = document.createElement('div');
+      div.className = 'toast-container';
+      document.body.appendChild(div);
+      return div;
+    })();
+    
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `<span class="toast-icon">${type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ'}</span><span>${message}</span>`;
+    container.appendChild(toast);
+    
+    setTimeout(() => toast.classList.add('on'), 10);
+    setTimeout(() => {
+      toast.classList.remove('on');
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }, []);
 
   const authH = useCallback(() => ({ Authorization: `Bearer ${token}` }), [token]);
 

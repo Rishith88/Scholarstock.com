@@ -1,31 +1,81 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import API_URL from '../config';
 
-const GIGS = [
-  { id: 1, title: 'Logo Design for College Club', seller: 'Kavya R.', avatar: '🎨', uni: 'NID Ahmedabad', category: 'Graphics', price: '₹500', rating: 4.9, reviews: 67, delivery: '2 days', tags: ['Logo', 'Branding', 'Vector'], featured: true, description: 'Professional minimalist logo design with 3 concepts and unlimited revisions.' },
-  { id: 2, title: 'Python Assignment Help', seller: 'Arjun S.', avatar: '💻', uni: 'IIT Madras', category: 'Coding', price: '₹800', rating: 4.8, reviews: 143, delivery: '1 day', tags: ['Python', 'Data Science', 'ML'], featured: true, description: 'Expert Python programming help including data analysis, ML models, and automation scripts.' },
-  { id: 3, title: 'Resume & CV Design', seller: 'Priya M.', avatar: '📄', uni: 'NIFT Delhi', category: 'Writing', price: '₹350', rating: 4.7, reviews: 89, delivery: '1 day', tags: ['Resume', 'ATS-Friendly', 'Design'], featured: false, description: 'ATS-optimized resume design that gets you noticed. Includes LinkedIn optimization.' },
-  { id: 4, title: 'Video Editing (YouTube/Reels)', seller: 'Rohan K.', avatar: '🎬', uni: 'FTII Pune', category: 'Video', price: '₹1,200', rating: 4.9, reviews: 52, delivery: '3 days', tags: ['Editing', 'Motion Graphics', 'Color Grade'], featured: true, description: 'Cinematic video editing with color grading, transitions, and motion graphics.' },
-  { id: 5, title: 'Math Tutoring (Calculus)', seller: 'Sneha P.', avatar: '🧮', uni: 'ISI Kolkata', category: 'Tutoring', price: '₹200/hr', rating: 5.0, reviews: 201, delivery: 'Live', tags: ['Calculus', 'Linear Algebra', 'Real Analysis'], featured: false, description: 'One-on-one math tutoring. Concepts explained from scratch with practice problems.' },
-  { id: 6, title: 'Presentation Design (PPT)', seller: 'Ananya D.', avatar: '📊', uni: 'MICA', category: 'Graphics', price: '₹600', rating: 4.6, reviews: 78, delivery: '2 days', tags: ['PowerPoint', 'Keynote', 'Pitch Deck'], featured: false, description: 'Stunning presentation designs for academic projects, pitches, and conferences.' },
-  { id: 7, title: 'React/Next.js Web Development', seller: 'Vikram T.', avatar: '🌐', uni: 'BITS Pilani', category: 'Coding', price: '₹2,500', rating: 4.8, reviews: 34, delivery: '5 days', tags: ['React', 'Next.js', 'Full Stack'], featured: true, description: 'Full-stack web application development with modern frameworks and responsive design.' },
-  { id: 8, title: 'Research Paper Proofreading', seller: 'Emma L.', avatar: '📝', uni: 'Oxford', category: 'Writing', price: '₹400', rating: 4.7, reviews: 112, delivery: '2 days', tags: ['Academic', 'APA/MLA', 'Grammar'], featured: false, description: 'Thorough proofreading and editing of academic papers with citation format checking.' },
-  { id: 9, title: '3D CAD Modeling', seller: 'Raj B.', avatar: '🏗️', uni: 'IIT Kharagpur', category: 'Engineering', price: '₹1,500', rating: 4.5, reviews: 28, delivery: '4 days', tags: ['SolidWorks', 'AutoCAD', '3D Print'], featured: false, description: 'Professional 3D modeling for engineering projects, prototypes, and 3D printing.' },
-  { id: 10, title: 'Social Media Marketing Plan', seller: 'Zara K.', avatar: '📱', uni: 'XLRI', category: 'Marketing', price: '₹700', rating: 4.6, reviews: 45, delivery: '3 days', tags: ['Instagram', 'Strategy', 'Content'], featured: false, description: 'Complete social media strategy including content calendar, hashtag research, and analytics setup.' },
-];
-
-const CATEGORIES = ['All', 'Graphics', 'Coding', 'Writing', 'Video', 'Tutoring', 'Engineering', 'Marketing'];
+const CATEGORIES = ['All', 'Graphics', 'Coding', 'Writing', 'Video', 'Tutoring', 'Engineering', 'Marketing', 'Tech', 'Business', 'Design'];
 
 export default function FreelanceMarketPage() {
+  const { token, user } = useAuth();
   const [filter, setFilter] = useState('All');
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('featured');
   const [selectedGig, setSelectedGig] = useState(null);
   const [showPostGig, setShowPostGig] = useState(false);
+  const [gigs, setGigs] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [gigForm, setGigForm] = useState({ title: '', category: 'Graphics', price: '', delivery: '', description: '' });
 
-  const filtered = GIGS
-    .filter(g => (filter === 'All' || g.category === filter) && (g.title.toLowerCase().includes(search.toLowerCase()) || g.tags.some(t => t.toLowerCase().includes(search.toLowerCase()))))
-    .sort((a, b) => sortBy === 'featured' ? (b.featured ? 1 : 0) - (a.featured ? 1 : 0) : sortBy === 'price' ? parseInt(a.price.replace(/[^\d]/g, '')) - parseInt(b.price.replace(/[^\d]/g, '')) : b.rating - a.rating);
+  useEffect(() => {
+    fetchGigs();
+  }, [filter, sortBy]);
+
+  const fetchGigs = async () => {
+    try {
+      setLoading(true);
+      const url = new URL(`${API_URL}/api/freelance/gigs`);
+      if (filter !== 'All') url.searchParams.append('category', filter);
+      if (search) url.searchParams.append('search', search);
+      url.searchParams.append('sort', sortBy);
+      
+      const res = await fetch(url.toString());
+      const data = await res.json();
+      if (data.success) {
+        setGigs(data.gigs);
+      }
+    } catch (err) {
+      console.error('Failed to fetch gigs:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePostGig = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/freelance/gigs`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          ...gigForm,
+          sellerUni: user?.university || 'ScholarStock User'
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        if(window.ssSound) window.ssSound('success');
+        setShowPostGig(false);
+        setGigForm({ title: '', category: 'Graphics', price: '', delivery: '', description: '' });
+        fetchGigs();
+      }
+    } catch (err) {
+      console.error('Post gig failed:', err);
+    }
+  };
+
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
+  };
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      fetchGigs();
+    }, 500);
+    return () => clearTimeout(delayDebounceFn);
+  }, [search]);
+
+  const filtered = gigs; // Data is filtered on backend now
 
   return (
     <div className="sec page-enter" style={{ marginTop: '2rem' }}>

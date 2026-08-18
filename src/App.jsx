@@ -11,7 +11,7 @@ import Sidebar from './components/Sidebar';
 import Footer from './components/Footer';
 import Chatbot from './components/Chatbot';
 import GuideBot from './components/GuideBot';
-import IntroSplash, { sound } from './components/IntroSplash';
+import IntroSplash from './components/IntroSplash';
 
 import HomePage from './pages/HomePage';
 import BrowsePage from './pages/BrowsePage';
